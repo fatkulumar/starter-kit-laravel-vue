@@ -10,6 +10,8 @@ import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { type BreadcrumbItem, type User } from '@/types';
+import { reactive, ref } from 'vue';
+import axios from '@/lib/axios'
 
 interface Props {
     mustVerifyEmail: boolean;
@@ -27,17 +29,65 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 const page = usePage();
 const user = page.props.auth.user as User;
+const error = ref<Record<string, any> | null>(null);
 
-const form = useForm({
+const form = useForm<{
+    name: string;
+    email: string;
+    photo: string | File | null;
+}>({
     name: user.name,
     email: user.email,
+    photo: null
 });
 
-const submit = () => {
-    form.patch(route('profile.update'), {
-        preserveScroll: true,
-    });
+let recentlySuccessful = ref<boolean>(false);
+
+const submit = async () => {
+
+    const formData = new FormData();
+    formData.append('_method', 'PATCH');
+    formData.append('name', form.name);
+    formData.append('email', form.email);
+    formData.append('photo', form.photo ?? '');
+
+    try {
+        const response = await axios.post(route('profile.update'), formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        if (response?.status === 200) {
+            recentlySuccessful.value = true;
+            setTimeout(() => {
+                recentlySuccessful.value = false;
+            }, 1000);
+        }
+
+    } catch (err: any) {
+        console.log(err)
+        if (err?.response?.status === 422) {
+            error.value = err.response.data.errors || { message: 'Data tidak valid' };
+        } else {
+            error.value = err?.response?.data || { message: 'Gagal submit data user' };
+        }
+    }
 };
+
+const previewPhoto = ref<string | null>(user.profile?.photo_url ?? null)
+
+const handleFileChange = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+        form.photo = target.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+            previewPhoto.value = reader.result as string;
+        }
+        reader.readAsDataURL(target.files[0]);
+    }
+}
 </script>
 
 <template>
@@ -49,10 +99,19 @@ const submit = () => {
                 <HeadingSmall title="Profile information" description="Update your name and email address" />
 
                 <form @submit.prevent="submit" class="space-y-6">
+                     <div class="grid gap-2">
+                        <img v-if="previewPhoto" :src="previewPhoto" alt="Preview" class="max-w-xs rounded shadow w-20" />
+                        <Label for="photo">Foto</Label>
+                        <Input id="photo" type="file" autofocus :tabindex="1" autocomplete="photo"
+                            @change="handleFileChange" />
+                        <InputError v-if="error?.photo" :message="error?.photo[0]" />
+
+                    </div>
+
                     <div class="grid gap-2">
                         <Label for="name">Name</Label>
                         <Input id="name" class="mt-1 block w-full" v-model="form.name" required autocomplete="name" placeholder="Full name" />
-                        <InputError class="mt-2" :message="form.errors.name" />
+                        <InputError v-if="error?.name" class="mt-2" :message="error?.name[0]" />
                     </div>
 
                     <div class="grid gap-2">
@@ -66,7 +125,7 @@ const submit = () => {
                             autocomplete="username"
                             placeholder="Email address"
                         />
-                        <InputError class="mt-2" :message="form.errors.email" />
+                        <InputError v-if="error?.email" class="mt-2" :message="error?.email[0]" />
                     </div>
 
                     <div v-if="mustVerifyEmail && !user.email_verified_at">
@@ -96,7 +155,7 @@ const submit = () => {
                             leave-active-class="transition ease-in-out"
                             leave-to-class="opacity-0"
                         >
-                            <p v-show="form.recentlySuccessful" class="text-sm text-neutral-600">Saved.</p>
+                            <p v-show="recentlySuccessful" class="text-sm text-neutral-600">Saved.</p>
                         </Transition>
                     </div>
                 </form>

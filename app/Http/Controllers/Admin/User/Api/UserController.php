@@ -162,6 +162,8 @@ class UserController extends Controller
         
         Cache::flush();
 
+        $user = $this->model::with(['profile'])->findOrFail($id);
+
         $this->setResult($user)
             ->setStatus(true)
             ->setMessage('Success Update Data')

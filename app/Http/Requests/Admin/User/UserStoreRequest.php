@@ -24,18 +24,11 @@ class UserStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'string',
-                'lowercase',
-                'email',
-                'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id),
-            ],
-            'password' => 'required|string|min:6|regex:/^(?=.*[A-Z])(?=.*[\W_])(?=.*\d).+$/',
-            'role' => 'required|in:admin,member',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)],
+            'password' => ['required', 'string', 'min:6', 'regex:/^(?=.*[A-Z])(?=.*[\W_])(?=.*\d).+$/'],
+            'role' => ['required', 'in:admin,member'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:2048'],
         ];
     }
 

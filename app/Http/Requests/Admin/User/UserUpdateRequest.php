@@ -26,14 +26,7 @@ class UserUpdateRequest extends FormRequest
         return [
             'id' => 'required|string|max:36',
             'name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'string',
-                'lowercase',
-                'email',
-                'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id),
-            ],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->id),],
             'password' => 'required|string|min:6|regex:/^(?=.*[A-Z])(?=.*[\W_])(?=.*\d).+$/',
             'role' => 'required|in:admin,member'
         ];
