@@ -58,7 +58,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         <Modal :show="userStore.showModal" @close="userStore.handleCloseModal">
             <h2 class="text-xl font-semibold mb-4">{{ userStore.form.id ? 'Form Edit User' : 'Form Tambah User' }}</h2>
             <form enctype="multipart/form-data" class="space-y-3" @submit.prevent="userStore.handleSave">
-                 <img v-if="userStore.previewPhoto" :src="userStore.previewPhoto" alt="Preview" class="max-w-xs rounded shadow w-20" />
+                <img v-if="userStore.previewPhoto" :src="userStore.previewPhoto" alt="Preview" class="max-w-xs rounded shadow w-20" />
                 <Label for="photo">Foto</Label>
                 <Input id="photo" type="file" autofocus :tabindex="1" autocomplete="photo"
                     @change="userStore.handleFileChange" />
