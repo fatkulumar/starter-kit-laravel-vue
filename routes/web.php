@@ -15,10 +15,6 @@ Route::get('member/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified', 'role:member'])->name('member.dashboard');
 
-Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 

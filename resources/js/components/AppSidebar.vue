@@ -49,7 +49,10 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="route('dashboard')">
+                        <Link v-if="$page.props.auth.user.role == 'admin'" :href="route('admin.dashboard')">
+                            <AppLogo />
+                        </Link>
+                        <Link v-if="$page.props.auth.user.role == 'member'" :href="route('member.dashboard')">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>
