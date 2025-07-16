@@ -36,14 +36,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
             <div class="flex items-center justify-between my-4">
-                <button @click="userStore.showModal = true"
-                    class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer">
-                    <PlusIcon class="h-6 w-6" />
-                </button>
+                <PlusIcon @click="userStore.showModal = true" class="h-8 w-8 bg-green-600 rounded-md p-1 cursor-pointer" />
 
                 <div class="relative flex items-center">
                     <SearchIcon class="w-8 h-8" />
-                    <input @input="userStore.handleSearch" v-model="userStore.searchQuery" type="text"
+                    <Input :tabIndex="2" @input="userStore.handleSearch" v-model="userStore.searchQuery" type="text"
                         placeholder="Cari..."
                         class="w-full pl-16 pr-4 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
                 </div>
@@ -56,7 +53,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         </div>
 
         <Modal :show="userStore.showModal" @close="userStore.handleCloseModal">
-            <h2 class="text-xl font-semibold mb-4">{{ userStore.form.id ? 'Form Edit User' : 'Form Tambah User' }}</h2>
+            <h2 class="mb-5 truncate leading-tight font-semibold">{{ userStore.form.id ? 'Form Edit User' : 'Form Tambah User' }}</h2>
             <form enctype="multipart/form-data" class="space-y-3" @submit.prevent="userStore.handleSave">
                 <img v-if="userStore.previewPhoto" :src="userStore.previewPhoto" alt="Preview" class="max-w-xs rounded shadow w-20" />
                 <Label for="photo">Foto</Label>
@@ -65,26 +62,26 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <InputError :message="userStore.error?.photo?.[0]" />
 
                 <Label for="name">Nama</Label>
-                <Input id="name" type="text" required autofocus :tabindex="1" autocomplete="name"
+                <Input id="name" type="text" required autofocus :tabindex="2" autocomplete="name"
                     v-model="userStore.form.name" placeholder="Masukkan Nama" />
                 <InputError :message="userStore.error?.name?.[0]" />
 
                 <Label for="email">Emsil</Label>
-                <Input id="email" type="email" required autofocus :tabindex="1" autocomplete="email"
+                <Input id="email" type="email" required autofocus :tabindex="3" autocomplete="email"
                     v-model="userStore.form.email" placeholder="Masukkan Email" />
                 <InputError :message="userStore.error?.email?.[0]" />
 
                 <Label for="password">Password</Label>
-                <Input id="password" type="password" required autofocus :tabindex="1" autocomplete="password"
+                <Input id="password" type="password" required autofocus :tabindex="4" autocomplete="password"
                     v-model="userStore.form.password" placeholder="Masukkan Passsword" />
                 <InputError :message="userStore.error?.password?.[0]" />
 
                 <Label for="role">Role</Label>
-                <Select id="role" v-model="userStore.form.role" :options="userStore.roleOptions"
+                <Select id="role" v-model="userStore.form.role" :tabindex="5" :options="userStore.roleOptions"
                     placeholder="Pilih role" class="mt-2" />
                 <InputError :message="userStore.error?.role?.[0]" />
 
-                <Button type="submit" class="mt-2 w-full" tabindex="5" :disabled="userStore.isLoading">
+                <Button type="submit" class="mt-2 w-full" tabindex="6" :disabled="userStore.isLoading">
                     <LoaderCircle v-if="userStore.isLoading" class="h-4 w-4 animate-spin" />
                     Simpan
                 </Button>

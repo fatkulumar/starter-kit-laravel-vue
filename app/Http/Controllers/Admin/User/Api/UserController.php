@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\User\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\User\UserDeleteAllRequest;
 use App\Http\Requests\Admin\User\UserStoreRequest;
 use App\Http\Requests\Admin\User\UserUpdateRequest;
 use App\Models\User;
@@ -87,19 +88,19 @@ class UserController extends Controller
                 ['user_id' => $user->id],
                 ['photo' => $uploadPhoto ?? 'photo ' . $data['name']]
             );
-            
+
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
             $this->setResult($e->getMessage())
-            ->setStatus(false)
-            ->setMessage('Failed Save Data')
-            ->setCode(JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+                ->setStatus(false)
+                ->setMessage('Failed Save Data')
+                ->setCode(JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
             return $this->toJson();
         }
 
         Cache::flush();
-        
+
         $user = $this->model::with(['profile'])->latest()->first();
 
         $this->setResult($user)
@@ -148,7 +149,7 @@ class UserController extends Controller
 
         if ($photo) {
             $this->fileSettings();
-             $this->deleteFile($user->profile->photo);
+            $this->deleteFile($user->profile->photo);
             $uploadPhoto = $this->uploadFile($photo);
             $user->profile()->updateOrCreate(
                 ['user_id' => $user->id],
@@ -159,7 +160,7 @@ class UserController extends Controller
         $user->save();
 
         $user->syncRoles($request->post('role'));
-        
+
         Cache::flush();
 
         $user = $this->model::with(['profile'])->findOrFail($id);
@@ -175,8 +176,7 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    // : JsonResponse
+    public function destroy(string $id): JsonResponse
     {
         $data = $this->model::findOrFail($id);
         $this->fileSettings();
@@ -186,6 +186,25 @@ class UserController extends Controller
         $data->delete();
         Cache::flush();
         $this->setResult($id)->setStatus(true)->setMessage('Success Delete Data')->setCode(JsonResponse::HTTP_OK);
+        return $this->toJson();
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function deleteAll(UserDeleteAllRequest $request) : JsonResponse
+    {
+        $data = $request->validated();
+        for ($i = 0; $i < count($data['ids']); $i++) {
+            $this->fileSettings();
+            $user = $this->model::findOrFail($data['ids'][$i]);
+            if ($user->profile && $this->isFileExists($user->profile->photo)) {
+                $this->deleteFile($user->profile->photo);
+            }
+            $user->delete();
+        }
+        Cache::flush();
+        $this->setResult($data['ids'])->setStatus(true)->setMessage('Success Delete Data')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }
 }

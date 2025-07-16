@@ -34,7 +34,9 @@ export const useUserStore = defineStore('user', {
         userCache: Map<string, UserListResponse>,
         showModal: boolean,
         form: UserForm,
-        previewPhoto: string
+        previewPhoto: string,
+        checkedAll: boolean,
+        selectedIds: string[]
     } => ({
         users: [] as User[],
         isLoading: false,
@@ -52,7 +54,9 @@ export const useUserStore = defineStore('user', {
             role: '',
             photo: null
         }),
-        previewPhoto: ''
+        previewPhoto: '',
+        checkedAll: false,
+        selectedIds: []
     }),
     getters: {
         roleOptions(): { label: string; value: Roles }[] {
@@ -257,10 +261,74 @@ export const useUserStore = defineStore('user', {
             }
         },
 
-        handleCloseModal(): void
-        {
+        handleCloseModal(): void {
             this.showModal = false;
             this.hanldeResetForm();
+        },
+
+        toggleSelectAll(users: User[]): void {
+            if (this.checkedAll) {
+                this.selectedIds = users.map(u => u.id);
+            } else {
+                this.selectedIds = [];
+            }
+        },
+        toggleSelectOne(userId: string): void {
+            if (this.selectedIds.includes(userId)) {
+                this.selectedIds = this.selectedIds.filter(id => id !== userId);
+            } else {
+                this.selectedIds.push(userId);
+            }
+            this.checkedAll = false;
+        },
+
+        syncCheckedAll(users: User[]): void {
+            this.checkedAll = users.length > 0 && users.every(user => this.selectedIds.includes(user.id));
+        },
+
+        async handleDeleteAll() {
+            this.isLoading = true;
+            const method = 'post';
+            const url = `/apiadmin/dashboard/apiadmin/dashboard/user/delete-all `
+            const form = {
+                ids: this.selectedIds
+            }
+            try {
+                const response = await axios.post<ApiResponse<User>>(url, form, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                if (response?.status === 200) {
+                    let deleteIds: string[] = [];
+                    const data = response.data.data;
+
+                    if (typeof data === 'string') {
+                        deleteIds = [data];
+                    } else if (Array.isArray(data)) {
+                        deleteIds = data;
+                    } else {
+                        return;
+                    }
+                    this.users = this.users.filter(user => !deleteIds.includes(user.id));
+                    this.error = null;
+                }
+            } catch (err: any) {
+                if (err?.response?.status === 422) {
+                    this.error = err.response.data.errors || { message: 'Data tidak valid' };
+                } else {
+                    this.error = err?.response?.data || { message: 'Gagal delete data user' };
+                }
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
+        async hanldeConfirmDeleteAll(): Promise<void> {
+            const konfirm = confirm(`Hapus?`)
+            if (konfirm) {
+                await this.handleDeleteAll();
+            }
         }
     }
 });

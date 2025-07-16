@@ -13,9 +13,12 @@
 
 ##### Libraries
 - [Laravel Breeze And Inertia Vue](https://laravel.com/docs/12.x/starter-kits#breeze-and-inertia)
+- [Axios 1.10.0](https://axios-http.com/docs/intro)
+- [Pinia 0.11.1](https://vuejs.org/guide/quick-start)
 
 ##### Requirements
 - [PHP >= 8.2](https://laravel.com/docs/12.x/deployment)
+- [Node >= 18.3](https://laravel.com/docs/12.x/deployment)
 
 ##### Installation
     composer install
@@ -54,6 +57,8 @@
 2. Use artisan optimize
     php artisan optimize
 
-## Reminder Me
+#### Reminder
 app/Http/Middleware/HandleInertiaRequests.php => setting $page
 resouce/js/components/appSidebar.vue => menu sidebar
+resouce/js/layouts/AuthLayout.vue => view auth
+resouce/js/layouts/AppLayout.vue => view dashboard
