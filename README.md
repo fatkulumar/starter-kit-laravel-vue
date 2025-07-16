@@ -58,7 +58,7 @@
     php artisan optimize
 
 #### Reminder
-app/Http/Middleware/HandleInertiaRequests.php => setting $page
-resouce/js/components/appSidebar.vue => menu sidebar
-resouce/js/layouts/AuthLayout.vue => view auth
-resouce/js/layouts/AppLayout.vue => view dashboard
+    app/Http/Middleware/HandleInertiaRequests.php => setting $page
+    resouce/js/components/appSidebar.vue => menu sidebar
+    resouce/js/layouts/AuthLayout.vue => view auth
+    resouce/js/layouts/AppLayout.vue => view dashboard
