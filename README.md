@@ -24,7 +24,7 @@
     composer install
     copy .env-example to .env
     php artisan key:generate
-    php artisan migrate:fresh --seed --seed
+    php artisan migrate:fresh --seed
     composer run dev
 
 ##### Structure
