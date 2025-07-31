@@ -28,7 +28,8 @@ class UserUpdateRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->id),],
             'password' => 'required|string|min:6|regex:/^(?=.*[A-Z])(?=.*[\W_])(?=.*\d).+$/',
-            'role' => 'required|in:admin,member'
+            'role' => 'required|in:admin,member',
+            'photo' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:2048'],
         ];
     }
 
@@ -45,6 +46,9 @@ class UserUpdateRequest extends FormRequest
             'password.regex' => 'Password harus memiliki minimal 1 huruf kapital, 1 angka, dan 1 karakter spesial.',
             'password.min' => 'Password minimal harus 6 karakter',
             'role.required' => 'Role wajib dipilih.',
+            'photo.image' => 'File harus berupa gambar.',
+            'photo.mimes' => 'Gambar harus berformat jpeg, png, jpg, atau webp.',
+            'photo.max' => 'Ukuran gambar maksimal 2MB.',
         ];
     }
 }

@@ -57,7 +57,7 @@ const breadcrumbs: BreadcrumbItem[] = [
             <form enctype="multipart/form-data" class="space-y-3" @submit.prevent="userStore.handleSave">
                 <img v-if="userStore.previewPhoto" :src="userStore.previewPhoto" alt="Preview" class="max-w-xs rounded shadow w-20" />
                 <Label for="photo">Foto</Label>
-                <Input id="photo" type="file" autofocus :tabindex="1" autocomplete="photo"
+                <Input id="photo" type="file" autofocus :tabindex="1" accept="image/jpg,image/jpeg,image/png" autocomplete="photo"
                     @change="userStore.handleFileChange" />
                 <InputError :message="userStore.error?.photo?.[0]" />
 

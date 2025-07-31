@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -24,5 +25,9 @@ class AccountAdminSeeder extends Seeder
         ]);
 
         $admin->assignRole('admin');
+
+        $admin->profile()->create(
+            collect(Profile::factory()->make()->getAttributes())->only(['photo'])->toArray()
+        );
     }
 }

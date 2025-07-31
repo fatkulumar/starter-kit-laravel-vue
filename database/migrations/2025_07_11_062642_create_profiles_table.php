@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('profiles', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->references('id')->on('users')->onDelete('CASCADE')->onUpdate('CASCADE');
+            $table->foreignUuid('user_id')->references('id')->on('users')->onDelete('CASCADE');
             $table->string('photo')->nullable();
             $table->timestamps();
         });
