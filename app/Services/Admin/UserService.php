@@ -5,13 +5,14 @@ namespace App\Services\Admin;
 use App\DataTransferObjects\UserDTO;
 use App\Repositories\Admin\Profile\ProfileRepository;
 use App\Repositories\Admin\User\UserRepository;
+use App\Services\InterfaceService;
+use App\Services\Service;
 use App\Traits\FileUpload;
 use App\Traits\ResultService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-class UserService
-// extends Service implements InterfaceService
+class UserService extends Service implements InterfaceService
 {
     use ResultService;
     use FileUpload;
@@ -101,7 +102,7 @@ class UserService
 
         $updateData = [];
 
-        if ($dto->name !== null) $updateData['name'] = $dto->names;
+        if ($dto->name !== null) $updateData['name'] = $dto->name;
         if ($dto->email !== null) $updateData['email'] = $dto->email;
         if ($dto->password !== null) $updateData['password'] = bcrypt($dto->password);
 
