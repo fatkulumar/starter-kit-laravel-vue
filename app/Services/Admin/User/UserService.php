@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Admin;
+namespace App\Services\Admin\User;
 
 use App\DataTransferObjects\UserDTO;
 use App\Repositories\Admin\Profile\ProfileRepository;
@@ -8,7 +8,6 @@ use App\Repositories\Admin\User\UserRepository;
 use App\Services\InterfaceService;
 use App\Services\Service;
 use App\Traits\FileUpload;
-use App\Traits\ResultService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -24,7 +23,7 @@ class UserService extends Service implements InterfaceService
     {
         $this->settings = [
             'attributes'  => ['jpeg', 'jpg', 'png'],
-            'path'        => 'upload/profile/',
+            'path'        => 'upload/profile/photo/',
             'softdelete'  => false
         ];
     }

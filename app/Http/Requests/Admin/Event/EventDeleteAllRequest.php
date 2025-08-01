@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin\User;
+namespace App\Http\Requests\Admin\Event;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserDeleteAllRequest extends FormRequest
+class EventDeleteAllRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,9 +26,6 @@ class UserDeleteAllRequest extends FormRequest
         ];
     }
 
-    /**
-     * override message
-     */
     public function messages(): array
     {
         return [

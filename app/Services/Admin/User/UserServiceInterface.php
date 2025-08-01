@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Admin;
+namespace App\Services\Admin\User;
 
 use App\DataTransferObjects\UserDTO;
 

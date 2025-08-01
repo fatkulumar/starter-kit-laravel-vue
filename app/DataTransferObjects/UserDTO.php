@@ -13,7 +13,7 @@ class UserDTO
         public readonly string $email,
         public readonly ?string $password,
         public readonly ?string $role,
-        public readonly ?ProfileDto $profile,
+        public readonly ?ProfileDTO $profile,
     ){}
 
     public static function fromArray(array $data): self

@@ -23,7 +23,7 @@ enum Roles {
     MEMBER = 'member',
 }
 
-export const useUserStore = defineStore('user', {
+export const useUserStore = defineStore('user-admin', {
     state: (): {
         users: User[],
         isLoading: boolean

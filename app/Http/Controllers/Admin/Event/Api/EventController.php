@@ -1,26 +1,25 @@
 <?php
 
-namespace App\Http\Controllers\Admin\User\Api;
+namespace App\Http\Controllers\Admin\Event\Api;
 
-use App\DataTransferObjects\UserDTO;
+use App\DataTransferObjects\EventDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\User\UserDeleteAllRequest;
-use App\Http\Requests\Admin\User\UserStoreRequest;
-use App\Http\Requests\Admin\User\UserUpdateRequest;
-use App\Services\Admin\User\UserService;
+use App\Http\Requests\Admin\Event\EventDeleteAllRequest;
+use App\Http\Requests\Admin\Event\EventStoreRequest;
+use App\Http\Requests\Admin\Event\EventUpdateRequest;
+use App\Services\Admin\Event\EventService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class EventController extends Controller
 {
-    private $userService;
-
+    private $eventService;
     /**
      * Create a new class instance.
      */
-    public function __construct(UserService $userService)
+    public function __construct(EventService $eventService)
     {
-        $this->userService = $userService;
+        $this->eventService = $eventService;
     }
 
     /**
@@ -32,14 +31,13 @@ class UserController extends Controller
         $page = $request->query('page', 1);
         $payload = [
             'search' => $search,
-            'cacheKey' => 'users:search=' . ($search ?: 'all') . ':page=' . $page,
+            'cacheKey' => 'events:search=' . ($search ?: 'all') . ':page=' . $page,
             'paginate' => 10
         ];
-        $result = $this->userService->getUsers($payload);
+        $result = $this->eventService->getEvents($payload);
         $this->setResult($result)->setStatus(true)->setMessage('Success Get Data')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -52,10 +50,10 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(UserStoreRequest $request): JsonResponse
+    public function store(EventStoreRequest $request): JsonResponse
     {
-        $userDTO = UserDTO::fromArray($request->validated());
-        $result = $this->userService->store($userDTO);
+        $dto = EventDTO::fromArray($request->validated());
+        $result = $this->eventService->store($dto);
         $this->setResult($result)->setStatus(true)->setMessage('Success Save Data')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }
@@ -79,10 +77,10 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UserUpdateRequest $request, string $id): JsonResponse
+    public function update(EventUpdateRequest $request, string $id): JsonResponse
     {
-        $userDTO = UserDTO::fromArray($request->validated());
-        $result = $this->userService->update($userDTO);
+        $dto = EventDTO::fromArray($request->validated());
+        $result = $this->eventService->update($dto);
         $this->setResult($result)->setStatus(true)->setMessage('Success Save Data')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }
@@ -90,10 +88,9 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-
     public function destroy(string $id): JsonResponse
     {
-        $this->userService->delete($id);
+        $this->eventService->delete($id);
         $this->setResult($id)->setStatus(true)->setMessage('Success Delete Data')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }
@@ -101,10 +98,10 @@ class UserController extends Controller
     /**
      * Remove the many data.
      */
-    public function deleteAll(UserDeleteAllRequest $request): JsonResponse
+    public function deleteAll(EventDeleteAllRequest $request): JsonResponse
     {
         $dataValidate = $request->validated();
-        $result = $this->userService->destroy($dataValidate['ids']);
+        $result = $this->eventService->destroy($dataValidate['ids']);
         $this->setResult($result)->setStatus(true)->setMessage('Success Delete Data')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }

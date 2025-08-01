@@ -20,3 +20,6 @@ require __DIR__.'/auth.php';
 
 require __DIR__.'/admin/user/view/user.php';
 require __DIR__.'/admin/user/api/user.php';
+
+require __DIR__.'/admin/event/view/event.php';
+require __DIR__.'/admin/event/api/event.php';

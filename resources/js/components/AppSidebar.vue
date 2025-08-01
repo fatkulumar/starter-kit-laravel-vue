@@ -23,6 +23,11 @@ const mainNavItemsAdmin: NavItem[] = [
         icon: LayoutGrid,
     },
     {
+        title: 'Events',
+        href: '/admin/dashboard/event',
+        icon: LayoutGrid,
+    },
+    {
         title: 'Users',
         href: '/admin/dashboard/user',
         icon: LayoutGrid,

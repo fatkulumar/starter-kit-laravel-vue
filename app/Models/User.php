@@ -58,6 +58,9 @@ class User extends Authenticatable
 
     protected $appends = ['role'];
 
+    /**
+     * Filtering
+     */
     public function scopeFilter($query, $search)
     {
         if ($search) {
@@ -68,11 +71,17 @@ class User extends Authenticatable
         }
     }
 
+    /**
+     * Relation to profile
+     */
     public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);
     }
 
+    /**
+     * Accessor Role
+     */
     public function getRoleAttribute(): ?string
     {
         return $this->getRoleNames()->first();

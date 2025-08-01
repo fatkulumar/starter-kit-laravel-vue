@@ -22,7 +22,9 @@ class Profile extends Model
 
     protected $appends = ['photo_url'];
 
-
+    /**
+     * Relation to User
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -40,7 +42,10 @@ class Profile extends Model
         ];
     }
 
-    public function getPhotoUrlAttribute(): string
+    /**
+     * Accessor photo_url
+     */
+    public function getPhotoUrlAttribute(): string | null
     {
         $this->fileSettings();
         return $this->photo
