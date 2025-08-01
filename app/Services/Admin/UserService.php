@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\DB;
 
 class UserService extends Service implements InterfaceService
 {
-    use ResultService;
     use FileUpload;
     private $userRepository, $profileRepository;
 
