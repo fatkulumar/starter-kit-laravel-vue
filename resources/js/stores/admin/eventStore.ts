@@ -5,6 +5,7 @@ import type { ApiResponse } from "@/types/ApiResponse";
 import type { PaginatedData } from "@/types/PaginatedData";
 import type { Pagination } from "@/types/pagination";
 import { useForm } from "@inertiajs/vue3";
+import { formatDatetimeLocal } from '@/utils/datetime'
 
 export type EventListResponse = ApiResponse<PaginatedData<Event>>
 
@@ -19,11 +20,11 @@ interface EventForm {
     registration_deadline: string;
     preliminary_date: string;
     final_date: string;
-    whatsapp_group_link: string;
-    guidebook_link: string;
-    location: string;
+    whatsapp_group_link?: string;
+    guidebook_link?: string;
+    location?: string;
     is_online: string;
-    link_zoom: string;
+    link_zoom?: string;
     quota: number;
 }
 
@@ -77,8 +78,8 @@ export const useEventStore = defineStore('event-admin', {
         isOnlineOptions(state): { label: string; value: string | number }[] {
             return [
                 { label: 'Pilih Status', value: '' }, 
-                { label: 'Aktif', value: '1' },
-                { label: 'Tidak Aktif', value: '0' }
+                { label: 'Online', value: '1' },
+                { label: 'Tidak Online', value: '0' }
             ];
         }
     },
@@ -90,7 +91,7 @@ export const useEventStore = defineStore('event-admin', {
             const searchQuery = search ?? this.searchQuery;
 
             const isSearching = !!searchQuery;
-            const cacheKey = isSearching ? `search_${searchQuery}` : `page_${page}`;
+            const cacheKey = isSearching ? `search_event_admin_${searchQuery}` : `page_${page}`;
 
             try {
                 if (this.eventCache.has(cacheKey)) {
@@ -177,11 +178,11 @@ export const useEventStore = defineStore('event-admin', {
             formData.append('final_date', this.form.final_date);
             formData.append('registration_deadline', this.form.registration_deadline);
             formData.append('preliminary_date', this.form.preliminary_date);
-            formData.append('whatsapp_group_link', this.form.whatsapp_group_link);
-            formData.append('guidebook_link', this.form.guidebook_link);
-            formData.append('location', this.form.location);
+            formData.append('whatsapp_group_link', this.form.whatsapp_group_link ?? '');
+            formData.append('guidebook_link', this.form.guidebook_link ?? '');
+            formData.append('location', this.form.location ?? '');
             formData.append('is_online', this.form.is_online ? '1' : '0');
-            formData.append('link_zoom', this.form.link_zoom);
+            formData.append('link_zoom', this.form.link_zoom ?? '');
             formData.append('quota', String(this.form.quota) ?? 0);
 
             if (this.form.banner) {
@@ -225,11 +226,11 @@ export const useEventStore = defineStore('event-admin', {
             this.form.description = item.description ?? '';
             this.form.banner = item.banner;
             this.previewBanner = item.banner_url;
-            this.form.start_time = item.start_time;
-            this.form.end_time = item.end_time;
-            this.form.registration_deadline = item.registration_deadline;
-            this.form.preliminary_date = item.preliminary_date;
-            this.form.final_date = item.final_date;
+            this.form.start_time = formatDatetimeLocal(new Date(item.start_time));
+            this.form.end_time = formatDatetimeLocal(new Date(item.end_time));
+            this.form.registration_deadline = formatDatetimeLocal(new Date(item.registration_deadline));
+            this.form.preliminary_date = formatDatetimeLocal(new Date(item.preliminary_date));
+            this.form.final_date = formatDatetimeLocal(new Date(item.final_date));
             this.form.whatsapp_group_link = item.whatsapp_group_link;
             this.form.guidebook_link = item.guidebook_link;
             this.form.location = item.location;

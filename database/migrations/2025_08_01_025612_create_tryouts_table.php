@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('tryouts', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->string('thumbnail')->nullable(); // opsional: thumbnail atau banner
             $table->foreignUuid('event_id')->references('id')->on('events')->onDelete('cascade'); // relasi opsional ke event
             $table->string('title');
             $table->text('description')->nullable();
@@ -21,8 +22,8 @@ return new class extends Migration
             $table->integer('duration'); // Durasi pengerjaan dalam menit
             $table->boolean('is_active')->default(true); // aktif/tidak
             $table->boolean('is_locked')->default(false); // untuk mengunci tryout setelah deadline
-            $table->string('cover_image')->nullable(); // opsional: thumbnail atau banner
             $table->string('guide_link')->nullable();  // link khusus panduan tryout ini
+            $table->integer('price')->default(0);
             $table->timestamps();
         });
     }

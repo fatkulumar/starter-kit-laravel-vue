@@ -6,6 +6,7 @@ import PencilIcon from '@/components/partials/PencilIcon.vue';
 import { useEventStore } from '@/stores/admin/eventStore';
 import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
 import Input from '@/components/ui/input/Input.vue';
+import { Link } from '@inertiajs/vue3';
 
 const { eventStore, events } = defineProps({
     events: {
@@ -38,6 +39,7 @@ const { eventStore, events } = defineProps({
                     <th scope="col" class="px-6 py-3">Judul</th>
                     <th scope="col" class="px-6 py-3">Mulai</th>
                     <th scope="col" class="px-6 py-3">Kuota</th>
+                    <th scope="col" class="px-6 py-3">Tryout</th>
                     <th scope="col" class="px-6 py-3">Action</th>
                     <th scope="col" class="px-6 py-3 flex gap-2 items-center">
                         <Checkbox class="w-8 h-8" id="checkedAll" v-model="eventStore.checkedAll"
@@ -50,7 +52,9 @@ const { eventStore, events } = defineProps({
             </thead>
             <tbody>
                 <template v-for="(item, index) in events" :key="index">
-                    <tr @click="eventStore.toggleDetail(index)" class="border-b dark:border-gray-700 border-gray-200 cursor-pointer hover:bg-gray-50" :class="{'bg-white': eventStore.expandedIndex === index}">
+                    <tr @click="eventStore.toggleDetail(index)"
+                        class="border-b dark:border-gray-700 border-gray-200 cursor-pointer hover:bg-gray-50"
+                        :class="{ 'bg-white': eventStore.expandedIndex === index }">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ index + 1 + (currentPage - 1) * perPage }}
                         </th>
@@ -60,6 +64,12 @@ const { eventStore, events } = defineProps({
                         <td class="px-6 py-4">{{ item.title }}</td>
                         <td class="px-6 py-4">{{ item.start_time_formatted }}</td>
                         <td class="px-6 py-4">{{ item.quota }}</td>
+                        <td class="px-6 py-4">
+                            <Link :href="`tryout?event_id=${item.id}`" title="Lihat Tryouts"
+                                class="block w-full h-full bg-gray-200 text-black text-center rounded hover:bg-gray-600 hover:text-white transition-all px-2 py-3">
+                            {{ item.tryouts_count ?? 0 }}
+                            </Link>
+                        </td>
                         <td class="px-6 py-4">
                             <a href="#" class="flex gap-2 font-medium text-blue-600 dark:text-blue-500 cursor-pointer">
                                 <PencilIcon @click="eventStore.handleEdit(item)"
@@ -83,7 +93,7 @@ const { eventStore, events } = defineProps({
                                         <td class="px-4 py-2 font-medium w-1/4">Selesai</td>
                                         <td class="px-4 py-2">{{ item.end_time_formatted }}</td>
                                     </tr>
-                                     <tr class="border-b">
+                                    <tr class="border-b">
                                         <td class="px-4 py-2 font-medium w-1/4">Batas Registrasi</td>
                                         <td class="px-4 py-2">{{ item.registration_deadline_formatted }}</td>
                                     </tr>

@@ -4,13 +4,11 @@ namespace App\Services\Admin\Event;
 
 use App\DataTransferObjects\EventDTO;
 use App\Repositories\Admin\Event\EventRepository;
-use App\Services\InterfaceService;
 use App\Services\Service;
 use App\Traits\FileUpload;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
-class EventService extends Service implements InterfaceService
+class EventService extends Service implements EventServiceInterface
 {
     use FileUpload;
     private $eventRepository;
@@ -147,7 +145,7 @@ class EventService extends Service implements InterfaceService
     /**
      * delete many data.
      */
-    public function destroy(array $ids)
+    public function destroy(array $ids): array
     {
         foreach ($ids as $id) {
             $data = $this->eventRepository->show($id);

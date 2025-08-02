@@ -35,8 +35,9 @@ class TryoutFactory extends Factory
             'is_active' => $this->faker->boolean(90), // 90% aktif
             'is_locked' => $this->faker->boolean(10), // 10% terkunci
 
-            'cover_image' => $this->faker->optional()->imageUrl(640, 360, 'tryout', true, 'Cover'),
+            'thumbnail' => $this->faker->optional()->imageUrl(640, 360, 'tryout', true, 'Cover'),
             'guide_link' => $this->faker->optional()->url(),
+            'price' => $this->faker->numberBetween(10000, 200000)
         ];
     }
 }

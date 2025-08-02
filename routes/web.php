@@ -18,8 +18,12 @@ Route::get('member/dashboard', function () {
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 
+//admin
 require __DIR__.'/admin/user/view/user.php';
 require __DIR__.'/admin/user/api/user.php';
 
 require __DIR__.'/admin/event/view/event.php';
 require __DIR__.'/admin/event/api/event.php';
+
+require __DIR__.'/admin/tryout/view/tryout.php';
+require __DIR__.'/admin/tryout/api/tryout.php';

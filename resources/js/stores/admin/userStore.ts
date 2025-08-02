@@ -74,7 +74,7 @@ export const useUserStore = defineStore('user-admin', {
             const searchQuery = search ?? this.searchQuery;
 
             const isSearching = !!searchQuery;
-            const cacheKey = isSearching ? `search_${searchQuery}` : `page_${page}`;
+            const cacheKey = isSearching ? `search_user_admin_${searchQuery}` : `page_${page}`;
 
             try {
                 if (this.userCache.has(cacheKey)) {

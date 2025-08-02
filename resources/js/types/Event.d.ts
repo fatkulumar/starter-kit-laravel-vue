@@ -23,4 +23,5 @@ export interface Event {
   registration_deadline_formatted: string;
   preliminary_date_formatted: string;
   final_date_formatted: string;
+  tryouts_count: number;
 }

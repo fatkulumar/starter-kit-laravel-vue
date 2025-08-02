@@ -27,7 +27,7 @@ class EventRepository extends Repository implements EventRepositoryInterface
         $cacheKey = $payload['cacheKey'];
         $paginate = $payload['paginate'];
         return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($search, $paginate) {
-            return $this->model::with(['tryouts'])->filter($search)->paginate($paginate);
+            return $this->model::withCount(['tryouts'])->filter($search)->paginate($paginate);
         });
     }
 
@@ -36,7 +36,7 @@ class EventRepository extends Repository implements EventRepositoryInterface
      */
     public function getEventWithTryoutLatest(string $id): object
     {
-        return $this->model::with(['tryouts'])->latest()->first();
+        return $this->model::withCount(['tryouts'])->latest()->first();
     }
 
     /**
@@ -44,6 +44,6 @@ class EventRepository extends Repository implements EventRepositoryInterface
      */
     public function getEventWithTryout(string $id): object
     {
-        return $this->model::with(['tryouts'])->find($id);
+        return $this->model::withCount(['tryouts'])->find($id);
     }
 }

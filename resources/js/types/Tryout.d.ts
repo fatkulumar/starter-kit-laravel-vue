@@ -8,8 +8,13 @@ export interface Tryout {
     duration: number;
     is_active: boolean;
     is_locked: boolean;
-    cover_image?: string;
+    thumbnail?: string;
     guide_link?: string;
+    price: number;
     created_at: string;
     updated_at: string;
+
+    thumbnail_url: string;
+    start_time_formatted: string;
+    end_time_formatted: string;
 }

@@ -21,12 +21,12 @@ return new class extends Migration
             $table->timestamp('registration_deadline'); // batas akhir pendaftaran
             $table->timestamp('preliminary_date'); // tanggal penyisihan
             $table->timestamp('final_date'); // tanggal final
-            $table->string('whatsapp_group_link'); // link grup WA peserta
-            $table->string('guidebook_link'); // link panduan / buku teknis
-            $table->string('location');
+            $table->string('whatsapp_group_link')->nullable(); // link grup WA peserta
+            $table->string('guidebook_link')->nullable(); // link panduan / buku teknis
+            $table->string('location')->nullable();
             $table->boolean('is_online')->default(true);
-            $table->string('link_zoom'); // link Zoom/Gmeet jika online
-            $table->integer('quota'); // batas peserta (opsional)
+            $table->string('link_zoom')->nullable(); // link Zoom/Gmeet jika online
+            $table->integer('quota')->nullable(); // batas peserta (opsional)
             $table->timestamps();
         });
     }

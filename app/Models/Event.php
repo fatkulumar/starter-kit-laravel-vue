@@ -71,7 +71,7 @@ class Event extends Model
     }
 
     /**
-     * Accessor photo_url
+     * Accessor banner_url
      */
     public function getBannerUrlAttribute(): string | null
     {
