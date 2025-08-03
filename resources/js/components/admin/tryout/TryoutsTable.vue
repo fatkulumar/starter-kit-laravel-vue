@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Tryout } from '@/types/Tryout';
-import { PropType } from 'vue';
+import { computed, PropType } from 'vue';
 import TrashIcon from '@/components/partials/TrashIcon.vue';
 import PencilIcon from '@/components/partials/PencilIcon.vue';
 import { useTryoutStore } from '@/stores/admin/tryoutStore';
@@ -26,6 +26,9 @@ const { tryoutStore, tryouts } = defineProps({
     }
 });
 
+const isActiveOptions = computed(() => tryoutStore.isActiveOptions);
+const isLockedOptions = computed(() => tryoutStore.isLockedOptions);
+
 </script>
 
 <template>
@@ -36,8 +39,7 @@ const { tryoutStore, tryouts } = defineProps({
                     <th scope="col" class="px-6 py-3">No</th>
                     <th scope="col" class="px-6 py-3">Thumbnail</th>
                     <th scope="col" class="px-6 py-3">Judul</th>
-                    <th scope="col" class="px-6 py-3">Is Active</th>
-                    <th scope="col" class="px-6 py-3">Is Locked</th>
+                    <th scope="col" class="px-6 py-3">Jenjang</th>
                     <th scope="col" class="px-6 py-3">Price</th>
                     <th scope="col" class="px-6 py-3">Action</th>
                     <th scope="col" class="px-6 py-3 flex gap-2 items-center">
@@ -59,9 +61,8 @@ const { tryoutStore, tryouts } = defineProps({
                             <img v-if="item.thumbnail_url" class="w-16" :src="item.thumbnail_url">
                         </td>
                         <td class="px-6 py-4">{{ item.title }}</td>
-                        <td class="px-6 py-4">{{ item.is_active }}</td>
-                        <td class="px-6 py-4">{{ item.is_locked }}</td>
-                        <td class="px-6 py-4">{{ item.price ?? 0 }}</td>
+                        <td class="px-6 py-4">{{ item.grade?.name }}</td>
+                        <td class="px-6 py-4">{{ item.price ? tryoutStore.formatRupiah(item.price) : 0 }}</td>
                         <td class="px-6 py-4">
                             <a href="#" class="flex gap-2 font-medium text-blue-600 dark:text-blue-500 cursor-pointer">
                                 <PencilIcon @click="tryoutStore.handleEdit(item)"
@@ -89,6 +90,16 @@ const { tryoutStore, tryouts } = defineProps({
                                         <td class="px-4 py-2 font-medium w-1/4">Selesai</td>
                                         <td class="px-4 py-2">{{ item.end_time_formatted }}</td>
                                     </tr>
+                                    
+                                    <tr class="border-b">
+                                        <td class="px-4 py-2 font-medium w-1/4">Is Active</td>
+                                        <td class="px-4 py-2">{{ tryoutStore.getLabelFromOptions(tryoutStore.isActiveOptions, item.is_active ? '1' : '0') }}</td>
+                                    </tr>
+                                    <tr class="border-b">
+                                        <td class="px-4 py-2 font-medium w-1/4">Is Locked</td>
+                                        <td class="px-4 py-2">{{ tryoutStore.getLabelFromOptions(tryoutStore.isLockedOptions, item.is_locked ? '1' : '0') }}</td>
+                                    </tr>
+
                                     <tr class="border-b">
                                         <td class="px-4 py-2 font-medium w-1/4">Durasi Pengerjaan</td>
                                         <td class="px-4 py-2">{{ item.duration }}</td>

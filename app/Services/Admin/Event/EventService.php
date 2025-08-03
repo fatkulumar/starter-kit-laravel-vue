@@ -158,4 +158,12 @@ class EventService extends Service implements EventServiceInterface
         Cache::flush();
         return $ids;
     }
+
+    /**
+     * find.
+     */
+    public function show(string $id): object
+    {
+        return $this->eventRepository->show($id);
+    }
 }

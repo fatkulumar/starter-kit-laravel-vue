@@ -33,6 +33,7 @@ class TryoutUpdateRequest extends FormRequest
             'is_locked' => 'required|boolean',
             'guide_link' => 'nullable|url',
             'price' => 'required|integer|min:0',
+            'grade_id' => 'required|string|max:36',
         ];
     }
 
@@ -78,6 +79,10 @@ class TryoutUpdateRequest extends FormRequest
             'price.required' => 'Harga wajib diisi.',
             'price.integer' => 'Harga harus berupa angka.',
             'price.min' => 'Harga tidak boleh negatif.',
+
+            'grade_id.required' => 'Grade ID wajib diisi.',
+            'grade_id.uuid' => 'Grade ID harus berupa UUID.',
+            'grade_id.exists' => 'Grade ID tidak ditemukan dalam database.',
         ];
     }
 }

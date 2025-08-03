@@ -13,8 +13,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        
         Role::firstOrCreate(['name' => 'admin']);
         Role::firstOrCreate(['name' => 'member']);
+        $this->call([
+            AccountAdminSeeder::class,
+            GradeSeeder::class
+        ]);
         \App\Models\User::factory()->count(10)->create();
         $events = \App\Models\Event::factory()->count(5)->create();
 
@@ -28,9 +33,5 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-
-        $this->call([
-            AccountAdminSeeder::class,
-        ]);
     }
 }

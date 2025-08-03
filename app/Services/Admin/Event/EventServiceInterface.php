@@ -11,4 +11,5 @@ interface EventServiceInterface
     public function update(EventDTO $eventDTO): object;
     public function delete(string $id): bool;
     public function destroy(array $id): array;
+    public function show(string $id): object;
 }

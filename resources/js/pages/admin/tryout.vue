@@ -16,18 +16,21 @@ import { Label } from '@/components/ui/label';
 import Select from '@/components/ui/select/select.vue';
 import { LoaderCircle } from 'lucide-vue-next';
 import Textarea from '@/components/ui/textarea/Textarea.vue';
+import { useGradeStore } from '@/stores/admin/gradeStore';
 
-const tryoutStore = useTryoutStore()
+const tryoutStore = useTryoutStore();
+const gradeStore = useGradeStore();
 
 onMounted(() => {
     tryoutStore.form.event_id = props.event_id;
     tryoutStore.fetchTryouts(props.event_id);
+    gradeStore.fetchGrade();
 })
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
+        title: 'Tryouts',
+        href: 'tryout',
     },
 ];
 
@@ -35,6 +38,10 @@ const props = defineProps({
     event_id: {
         type: String,
         default: () => ''
+    },
+    event: {
+        type: Object,
+        default: () => {}
     }
 });
 
@@ -57,6 +64,7 @@ const props = defineProps({
                 </div>
             </div>
 
+            <p class="text-center underline">{{ event.title }}</p>
             <TryoutsTable :tryouts="tryoutStore.tryouts" :current-page="tryoutStore.pagination?.current_page"
                 :per-page="tryoutStore.pagination?.per_page" :tryout-store="tryoutStore" />
             <Pagination v-if="tryoutStore.pagination" :links="tryoutStore.pagination.links"
@@ -78,6 +86,11 @@ const props = defineProps({
                 <Input id="title" type="text" required :tabindex="2" autocomplete="title"
                     v-model="tryoutStore.form.title" placeholder="Masukkan Judul" />
                 <InputError :message="tryoutStore.error?.title?.[0]" />
+
+                <Label for="grade_id">Jenjang</Label>
+                <Select id="grade_id" v-model="tryoutStore.form.grade_id" :tabindex="6"
+                    :options="gradeStore.gradeOptions" placeholder="Pilih Jenjang" class="mt-2" />
+                <InputError :message="tryoutStore.error?.grade_id?.[0]" />
 
                 <Label for="description">Deskripsi</Label>
                 <Textarea class="w-full" id="description" required :tabindex="3" autocomplete="description"
@@ -121,7 +134,7 @@ const props = defineProps({
                     </div>
 
                     <div class="space-y-3">
-                        <Label for="price">Harga</Label>
+                        <Label for="price">Harga (IDR)</Label>
                         <Input id="price" type="number" required :tabindex="9" autocomplete="price"
                             v-model="tryoutStore.form.price" />
                         <InputError :message="tryoutStore.error?.price?.[0]" />

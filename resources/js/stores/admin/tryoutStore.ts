@@ -5,7 +5,8 @@ import type { ApiResponse } from "@/types/ApiResponse";
 import type { PaginatedData } from "@/types/PaginatedData";
 import type { Pagination } from "@/types/pagination";
 import { useForm } from "@inertiajs/vue3";
-import { formatDatetimeLocal } from '@/utils/datetime'
+import { formatDatetimeLocal } from '@/utils/datetime';
+import { formatRupiah } from "@/utils/formatRupiah";
 
 export type TryoutListResponse = ApiResponse<PaginatedData<Tryout>>
 
@@ -23,6 +24,7 @@ interface TryoutForm {
     is_locked: string;
     guide_link?: string;
     price: number;
+    grade_id: string;
 }
 
 export const useTryoutStore = defineStore('tryout-admin', {
@@ -63,6 +65,7 @@ export const useTryoutStore = defineStore('tryout-admin', {
             is_locked: '',
             guide_link: '',
             price: 0,
+            grade_id: ''
         }),
         previewThumbnail: '',
         checkedAll: false,
@@ -95,7 +98,7 @@ export const useTryoutStore = defineStore('tryout-admin', {
             const searchQuery = search ?? this.searchQuery;
             
             const isSearching = !!searchQuery;
-            const cacheKey = isSearching ? `search_tryout_event_id_${event_id}_${searchQuery}` : `page_${page}_event_id_${event_id}`;
+            const cacheKey = isSearching ? `search_tryout_admin_event_id_${event_id}_${searchQuery}` : `page_${page}_event_id_${event_id}`;
             
             try {
                 this.event_id = this.event_id;
@@ -189,6 +192,7 @@ export const useTryoutStore = defineStore('tryout-admin', {
             formData.append('is_locked', this.form.is_locked ?? '0');
             formData.append('guide_link', this.form.guide_link ?? '');
             formData.append('price', String(this.form.price));
+            formData.append('grade_id', this.form.grade_id);
 
             if (this.form.thumbnail) {
                 formData.append('thumbnail', this.form.thumbnail);
@@ -239,6 +243,7 @@ export const useTryoutStore = defineStore('tryout-admin', {
             this.form.is_locked = item.is_locked ? '1' : '0';
             this.form.guide_link = item.guide_link ?? '';
             this.form.price = item.price ?? 0;
+            this.form.grade_id = item.grade_id;
             this.showModal = true;
         },
 
@@ -281,7 +286,6 @@ export const useTryoutStore = defineStore('tryout-admin', {
 
         hanldeResetForm(): void {
             this.form.id = '';
-            this.form.event_id = '';
             this.form.title = '';
             this.form.description = '';
             this.form.start_time = '';
@@ -293,6 +297,7 @@ export const useTryoutStore = defineStore('tryout-admin', {
             this.form.guide_link = '';
             this.form.created_at = '';
             this.form.updated_at = '';
+            this.form.grade_id = '';
         },
 
         handleFileChange(event: Event & { target: HTMLInputElement }): void {
@@ -380,5 +385,14 @@ export const useTryoutStore = defineStore('tryout-admin', {
         toggleDetail(index: number): void {
             this.expandedIndex = this.expandedIndex === index ? null : index;
         },
+        
+        getLabelFromOptions(options: { label: string; value: string | number | boolean}[], value: string | number | boolean) {
+            return options.find(opt => opt.value == value)?.label ?? '-';
+        },
+
+        formatRupiah(value: number | string): string
+        {
+            return formatRupiah(value);
+        }
     }
 });

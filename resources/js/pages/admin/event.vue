@@ -25,8 +25,8 @@ onMounted(() => {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
+        title: 'Events',
+        href: 'event',
     },
 ];
 </script>

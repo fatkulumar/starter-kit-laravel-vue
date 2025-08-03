@@ -28,7 +28,7 @@ class TryoutRepository extends Repository implements TryoutRepositoryInterface
         $paginate = $payload['paginate'];
         $event_id = $payload['event_id'];
         return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($search, $paginate, $event_id) {
-            return $this->model::with(['event:id,title'])
+            return $this->model::with(['event:id,title', 'grade:id,name,level,alias'])
                 ->where('event_id', $event_id)
                 ->filter($search)
                 ->paginate($paginate)
@@ -39,5 +39,21 @@ class TryoutRepository extends Repository implements TryoutRepositoryInterface
                     return $item;
                 });
         });
+    }
+
+    /**
+     * find by event_id.
+     */
+    public function findByEventId(string $eventId): object
+    {
+        return $this->model::where('event_id', $eventId)->first();
+    }
+
+     /**
+     * find by with grade.
+     */
+    public function findWithGrade(string $id): object
+    {
+        return $this->model::with(['grade:id,name,level,alias'])->find($id);
     }
 }

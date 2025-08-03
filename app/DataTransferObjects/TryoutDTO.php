@@ -9,7 +9,8 @@ class TryoutDTO
     public function __construct(
         public readonly ?string $id,
         public readonly UploadedFile|string|null $thumbnail,
-        public readonly ?string $event_id,
+        public readonly string $event_id,
+        public readonly string $grade_id,
         public readonly string $title,
         public readonly ?string $description,
         public readonly string $start_time,
@@ -26,7 +27,8 @@ class TryoutDTO
         return new self(
             id: $data['id'] ?? null,
             thumbnail: $data['thumbnail'] ?? null,
-            event_id: $data['event_id'] ?? null,
+            event_id: $data['event_id'],
+            grade_id: $data['grade_id'],
             title: $data['title'],
             description: $data['description'] ?? null,
             start_time: $data['start_time'],

@@ -27,3 +27,5 @@ require __DIR__.'/admin/event/api/event.php';
 
 require __DIR__.'/admin/tryout/view/tryout.php';
 require __DIR__.'/admin/tryout/api/tryout.php';
+
+require __DIR__.'/admin/grade/api/grade.php';

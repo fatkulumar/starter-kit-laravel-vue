@@ -1,3 +1,5 @@
+import { Grade } from "./Grade";
+
 export interface Tryout {
     id: string;
     event_id: string;
@@ -11,6 +13,8 @@ export interface Tryout {
     thumbnail?: string;
     guide_link?: string;
     price: number;
+    grade_id: string;
+    grade: Grade;
     created_at: string;
     updated_at: string;
 

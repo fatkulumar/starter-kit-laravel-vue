@@ -3,13 +3,10 @@
 namespace App\Services\Admin\Tryout;
 
 use App\DataTransferObjects\TryoutDTO;
-use App\Repositories\Admin\Event\EventRepository;
 use App\Repositories\Admin\Tryout\TryoutRepository;
-use App\Services\InterfaceService;
 use App\Services\Service;
 use App\Traits\FileUpload;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 class TryoutService extends Service implements TryoutServiceInterface
 {
@@ -51,6 +48,7 @@ class TryoutService extends Service implements TryoutServiceInterface
     {
         $data = [
             'event_id'      => $dto->event_id,
+            'grade_id'      => $dto->grade_id,
             'title'         => $dto->title,
             'description'   => $dto->description,
             'start_time'    => $dto->start_time,
@@ -77,7 +75,7 @@ class TryoutService extends Service implements TryoutServiceInterface
         Cache::flush(); // Bersihkan cache agar data baru terbaca
 
         // Return detail data yang baru disimpan
-        return $this->tryoutRepository->show($tryout->id);
+        return $this->tryoutRepository->findWithGrade($tryout->id);
     }
 
 
@@ -92,6 +90,7 @@ class TryoutService extends Service implements TryoutServiceInterface
         $updateData = [];
 
         if ($dto->event_id !== null) $updateData['event_id'] = $dto->event_id;
+        if ($dto->grade_id !== null) $updateData['grade_id'] = $dto->grade_id;
         if ($dto->title !== null) $updateData['title'] = $dto->title;
         if ($dto->description !== null) $updateData['description'] = $dto->description;
         if ($dto->start_time !== null) $updateData['start_time'] = $dto->start_time;
@@ -116,7 +115,7 @@ class TryoutService extends Service implements TryoutServiceInterface
 
         Cache::flush();
 
-        return $this->tryoutRepository->show($dto->id);
+        return $this->tryoutRepository->findWithGrade($dto->id);
     }
 
 
@@ -150,5 +149,13 @@ class TryoutService extends Service implements TryoutServiceInterface
         }
         Cache::flush();
         return $ids;
+    }
+
+    /**
+     * find by id.
+     */
+    public function findByEventId(string $id): object
+    {
+        return $this->tryoutRepository->findByEventId($id);
     }
 }

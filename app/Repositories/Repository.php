@@ -2,24 +2,32 @@
 
 namespace App\Repositories;
 
+use Illuminate\Support\Facades\Cache;
+
 class Repository implements InterfaceRepository
 {
     protected $model;
-    
-    /**
-     * List all data pagninate.
-     */
-    public function paginate(int $paginate): object
-    {
-        return $this->model->paginate($paginate);
-    }
 
     /**
      * List all data.
      */
-    public function all(): object
+    public function all(array $payload): object
     {
-        return $this->model->all();
+        $search = $payload['search'] ?? null;
+        $cacheKey = $payload['cacheKey'];
+        $paginate = $payload['paginate'] ?? null;
+
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($search, $paginate) {
+            $query = $this->model::query();
+
+            if (!empty($search)) {
+                $query->filter($search); 
+            }
+
+            return $paginate
+                ? $query->paginate($paginate)
+                : (object) $query->get();
+        });
     }
 
     /**
@@ -38,7 +46,7 @@ class Repository implements InterfaceRepository
         return $this->model->findOrFail($id)->update($data);
     }
 
-     /**
+    /**
      * get by id.
      */
     public function show(string $id): object

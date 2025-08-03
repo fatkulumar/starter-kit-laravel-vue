@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('tryouts', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->foreignUuid('grade_id')->references('id')->on('grades')->onDelete('cascade');
             $table->string('thumbnail')->nullable(); // opsional: thumbnail atau banner
             $table->foreignUuid('event_id')->references('id')->on('events')->onDelete('cascade'); // relasi opsional ke event
             $table->string('title');

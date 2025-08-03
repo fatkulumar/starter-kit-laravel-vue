@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Event;
+use App\Models\Grade;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -37,7 +38,8 @@ class TryoutFactory extends Factory
 
             'thumbnail' => $this->faker->optional()->imageUrl(640, 360, 'tryout', true, 'Cover'),
             'guide_link' => $this->faker->optional()->url(),
-            'price' => $this->faker->numberBetween(10000, 200000)
+            'price' => $this->faker->numberBetween(10000, 200000),
+            'grade_id' => Grade::inRandomOrder()->first()?->id // ambil salah satu grade
         ];
     }
 }

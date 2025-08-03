@@ -32,7 +32,7 @@ class TryoutController extends Controller
         $page = $request->query('page', 1);
         $payload = [
             'search' => $search,
-            'cacheKey' => 'tryouts:search=' . ($search ?: 'all') . ':page=' . $page . '_event_id_' . $event_id,
+            'cacheKey' => 'tryouts_admin:search=' . ($search ?: 'all') . ':page=' . $page . '_event_id_' . $event_id,
             'paginate' => 10,
             'event_id' => $event_id
         ];
