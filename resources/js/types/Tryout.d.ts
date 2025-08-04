@@ -2,6 +2,7 @@ import { Grade } from "./Grade";
 
 export interface Tryout {
     id: string;
+    tryout_code: string;
     event_id: string;
     title: string;
     description?: string;
@@ -21,4 +22,5 @@ export interface Tryout {
     thumbnail_url: string;
     start_time_formatted: string;
     end_time_formatted: string;
+    orders_count: number;
 }

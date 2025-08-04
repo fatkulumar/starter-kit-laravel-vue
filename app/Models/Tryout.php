@@ -7,6 +7,7 @@ use App\Traits\HashUuid;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Tryout extends Model
 {
@@ -17,6 +18,7 @@ class Tryout extends Model
 
     protected $fillable = [
         'event_id',
+        'tryout_code',
         'grade_id',
         'thumbnail',
         'title',
@@ -98,5 +100,37 @@ class Tryout extends Model
     public function grade()
     {
         return $this->belongsTo(Grade::class);
+    }
+
+    /**
+     * Create code tryout
+     */
+    protected static function booted(): void
+    {
+        static::creating(function ($tryout) {
+            if (empty($tryout->tryout_code)) {
+                do {
+                    $tryout_code = 'tryout-' . Carbon::now()->format('Ymd') . '-' . strtoupper(Str::random(6));
+                } while (self::where('tryout_code', $tryout_code)->exists());
+
+                $tryout->tryout_code = $tryout_code;
+            }
+        });
+    }
+
+    /**
+     * Relation to orders
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Relation to users
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'orders');
     }
 }

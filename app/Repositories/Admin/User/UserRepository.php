@@ -10,7 +10,7 @@ class UserRepository extends Repository implements UserRepositoryInterface
 {
     protected $model;
 
-     /**
+    /**
      * Create a new class instance.
      */
     public function __construct(User $model)
@@ -26,10 +26,31 @@ class UserRepository extends Repository implements UserRepositoryInterface
         $search = $payload['search'];
         $cacheKey = $payload['cacheKey'];
         $paginate = $payload['paginate'];
+
         return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($search, $paginate) {
-            return $this->model::with(['profile'])->filter($search)->paginate($paginate);
+            return $this->model::with([
+                'profile',
+                'tryouts' => fn($q) => $q->select('tryouts.id', 'title') // ambil hanya id & title
+            ])
+                ->withCount('tryouts')
+                ->filter($search)
+                ->paginate($paginate)
+                ->through(function ($item) {
+                    // opsional: hilangkan kolom `pivot` kalau tak dipakai
+                    if ($item->relationLoaded('tryouts') && $item->tryouts) {
+                        $item->tryouts->each(function ($tryout) {
+                            unset($tryout->pivot); // jika tidak ingin kirim data pivot
+                        });
+                        $item->tryouts->each(function ($tryout) {
+                            unset($tryout->pivot); // opsional
+                            $tryout->setAppends([]); // baru ini benar
+                        });
+                    }
+                    return $item;
+                });
         });
     }
+
 
     /**
      * Get Data Lates.

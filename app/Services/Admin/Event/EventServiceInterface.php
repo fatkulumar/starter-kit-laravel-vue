@@ -12,4 +12,5 @@ interface EventServiceInterface
     public function delete(string $id): bool;
     public function destroy(array $id): array;
     public function show(string $id): object;
+    public function findByEventCode(string $eventCode): object;
 }

@@ -29,6 +29,9 @@ class DatabaseSeeder extends Seeder
             ]);
         });
 
+        \App\Models\Order::factory()->count(5)->create();
+        \App\Models\Payment::factory()->count(5)->create();
+
         // User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',

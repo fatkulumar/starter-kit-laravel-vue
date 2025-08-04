@@ -166,4 +166,12 @@ class EventService extends Service implements EventServiceInterface
     {
         return $this->eventRepository->show($id);
     }
+
+    /**
+     * Find by event_code
+     */
+    public function findByEventCode(string $eventCode): object
+    {
+        return $this->eventRepository->findByEventCode($eventCode);
+    }
 }

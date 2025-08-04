@@ -69,12 +69,10 @@ class TryoutService extends Service implements TryoutServiceInterface
 
         $data['thumbnail'] = $uploadThumbnail;
 
-        // Simpan data tryout
         $tryout = $this->tryoutRepository->store($data);
 
-        Cache::flush(); // Bersihkan cache agar data baru terbaca
+        Cache::flush(); 
 
-        // Return detail data yang baru disimpan
         return $this->tryoutRepository->findWithGrade($tryout->id);
     }
 
@@ -157,5 +155,13 @@ class TryoutService extends Service implements TryoutServiceInterface
     public function findByEventId(string $id): object
     {
         return $this->tryoutRepository->findByEventId($id);
+    }
+
+    /**
+     * find by tryout_code.
+     */
+    public function findByTryoutCode(string $tryoutCode): object
+    {
+        return $this->tryoutRepository->findByTryoutCode($tryoutCode);
     }
 }

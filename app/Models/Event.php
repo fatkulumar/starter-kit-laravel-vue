@@ -6,6 +6,7 @@ use App\Traits\HashUuid;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Event extends Model
 {
@@ -24,6 +25,7 @@ class Event extends Model
     ];
     protected $fillable = [
         'title',
+        'event_code',
         'description',
         'banner',
         'start_time',
@@ -127,5 +129,21 @@ class Event extends Model
     public function getFinalDateFormattedAttribute(): string
     {
         return Carbon::parse($this->final_date)->translatedFormat('l, j F Y');
+    }
+
+    /**
+     * Create code event
+     */
+    protected static function booted(): void
+    {
+        static::creating(function ($event) {
+            if (empty($event->event_code)) {
+                do {
+                    $event_code = 'event-' . Carbon::now()->format('Ymd') . '-' . strtoupper(Str::random(6));
+                } while (self::where('event_code', $event_code)->exists());
+
+                $event->event_code = $event_code;
+            }
+        });
     }
 }

@@ -1,5 +1,6 @@
 export interface Event {
   id: string;
+  event_code: string;
   title: string;
   description?: string;
   banner?: string;

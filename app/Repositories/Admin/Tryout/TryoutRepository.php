@@ -49,11 +49,19 @@ class TryoutRepository extends Repository implements TryoutRepositoryInterface
         return $this->model::where('event_id', $eventId)->first();
     }
 
-     /**
+    /**
      * find by with grade.
      */
     public function findWithGrade(string $id): object
     {
         return $this->model::with(['grade:id,name,level,alias'])->find($id);
+    }
+
+    /**
+     * find by tryout_code.
+     */
+    public function findByTryoutCode(string $tryoutCode): object
+    {
+        return $this->model::withCount('orders')->where('tryout_code', $tryoutCode)->first(['id', 'title', 'price']);
     }
 }

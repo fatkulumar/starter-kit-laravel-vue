@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('title');
+            $table->string('event_code')->unique();
+            $table->string('title')->index();
             $table->text('description')->nullable();
             $table->string('banner')->nullable(); // gambar/banner event
             $table->timestamp('start_time');

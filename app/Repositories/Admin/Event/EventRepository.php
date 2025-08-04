@@ -46,4 +46,12 @@ class EventRepository extends Repository implements EventRepositoryInterface
     {
         return $this->model::withCount(['tryouts'])->find($id);
     }
+
+    /** 
+     * Find by event_code
+     */
+    public function findByEventCode(string $eventCode): object
+    {
+        return $this->model::where('event_code', $eventCode)->first();
+    }
 }

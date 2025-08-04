@@ -65,7 +65,7 @@ const { eventStore, events } = defineProps({
                         <td class="px-6 py-4">{{ item.start_time_formatted }}</td>
                         <td class="px-6 py-4">{{ item.quota }}</td>
                         <td class="px-6 py-4">
-                            <Link :href="`tryout?event_id=${item.id}`" title="Lihat Tryouts"
+                            <Link :href="`tryout?event_code=${item.event_code}`" title="Lihat Tryouts"
                                 class="block w-full h-full bg-gray-200 text-black text-center rounded hover:bg-gray-600 hover:text-white transition-all px-2 py-3">
                             {{ item.tryouts_count ?? 0 }}
                             </Link>

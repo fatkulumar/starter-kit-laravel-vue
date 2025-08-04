@@ -7,4 +7,5 @@ interface TryoutRepositoryInterface
     public function getTryouts(array $payload): object;
     public function findByEventId(string $eventId): object;
     public function findWithGrade(string $id): object;
+    public function findByTryoutCode(string $tryoutCode): object;
 }

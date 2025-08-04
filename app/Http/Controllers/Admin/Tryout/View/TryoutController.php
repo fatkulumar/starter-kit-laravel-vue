@@ -24,15 +24,29 @@ class TryoutController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request)
+    public function index(Request $request)
     {
-        $eventId = $request->get('event_id');
+        $eventCode = $request->query('event_code');
+        $findEventByEventCode = $this->eventService->findByEventCode($eventCode);
+        $eventId = $findEventByEventCode->id;
         $checkEventId = $this->tryoutService->findByEventId($eventId);
         $event = $this->eventService->show($eventId);
         if(!$checkEventId) return redirect()->back();
         return Inertia::render('admin/tryout', [
             'event_id' => $eventId,
             'event' => $event
+        ]);
+    }
+
+    /**
+     * Gift.
+     */
+    public function gift(Request $request)
+    {
+        $tryoutCode = $request->query('tryout_code');
+        $findTryoutByTryoutCode = $this->tryoutService->findByTryoutCode($tryoutCode);
+        return Inertia::render('admin/tryout/gift', [
+            'tryout' => $findTryoutByTryoutCode
         ]);
     }
 }

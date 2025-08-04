@@ -6,6 +6,8 @@ import PencilIcon from '@/components/partials/PencilIcon.vue';
 import { useTryoutStore } from '@/stores/admin/tryoutStore';
 import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
 import Input from '@/components/ui/input/Input.vue';
+import { Send } from 'lucide-vue-next';
+import { Link } from '@inertiajs/vue3';
 
 const { tryoutStore, tryouts } = defineProps({
     tryouts: {
@@ -40,7 +42,6 @@ const isLockedOptions = computed(() => tryoutStore.isLockedOptions);
                     <th scope="col" class="px-6 py-3">Thumbnail</th>
                     <th scope="col" class="px-6 py-3">Judul</th>
                     <th scope="col" class="px-6 py-3">Jenjang</th>
-                    <th scope="col" class="px-6 py-3">Price</th>
                     <th scope="col" class="px-6 py-3">Action</th>
                     <th scope="col" class="px-6 py-3 flex gap-2 items-center">
                         <Checkbox class="w-8 h-8" id="checkedAll" v-model="tryoutStore.checkedAll"
@@ -62,7 +63,11 @@ const isLockedOptions = computed(() => tryoutStore.isLockedOptions);
                         </td>
                         <td class="px-6 py-4">{{ item.title }}</td>
                         <td class="px-6 py-4">{{ item.grade?.name }}</td>
-                        <td class="px-6 py-4">{{ item.price ? tryoutStore.formatRupiah(item.price) : 0 }}</td>
+                        <td class="px-6 py-4" title="Gift Tryout">
+                            <Link :href="`tryout/gift?tryout_code=${item.tryout_code}`" >
+                                <Send class="hover:bg-gray-200" />
+                            </Link>
+                        </td>
                         <td class="px-6 py-4">
                             <a href="#" class="flex gap-2 font-medium text-blue-600 dark:text-blue-500 cursor-pointer">
                                 <PencilIcon @click="tryoutStore.handleEdit(item)"
@@ -83,6 +88,10 @@ const isLockedOptions = computed(() => tryoutStore.isLockedOptions);
                             <table class="w-full table-auto border border-gray-300 rounded">
                                 <tbody>
                                     <tr class="border-b">
+                                        <td class="px-4 py-2 font-medium w-1/4">Harga</td>
+                                        <td class="px-6 py-4">{{ item.price ? tryoutStore.formatRupiah(item.price) : 0 }}</td>
+                                    </tr>
+                                     <tr class="border-b">
                                         <td class="px-4 py-2 font-medium w-1/4">Mulai</td>
                                         <td class="px-4 py-2">{{ item.start_time_formatted }}</td>
                                     </tr>

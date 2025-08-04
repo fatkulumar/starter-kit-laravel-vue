@@ -86,4 +86,12 @@ class User extends Authenticatable
     {
         return $this->getRoleNames()->first();
     }
+
+    /**
+     * Relasi to tryout
+     */
+    public function tryouts()
+    {
+        return $this->belongsToMany(Tryout::class, 'orders');
+    }
 }
