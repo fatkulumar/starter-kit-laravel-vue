@@ -6,6 +6,7 @@ import type { PaginatedData } from "@/types/PaginatedData";
 import type { Pagination } from "@/types/pagination";
 import { User } from "@/types";
 import { Tryout } from "@/types/Tryout";
+import { useUserStore } from "./userStore";
 
 export type OrderListResponse = ApiResponse<PaginatedData<Order>>
 
@@ -50,7 +51,7 @@ export const useOrderStore = defineStore('order-tryout-admin', {
         },
         checkedAll: false,
         selectedUserIds: [],
-        orderCount: null
+        orderCount: null,
     }),
     getters: {
         statusOrderOptions(): { label: string; value: StatusOrder }[] {
@@ -128,7 +129,7 @@ export const useOrderStore = defineStore('order-tryout-admin', {
                 }
 
                 this.page = page;
-                
+
                 this.orderCache.set(cacheKey, response.data);
             } catch (err: any) {
                 this.error = err?.response?.data || { message: 'Gagal mengambil data order' };
@@ -137,19 +138,22 @@ export const useOrderStore = defineStore('order-tryout-admin', {
             }
         },
 
-        async handleOrderTryout(): Promise<void> {
+        async handleGiftTryout(): Promise<void> {
+            const userStore = useUserStore();
             this.isLoading = true;
             this.error = null;
             const trueConfirm = confirm(`Gift ?`)
             if (trueConfirm) {
                 const formData = new FormData();
-                const url = `/apiadmin/dashboard/order`;
+                const url = `/apiadmin/dashboard/order/gift-tryout`;
                 formData.append('_method', 'POST');
                 this.form.user_id.forEach(id => {
                     formData.append('user_id[]', id);
                 });
                 formData.append('tryout_id', this.form.tryout_id);
                 formData.append('amount', String(this.form.amount));
+                formData.append('search', String(this.searchQuery));
+                formData.append('page', String(this.page));
 
                 try {
                     const response = await axios.post<ApiResponse<Order>>(url, formData, {
@@ -159,6 +163,8 @@ export const useOrderStore = defineStore('order-tryout-admin', {
                     });
 
                     if (response?.status === 200) {
+                        await userStore.deleteCacheUsersNotHasTryout();
+                        await userStore.fetchUsersNotHasTryout(userStore.pageNotHasTryout);
                         this.hanldeResetForm();
                         this.error = null;
                         this.orderCount = response.data.data.order_count;
@@ -178,7 +184,9 @@ export const useOrderStore = defineStore('order-tryout-admin', {
         hanldeResetForm(): void {
             this.form.user_id = [];
             this.form.amount = 0;
-            this.form.tryout_id = ''
+            this.form.tryout_id = '';
+
+            this.checkedAll = false;
         },
 
         toggleSelectAll(users: User[], tryout: Partial<Tryout>): void {

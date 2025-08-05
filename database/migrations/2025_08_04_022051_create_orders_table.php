@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreignUuid('tryout_id')->references('id')->on('tryouts')->onDelete('cascade');
+            $table->foreignUuid('user_id')->references('id')->on('users');
+            $table->foreignUuid('tryout_id')->references('id')->on('tryouts');
+            $table->string('payment_gateway'); // ex: midtrans, tripay
+            $table->string('payment_method'); // ex: gopay, bca_va, qris
             $table->string('order_number')->unique();
             $table->decimal('amount', 12, 2); // Total yang harus dibayar
             $table->enum('status', ['pending', 'paid', 'failed', 'cancelled'])->default('pending');

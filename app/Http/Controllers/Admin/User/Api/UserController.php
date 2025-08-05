@@ -108,4 +108,21 @@ class UserController extends Controller
         $this->setResult($result)->setStatus(true)->setMessage('Success Delete Data')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }
+
+    /**
+     * List users not has tryout.
+     */
+    public function userNotHasTryout(Request $request)
+    {
+        $search = $request->query('search');
+        $page = $request->query('page', 1);
+        $payload = [
+            'search' => $search,
+            'cacheKey' => 'users_not_has_tryout_admin:search=' . ($search ?: 'all') . ':page=' . $page,
+            'paginate' => 10
+        ];
+        $result = $this->userService->userNotHasTryout($payload);
+        $this->setResult($result)->setStatus(true)->setMessage('Success Delete Data')->setCode(JsonResponse::HTTP_OK);
+        return $this->toJson();
+    }
 }

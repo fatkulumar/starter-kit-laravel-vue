@@ -19,8 +19,23 @@ class Order extends Model
         'tryout_id',
         'order_number',
         'amount',
-        'status'
+        'status',
+        'payment_gateway',
+        'payment_method'
     ];
+
+    /**
+     * Filter.
+     */
+    public function scopeFilter($query, $search)
+    {
+        $query->when($search, function ($q) use ($search) {
+            $q->whereHas('user', function ($q2) use ($search) {
+                $q2->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%'])
+                    ->orWhereRaw('LOWER(email) LIKE ?', ['%' . strtolower($search) . '%']);
+            });
+        });
+    }
 
     /**
      * Relasi to tryout.

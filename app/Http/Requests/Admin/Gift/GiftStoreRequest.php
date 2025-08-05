@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin\Order;
+namespace App\Http\Requests\Admin\Gift;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class OrderStoreRequest extends FormRequest
+class GiftStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class OrderStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|uuid|exists:users,id',
-            'tryout_id' => 'required|array',
+            'user_id' => ['required', 'array'],
+            'tryout_id' => 'required|uuid|exists:tryouts,id',
             'amount' => 'required|integer',
         ];
     }

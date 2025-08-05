@@ -11,4 +11,5 @@ interface UserServiceInterface
     public function update(UserDTO $userDTO): object;
     public function delete(string $id): bool;
     public function destroy(array $id): array;
+    public function userNotHasTryout(array $payload): object;
 }

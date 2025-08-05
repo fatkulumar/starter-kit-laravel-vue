@@ -5,16 +5,14 @@ namespace App\DataTransferObjects;
 use App\Enums\OrderStatusEnum;
 use Illuminate\Support\Str;
 
-class OrderDTO
+class GiftTryoutDTO
 {
     public function __construct(
-        public readonly string $user_id,
-        public readonly array $tryout_id,
+        public readonly array $user_id,
+        public readonly string $tryout_id,
         public readonly string $order_number,
         public readonly float $amount,
         public readonly OrderStatusEnum $status,
-        public readonly string $payment_gateway,
-        public readonly string $payment_method,
     ) {}
 
     public static function fromArray(array $data): self
@@ -25,8 +23,6 @@ class OrderDTO
             order_number: $data['order_number'] ?? 'order-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6)),
             amount: (float) $data['amount'],
             status: OrderStatusEnum::from($data['status'] ?? 'pending'),
-            payment_gateway: $data['payment_gateway'],
-            payment_method: $data['payment_method'],
         );
     }
 
@@ -38,8 +34,6 @@ class OrderDTO
             'order_number' => $this->order_number,
             'amount' => $this->amount,
             'status' => $this->status->value,
-            'payment_gateway' => $this->payment_gateway,
-            'payment_method' => $this->payment_method,
         ];
     }
 }

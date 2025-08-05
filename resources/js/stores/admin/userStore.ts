@@ -36,7 +36,16 @@ export const useUserStore = defineStore('user-admin', {
         form: UserForm,
         previewPhoto: string,
         checkedAll: boolean,
-        selectedIds: string[]
+        selectedIds: string[],
+
+        usersNotHasTryout: User[],
+        paginationNotHasTryout: Pagination | null,
+        pageNotHasTryout: number,
+        searchQueryNotHasTryout: string,
+        userCacheNotHasTryout: Map<string, UserListResponse>,
+        checkedAllNotHasTryout: boolean,
+        selectedIdsNotHasTryout: string[],
+        frefixCacheKeyNotHasTryout: string
     } => ({
         users: [] as User[],
         isLoading: false,
@@ -56,7 +65,16 @@ export const useUserStore = defineStore('user-admin', {
         }),
         previewPhoto: '',
         checkedAll: false,
-        selectedIds: []
+        selectedIds: [],
+
+        usersNotHasTryout: [] as User[],
+        paginationNotHasTryout: null as Pagination | null,
+        pageNotHasTryout: 0,
+        searchQueryNotHasTryout: '',
+        userCacheNotHasTryout: new Map<string, UserListResponse>,
+        checkedAllNotHasTryout: false,
+        selectedIdsNotHasTryout: [],
+        frefixCacheKeyNotHasTryout: ''
     }),
     getters: {
         roleOptions(): { label: string; value: Roles }[] {
@@ -74,7 +92,7 @@ export const useUserStore = defineStore('user-admin', {
             const searchQuery = search ?? this.searchQuery;
 
             const isSearching = !!searchQuery;
-            const cacheKey = isSearching ? `search_user_admin_${searchQuery}` : `page_${page}`;
+            const cacheKey = isSearching ? `search_user_admin_${searchQuery}` : `search_users_has_not_tryout_admin__page_${page}`;
 
             try {
                 if (this.userCache.has(cacheKey)) {
@@ -289,7 +307,7 @@ export const useUserStore = defineStore('user-admin', {
         async handleDeleteAll() {
             this.isLoading = true;
             const method = 'post';
-            const url = `/apiadmin/dashboard/apiadmin/dashboard/user/delete-all `
+            const url = `/apiadmin/dashboard/user/delete-all `
             const form = {
                 ids: this.selectedIds
             }
@@ -329,6 +347,90 @@ export const useUserStore = defineStore('user-admin', {
             if (konfirm) {
                 await this.handleDeleteAll();
             }
+        },
+
+        async fetchUsersNotHasTryout(page = 1, search?: string): Promise<void> {
+            this.isLoading = true;
+            this.error = null;
+
+            const searchQuery = search ?? this.searchQueryNotHasTryout;
+
+            const isSearching = !!searchQuery;
+            const cacheKey = isSearching ? `search_users_has_not_tryout_admin_${searchQuery}` : `search_users_has_not_tryout_admin_${page}`;
+            this.frefixCacheKeyNotHasTryout = cacheKey;
+
+            try {
+                if (this.userCacheNotHasTryout.has(cacheKey)) {
+                    const cached = this.userCacheNotHasTryout.get(cacheKey)!;
+
+                    if (Array.isArray(cached.data)) {
+                        this.usersNotHasTryout = cached.data;
+                        this.paginationNotHasTryout = null;
+                    } else {
+                        this.usersNotHasTryout = cached.data.data;
+                        this.paginationNotHasTryout = {
+                            current_page: cached.data.current_page,
+                            per_page: cached.data.per_page,
+                            total: cached.data.total,
+                            last_page: cached.data.last_page,
+                            next_page_url: cached.data.next_page_url,
+                            prev_page_url: cached.data.prev_page_url,
+                            from: cached.data.from,
+                            to: cached.data.to,
+                            path: cached.data.path,
+                            links: cached.data.links,
+                        };
+                    }
+
+                    this.pageNotHasTryout = page;
+                    return;
+                }
+
+                const url = isSearching
+                    ? `/apiadmin/dashboard/user/not-has-tryout?search=${encodeURIComponent(searchQuery)}`
+                    : `/apiadmin/dashboard/user/not-has-tryout?page=${page}`;
+
+                const responseNotHasTryout = await axios.get<UserListResponse>(url);
+                const userDataNotHasTryout = responseNotHasTryout.data.data;
+
+                if (Array.isArray(userDataNotHasTryout)) {
+                    this.usersNotHasTryout = userDataNotHasTryout;
+                    this.paginationNotHasTryout = null;
+                } else {
+                    this.usersNotHasTryout = userDataNotHasTryout.data;
+                    this.paginationNotHasTryout = {
+                        current_page: userDataNotHasTryout.current_page,
+                        per_page: userDataNotHasTryout.per_page,
+                        total: userDataNotHasTryout.total,
+                        last_page: userDataNotHasTryout.last_page,
+                        next_page_url: userDataNotHasTryout.next_page_url,
+                        prev_page_url: userDataNotHasTryout.prev_page_url,
+                        from: userDataNotHasTryout.from,
+                        to: userDataNotHasTryout.to,
+                        path: userDataNotHasTryout.path,
+                        links: userDataNotHasTryout.links,
+                    };
+                }
+
+                this.pageNotHasTryout = page;
+                this.userCacheNotHasTryout.set(cacheKey, responseNotHasTryout.data);
+            } catch (err: any) {
+                this.error = err?.response?.data || { message: 'Gagal mengambil data user yang tidak memiliki tryout' };
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
+        handlePageChangeHasNotTryout(page: number): void {
+            this.fetchUsersNotHasTryout(page);
+        },
+
+        async deleteCacheUsersNotHasTryout(): Promise<void> {
+            [...this.userCacheNotHasTryout.keys()]
+                .filter(key =>
+                    key.startsWith(this.frefixCacheKeyNotHasTryout)
+                )
+                .forEach(key => this.userCacheNotHasTryout.delete(key));
         }
     }
 });

@@ -4,6 +4,7 @@ namespace App\Repositories\Admin\Order;
 
 use App\Models\Order;
 use App\Repositories\Repository;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class OrderRepository extends Repository implements OrderRepositoryInterface
@@ -27,7 +28,7 @@ class OrderRepository extends Repository implements OrderRepositoryInterface
     }
 
     /**
-     * Generate tryout_code.
+     * Generate order number.
      */
     public function generateUniqueOrderNumber(): string
     {
@@ -41,9 +42,15 @@ class OrderRepository extends Repository implements OrderRepositoryInterface
     /**
      * find by tryout_id with user.
      */
-    public function findByTryoutId(string $tryoutId): object
+    public function findByTryoutId(array $payload): object
     {
-        return $this->model::with(['user'])->where('tryout_id', $tryoutId)->get();
+        $search = $payload['search'];
+        $cacheKey = $payload['cacheKey'];
+        $paginate = $payload['paginate'];
+        $tryoutId = $payload['tryout_id'];
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($search, $paginate, $tryoutId) {
+            return $this->model::with(['user'])->where('tryout_id', $tryoutId)->where('status', 'paid')->filter($search)->paginate($paginate);
+        });
     }
 
     /**

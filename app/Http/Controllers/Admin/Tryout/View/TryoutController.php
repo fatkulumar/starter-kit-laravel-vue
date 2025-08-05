@@ -45,7 +45,7 @@ class TryoutController extends Controller
     {
         $tryoutCode = $request->query('tryout_code');
         $findTryoutByTryoutCode = $this->tryoutService->findByTryoutCode($tryoutCode);
-        return Inertia::render('admin/tryout/gift', [
+        return Inertia::render('admin/giftTryout', [
             'tryout' => $findTryoutByTryoutCode
         ]);
     }

@@ -67,4 +67,18 @@ class UserRepository extends Repository implements UserRepositoryInterface
     {
         return $this->model::with(['profile'])->find($id);
     }
+
+    /**
+     * List users not has tryout.
+     */
+    public function userNotHasTryout(array $payload): object
+    {
+        $search = $payload['search'];
+        $cacheKey = $payload['cacheKey'];
+        $paginate = $payload['paginate'];
+        Cache::forget($cacheKey);
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($search, $paginate) {
+            return $this->model::whereDoesntHave('tryouts')->filter($search)->paginate($paginate);
+        });
+    }
 }

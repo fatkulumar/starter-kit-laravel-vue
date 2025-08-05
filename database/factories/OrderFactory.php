@@ -2,21 +2,16 @@
 
 namespace Database\Factories;
 
+use App\Enums\OrderStatusEnum;
+use App\Enums\PaymentGatewayEnum;
+use App\Enums\PaymentMethodEnum;
 use App\Models\Tryout;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Order>
- */
 class OrderFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
@@ -25,7 +20,9 @@ class OrderFactory extends Factory
             'tryout_id' => Tryout::factory(),
             'order_number' => 'order-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6)),
             'amount' => $this->faker->randomFloat(2, 50000, 300000),
-            'status' => $this->faker->randomElement(['pending', 'paid', 'failed', 'cancelled']),
+            'status' => $this->faker->randomElement(OrderStatusEnum::cases())->value,
+            'payment_method' => $this->faker->randomElement(PaymentMethodEnum::cases())->value,
+            'payment_gateway' => $this->faker->randomElement(PaymentGatewayEnum::cases())->value,
         ];
     }
 }

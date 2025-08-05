@@ -167,4 +167,12 @@ class UserService extends Service implements InterfaceService
         Cache::flush();
         return $ids;
     }
+
+    /**
+     * List users not has tryout.
+     */
+    public function userNotHasTryout(array $payload): object
+    {
+        return $this->userRepository->userNotHasTryout($payload);
+    }
 }
