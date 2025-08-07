@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('profiles', function (Blueprint $table) {
+        Schema::create('subtests', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->string('photo')->nullable();
+            $table->foreignUuid('tryout_id')->references('id')->on('tryouts')->onDelete('cascade');
+            $table->string('title');
+            $table->integer('amount_minutes');
+            $table->integer('amount_question');
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('profiles');
+        Schema::dropIfExists('subtests');
     }
 };

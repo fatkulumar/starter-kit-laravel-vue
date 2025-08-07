@@ -242,7 +242,6 @@ export const useEventStore = defineStore('event-admin', {
 
         async handleDelete(id: string) {
             this.isLoading = true;
-            const method = 'delete';
             const url = `/apiadmin/dashboard/event/${id}`
             try {
                 const response = await axios.delete<ApiResponse<string>>(url);
@@ -335,8 +334,7 @@ export const useEventStore = defineStore('event-admin', {
 
         async handleDeleteAll() {
             this.isLoading = true;
-            const method = 'post';
-            const url = `/apiadmin/dashboard/apiadmin/dashboard/event/delete-all `
+            const url = `/apiadmin/dashboard/event/delete-all `
             const form = {
                 ids: this.selectedIds
             }
@@ -359,6 +357,8 @@ export const useEventStore = defineStore('event-admin', {
                     }
                     this.events = this.events.filter(event => !deleteIds.includes(event.id));
                     this.error = null;
+                    this.checkedAll = false;
+                    this.selectedIds = [];
                 }
             } catch (err: any) {
                 if (err?.response?.status === 422) {

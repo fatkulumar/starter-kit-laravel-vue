@@ -1,20 +1,15 @@
 <script setup lang="ts">
 import HasOrderTryoutTable from '@/components/admin/giftTryout/HasOrderTryoutTable.vue';
 import Pagination from '@/components/partials/Pagination.vue';
-import PlusIcon from '@/components/partials/PlusIcon.vue';
 import SearchIcon from '@/components/partials/SearchIcon.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-// import { useUserStore } from '@/stores/admin/userStore';
 import { BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
 import { Input } from '@/components/ui/input';
-// import { useOrderStore } from '@/stores/admin/orderStore';
 import { Tryout } from '@/types/Tryout';
 import { useHasOrderStore } from '@/stores/admin/hasOrderStore';
 
-// const userStore = useUserStore()
-// const orderStore = useOrderStore()
 const hasOrderStore = useHasOrderStore();
 
 onMounted(() => {
@@ -45,8 +40,6 @@ const props = withDefaults(
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
             <div class="flex items-center justify-between my-4">
-                <!-- <PlusIcon @click="hasOrderStore.showModal = true"
-                    class="h-8 w-8 bg-green-600 rounded-md p-1 cursor-pointer" /> -->
                 <div class="relative flex items-center">
                     <SearchIcon class="w-8 h-8" />
                     <Input :tabIndex="2" @input="hasOrderStore.handleSearch" v-model="hasOrderStore.searchQuery" type="text"

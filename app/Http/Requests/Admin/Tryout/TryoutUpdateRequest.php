@@ -33,7 +33,7 @@ class TryoutUpdateRequest extends FormRequest
             'is_locked' => 'required|boolean',
             'guide_link' => 'nullable|url',
             'price' => 'required|integer|min:0',
-            'grade_id' => 'required|uuid|exists:grades.id',
+            'grade_id' => 'required|uuid|exists:grades,id',
         ];
     }
 

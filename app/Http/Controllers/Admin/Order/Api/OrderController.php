@@ -92,7 +92,8 @@ class OrderController extends Controller
         $payload = [
             'search' => $search,
             'cacheKey' => 'users_not_has_tryout_admin:search=' . ($search ?: 'all') . ':page=' . $page,
-            'paginate' => 10
+            'paginate' => 10,
+            'minutes' => 10,
         ];
         $dto = GiftTryoutDTO::fromArray($request->validated());
         $result = $this->orderService->giftTryout($dto, $payload);

@@ -29,6 +29,7 @@ class GradeController extends Controller
         $payload = [
             'search' => $search,
             'cacheKey' => 'grades_admin:search=' . ($search ?: 'all') . ':page=' . $page,
+            'minutes' => 10,
         ];
         $result = $this->gradeService->getGrades($payload);
         $this->setResult($result)->setStatus(true)->setMessage('Success Get Data')->setCode(JsonResponse::HTTP_OK);

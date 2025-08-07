@@ -152,7 +152,7 @@ class TryoutService extends Service implements TryoutServiceInterface
     /**
      * find by id.
      */
-    public function findByEventId(string $id): object
+    public function findByEventId(string $id): object | null
     {
         return $this->tryoutRepository->findByEventId($id);
     }

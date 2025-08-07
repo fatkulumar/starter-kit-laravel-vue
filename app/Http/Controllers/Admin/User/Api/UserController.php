@@ -33,6 +33,7 @@ class UserController extends Controller
         $payload = [
             'search' => $search,
             'cacheKey' => 'users_admin:search=' . ($search ?: 'all') . ':page=' . $page,
+            'minutes' => 10,
             'paginate' => 10
         ];
         $result = $this->userService->getUsers($payload);

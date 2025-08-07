@@ -52,18 +52,18 @@ const { eventStore, events } = defineProps({
             </thead>
             <tbody>
                 <template v-for="(item, index) in events" :key="index">
-                    <tr @click="eventStore.toggleDetail(index)"
+                    <tr
                         class="border-b dark:border-gray-700 border-gray-200 cursor-pointer hover:bg-gray-50"
                         :class="{ 'bg-white': eventStore.expandedIndex === index }">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        <th @click="eventStore.toggleDetail(index)" scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ index + 1 + (currentPage - 1) * perPage }}
                         </th>
-                        <td class="px-6 py-4">
+                        <td @click="eventStore.toggleDetail(index)" class="px-6 py-4">
                             <img class="w-16" :src="item.banner_url">
                         </td>
-                        <td class="px-6 py-4">{{ item.title }}</td>
-                        <td class="px-6 py-4">{{ item.start_time_formatted }}</td>
-                        <td class="px-6 py-4">{{ item.quota }}</td>
+                        <td @click="eventStore.toggleDetail(index)" class="px-6 py-4">{{ item.title }}</td>
+                        <td @click="eventStore.toggleDetail(index)" class="px-6 py-4">{{ item.start_time_formatted }}</td>
+                        <td @click="eventStore.toggleDetail(index)" class="px-6 py-4">{{ item.quota }}</td>
                         <td class="px-6 py-4">
                             <Link :href="`tryout?event_code=${item.event_code}`" title="Lihat Tryouts"
                                 class="block w-full h-full bg-gray-200 text-black text-center rounded hover:bg-gray-600 hover:text-white transition-all px-2 py-3">

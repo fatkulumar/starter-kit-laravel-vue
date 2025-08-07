@@ -48,7 +48,8 @@ class OrderRepository extends Repository implements OrderRepositoryInterface
         $cacheKey = $payload['cacheKey'];
         $paginate = $payload['paginate'];
         $tryoutId = $payload['tryout_id'];
-        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($search, $paginate, $tryoutId) {
+        $minutes = $payload['minutes'];
+        return Cache::remember($cacheKey, now()->addMinutes($minutes), function () use ($search, $paginate, $tryoutId) {
             return $this->model::with(['user'])->where('tryout_id', $tryoutId)->where('status', 'paid')->filter($search)->paginate($paginate);
         });
     }

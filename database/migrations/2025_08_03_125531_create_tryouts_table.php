@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tryouts', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('tryout_code')->unique();
-            $table->foreignUuid('grade_id')->references('id')->on('grades')->onDelete('cascade');
+            $table->foreignUuid('grade_id')->references('id')->on('grades');
             $table->string('thumbnail')->nullable(); // opsional: thumbnail atau banner
             $table->foreignUuid('event_id')->references('id')->on('events')->onDelete('cascade'); // relasi opsional ke event
             $table->string('title')->index();

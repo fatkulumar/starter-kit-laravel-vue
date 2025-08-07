@@ -1,43 +1,44 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Tryout\Api;
+namespace App\Http\Controllers\Admin\Subtest\Api;
 
-use App\DataTransferObjects\TryoutDTO;
+use App\DataTransferObjects\SubtestDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Tryout\TryoutDeleteAllRequest;
-use App\Http\Requests\Admin\Tryout\TryoutStoreRequest;
-use App\Http\Requests\Admin\Tryout\TryoutUpdateRequest;
-use App\Services\Admin\Tryout\TryoutService;
+use App\Http\Requests\Admin\Subtest\SubtestDeleteAllRequest;
+use App\Http\Requests\Admin\Subtest\SubtestStoreRequest;
+use App\Http\Requests\Admin\Subtest\SubtestUpdateRequest;
+use App\Services\Admin\subtest\SubtestService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class TryoutController extends Controller
+class SubtestController extends Controller
 {
-    private $tryoutService;
+     private $subtestService;
     /**
      * Create a new class instance.
      */
-    public function __construct(TryoutService $tryoutService)
+    public function __construct(SubtestService $subtestService)
     {
-        $this->tryoutService = $tryoutService;
+        $this->subtestService = $subtestService;
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request) : JsonResponse
+    public function index(Request $request)
+    // : JsonResponse
     {
-        $event_id = $request->query('event_id');
         $search = $request->query('search');
         $page = $request->query('page', 1);
+        $tryoutId = $request->query('tryout_id');
         $payload = [
             'search' => $search,
-            'cacheKey' => 'tryouts_admin:search=' . ($search ?: 'all') . ':page=' . $page . '_event_id_' . $event_id,
+            'cacheKey' => 'subtests_admin:search=' . ($search ?: 'all') . $tryoutId . ':page=' . $page .'_'. $tryoutId,
             'paginate' => 10,
             'minutes' => 10,
-            'event_id' => $event_id
+            'tryout_id' => $tryoutId
         ];
-        $result = $this->tryoutService->getTryouts($payload);
+        $result = $this->subtestService->getSubtestByTryoutId($payload);
         $this->setResult($result)->setStatus(true)->setMessage('Success Get Data')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }
@@ -53,10 +54,10 @@ class TryoutController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(TryoutStoreRequest $request): JsonResponse
+     public function store(SubtestStoreRequest $request): JsonResponse
     {
-        $dto = TryoutDTO::fromArray($request->validated());
-        $result = $this->tryoutService->store($dto);
+        $dto = SubtestDTO::fromArray($request->validated());
+        $result = $this->subtestService->store($dto);
         $this->setResult($result)->setStatus(true)->setMessage('Success Save Data')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }
@@ -80,10 +81,10 @@ class TryoutController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(TryoutUpdateRequest $request, string $id): JsonResponse
+   public function update(SubtestUpdateRequest $request, string $id): JsonResponse
     {
-        $dto = TryoutDTO::fromArray($request->validated());
-        $result = $this->tryoutService->update($dto);
+        $dto = SubtestDTO::fromArray($request->validated());
+        $result = $this->subtestService->update($dto);
         $this->setResult($result)->setStatus(true)->setMessage('Success Save Data')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }
@@ -93,7 +94,7 @@ class TryoutController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
-        $this->tryoutService->delete($id);
+        $this->subtestService->delete($id);
         $this->setResult($id)->setStatus(true)->setMessage('Success Delete Data')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }
@@ -101,10 +102,10 @@ class TryoutController extends Controller
     /**
      * Remove the many data.
      */
-    public function deleteAll(TryoutDeleteAllRequest $request): JsonResponse
+    public function deleteAll(SubtestDeleteAllRequest $request): JsonResponse
     {
         $dataValidate = $request->validated();
-        $result = $this->tryoutService->destroy($dataValidate['ids']);
+        $result = $this->subtestService->destroy($dataValidate['ids']);
         $this->setResult($result)->setStatus(true)->setMessage('Success Delete Data')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }

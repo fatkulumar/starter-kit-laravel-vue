@@ -64,7 +64,7 @@ const props = defineProps({
                 </div>
             </div>
 
-            <p class="text-center underline">{{ event.title }}</p>
+            <p class="text-center underline">Tryout: {{ event.title }}</p>
             <TryoutsTable :tryouts="tryoutStore.tryouts" :current-page="tryoutStore.pagination?.current_page"
                 :per-page="tryoutStore.pagination?.per_page" :tryout-store="tryoutStore" />
             <Pagination v-if="tryoutStore.pagination" :links="tryoutStore.pagination.links"

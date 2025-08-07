@@ -330,6 +330,8 @@ export const useUserStore = defineStore('user-admin', {
                     }
                     this.users = this.users.filter(user => !deleteIds.includes(user.id));
                     this.error = null;
+                    this.checkedAll = false;
+                    this.selectedIds = [];
                 }
             } catch (err: any) {
                 if (err?.response?.status === 422) {

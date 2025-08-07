@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('order_id')->references('id')->on('orders');
+            $table->foreignUuid('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->string('payment_gateway'); // ex: midtrans, tripay
             $table->string('payment_method'); // ex: gopay, bca_va, qris
             $table->string('reference')->nullable(); // ID unik dari gateway

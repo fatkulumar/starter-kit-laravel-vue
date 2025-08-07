@@ -32,7 +32,8 @@ class EventController extends Controller
         $payload = [
             'search' => $search,
             'cacheKey' => 'events_admin:search=' . ($search ?: 'all') . ':page=' . $page,
-            'paginate' => 10
+            'paginate' => 10,
+            'minutes' => 10,
         ];
         $result = $this->eventService->getEvents($payload);
         $this->setResult($result)->setStatus(true)->setMessage('Success Get Data')->setCode(JsonResponse::HTTP_OK);

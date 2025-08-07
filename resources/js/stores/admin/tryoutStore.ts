@@ -101,7 +101,7 @@ export const useTryoutStore = defineStore('tryout-admin', {
             const cacheKey = isSearching ? `search_tryout_admin_event_id_${event_id}_${searchQuery}` : `page_${page}_event_id_${event_id}`;
             
             try {
-                this.event_id = this.event_id;
+                this.event_id = event_id;
                 if (this.tryoutCache.has(cacheKey)) {
                     const cached = this.tryoutCache.get(cacheKey)!;
 
@@ -159,7 +159,7 @@ export const useTryoutStore = defineStore('tryout-admin', {
                 }
 
                 this.page = page;
-
+                
                 this.tryoutCache.set(cacheKey, response.data);
             } catch (err: any) {
                 this.error = err?.response?.data || { message: 'Gagal mengambil data tryout' };
@@ -363,6 +363,8 @@ export const useTryoutStore = defineStore('tryout-admin', {
                     }
                     this.tryouts = this.tryouts.filter(tryout => !deleteIds.includes(tryout.id));
                     this.error = null;
+                    this.checkedAll = false;
+                    this.selectedIds = [];
                 }
             } catch (err: any) {
                 if (err?.response?.status === 422) {

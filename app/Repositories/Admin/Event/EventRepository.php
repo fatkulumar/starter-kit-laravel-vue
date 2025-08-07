@@ -26,7 +26,8 @@ class EventRepository extends Repository implements EventRepositoryInterface
         $search = $payload['search'];
         $cacheKey = $payload['cacheKey'];
         $paginate = $payload['paginate'];
-        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($search, $paginate) {
+        $minutes = $payload['minutes'];
+        return Cache::remember($cacheKey, now()->addMinutes($minutes), function () use ($search, $paginate) {
             return $this->model::withCount(['tryouts'])->filter($search)->paginate($paginate);
         });
     }

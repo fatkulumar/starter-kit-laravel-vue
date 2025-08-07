@@ -11,6 +11,6 @@ interface TryoutServiceInterface
     public function update(TryoutDTO $tryoutDTO): object;
     public function delete(string $id): bool;
     public function destroy(array $id): array;
-    public function findByEventId(string $id): object;
+    public function findByEventId(string $id): object | null;
     public function findByTryoutCode(string $tryoutCode): object;
 }

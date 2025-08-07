@@ -35,6 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 'exception' => get_class($e),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
             ]);
         });
     })->create();

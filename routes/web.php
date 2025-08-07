@@ -32,3 +32,6 @@ require __DIR__.'/admin/grade/api/grade.php';
 
 require __DIR__.'/admin/order/api/order.php';
 require __DIR__.'/admin/order/view/order.php';
+
+require __DIR__.'/admin/subtest/api/subtest.php';
+require __DIR__.'/admin/subtest/view/subtest.php';

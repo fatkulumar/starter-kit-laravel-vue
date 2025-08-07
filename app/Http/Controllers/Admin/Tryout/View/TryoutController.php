@@ -29,7 +29,7 @@ class TryoutController extends Controller
         $eventCode = $request->query('event_code');
         $findEventByEventCode = $this->eventService->findByEventCode($eventCode);
         $eventId = $findEventByEventCode->id;
-        $checkEventId = $this->tryoutService->findByEventId($eventId);
+        $checkEventId = $this->eventService->show($eventId);
         $event = $this->eventService->show($eventId);
         if(!$checkEventId) return redirect()->back();
         return Inertia::render('admin/tryout', [

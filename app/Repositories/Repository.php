@@ -13,11 +13,12 @@ class Repository implements InterfaceRepository
      */
     public function all(array $payload): object
     {
-        $search = $payload['search'] ?? null;
+        $search = $payload['search'];
         $cacheKey = $payload['cacheKey'];
-        $paginate = $payload['paginate'] ?? null;
+        $paginate = $payload['paginate'];
+        $minutes = $payload['minutes'];
 
-        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($search, $paginate) {
+        return Cache::remember($cacheKey, now()->addMinutes($minutes), function () use ($search, $paginate) {
             $query = $this->model::query();
 
             if (!empty($search)) {
