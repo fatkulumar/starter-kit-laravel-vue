@@ -33,6 +33,12 @@ class DatabaseSeeder extends Seeder
         \App\Models\Payment::factory()->count(5)->create();
         \App\Models\Subtest::factory()->count(30)->create();
 
+        $this->call([
+            SubjectSeeder::class
+        ]);
+        
+        \App\Models\Question::factory()->count(30)->create();
+
         // User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',

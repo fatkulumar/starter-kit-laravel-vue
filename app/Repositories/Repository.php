@@ -42,7 +42,7 @@ class Repository implements InterfaceRepository
     /**
      * update data.
      */
-    public function update(string $id, array $data): array
+    public function update(string $id, array $data): bool
     {
         return $this->model->findOrFail($id)->update($data);
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Admin\subtest;
+namespace App\Services\Admin\Subtest;
 
 use App\DataTransferObjects\SubtestDTO;
 use App\Repositories\Admin\Subtest\SubtestRepository;

@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subtests', function (Blueprint $table) {
+        Schema::create('subjects', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('subtest_code');
-            $table->foreignUuid('tryout_id')->references('id')->on('tryouts')->onDelete('cascade');
-            $table->string('title');
-            $table->integer('amount_minutes');
-            $table->integer('amount_question');
+            $table->string('name')->unique(); // contoh: "Matematika", "Bahasa Indonesia"
+            $table->string('code')->nullable(); // kode opsional, misal "MAT", "BIN"
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subtests');
+        Schema::dropIfExists('subjects');
     }
 };

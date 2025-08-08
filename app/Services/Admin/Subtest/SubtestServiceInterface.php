@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Services\Admin\subtest;
+namespace App\Services\Admin\Subtest;
 
-use App\DataTransferObjects\EventDTO;
 use App\DataTransferObjects\SubtestDTO;
 
 interface SubtestServiceInterface

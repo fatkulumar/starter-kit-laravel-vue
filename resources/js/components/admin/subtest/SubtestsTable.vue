@@ -6,6 +6,7 @@ import PencilIcon from '@/components/partials/PencilIcon.vue';
 import { useSubtestStore } from '@/stores/admin/subtestStore';
 import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
 import Input from '@/components/ui/input/Input.vue';
+import { Link } from '@inertiajs/vue3';
 
 const { subtestStore, subtests } = defineProps({
     subtests: {
@@ -38,6 +39,7 @@ const { subtestStore, subtests } = defineProps({
                     <th scope="col" class="px-6 py-3">Judul</th>
                     <th scope="col" class="px-6 py-3">Jumlah Pertanyaan</th>
                     <th scope="col" class="px-6 py-3">Jumlah Menit</th>
+                    <th scope="col" class="px-6 py-3"></th>
                     <th scope="col" class="px-6 py-3">Action</th>
                     <th scope="col" class="px-6 py-3 flex gap-2 items-center">
                         <Checkbox class="w-8 h-8" id="checkedAll" v-model="subtestStore.checkedAll"
@@ -57,6 +59,9 @@ const { subtestStore, subtests } = defineProps({
                         <td class="px-6 py-4">{{ item.title }}</td>
                         <td class="px-6 py-4">{{ item.amount_question }}</td>
                         <td class="px-6 py-4">{{ item.amount_minutes }}</td>
+                        <td class="px-6 py-4">
+                            <Link class="px-2 py-1 bg-green-400 text-white rounded-md font-semibold" :href="`question?subtest_code=${item.subtest_code}`">Buat Soal</Link>
+                        </td>
                         <td class="px-6 py-4">
                             <a href="#" class="flex gap-2 font-medium text-blue-600 dark:text-blue-500 cursor-pointer">
                                 <PencilIcon @click="subtestStore.handleEdit(item)"

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin\Subtest\View;
 
 use App\Http\Controllers\Controller;
-use App\Services\Admin\subtest\SubtestService;
+use App\Services\Admin\Subtest\SubtestService;
 use App\Services\Admin\Tryout\TryoutService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
