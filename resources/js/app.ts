@@ -10,6 +10,9 @@ import { createPinia } from 'pinia';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     resolve: (name) => resolvePageComponent(`./pages/${name}.vue`, import.meta.glob<DefineComponent>('./pages/**/*.vue')),
@@ -18,6 +21,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue)
             .use(createPinia())
+            .use(VueSweetalert2)
             .mount(el);
     },
     progress: {

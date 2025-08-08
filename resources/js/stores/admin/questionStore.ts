@@ -5,7 +5,8 @@ import type { ApiResponse } from "@/types/ApiResponse";
 import type { PaginatedData } from "@/types/PaginatedData";
 import type { Pagination } from "@/types/pagination";
 import { useForm } from "@inertiajs/vue3";
-import { formatDatetimeLocal } from '@/utils/datetime'
+import { showSuccess, showError } from '@/utils/alert'
+
 
 export type QuestionListResponse = ApiResponse<PaginatedData<Question>>
 
@@ -181,13 +182,15 @@ export const useQuestionStore = defineStore('question-admin', {
                         this.questions.unshift(updatedQuestion);
                     }
 
-                    // this.hanldeResetForm();
+                    showSuccess(response.data.message);
                     this.showModal = false;
                     this.error = null;
                 }
             } catch (err: any) {
                 if (err?.response?.status === 422) {
                     this.error = err.response.data.errors || { message: 'Data tidak valid' };
+                    const errors = err.response.data.errors || {}
+                    showError(errors);
                 } else {
                     this.error = err?.response?.data || { message: 'Gagal submit data question' };
                 }
@@ -248,7 +251,6 @@ export const useQuestionStore = defineStore('question-admin', {
             if (this.questions[number - 1]) {
                 this.form.id = this.questions[number - 1].id;
                 this.form.subtest_id = this.questions[number - 1].subtest_id;
-                this.form.subject_id = this.questions[number - 1].subject_id;
                 this.form.option_a = this.questions[number - 1].option_a;
                 this.form.option_b = this.questions[number - 1].option_b;
                 this.form.option_c = this.questions[number - 1].option_c;

@@ -47,7 +47,7 @@ class QuestionController extends Controller
     {
         $dto = QuestionDTO::fromArray($request->validated());
         $result = $this->questionService->store($dto);
-        $this->setResult($result)->setStatus(true)->setMessage('Success Save Data')->setCode(JsonResponse::HTTP_OK);
+        $this->setResult($result)->setStatus(true)->setMessage('Berhasil Tambah Soal')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }
 
@@ -74,7 +74,7 @@ class QuestionController extends Controller
     {
         $dto = QuestionDTO::fromArray($request->validated());
         $result = $this->questionService->update($dto);
-        $this->setResult($result)->setStatus(true)->setMessage('Success Save Data')->setCode(JsonResponse::HTTP_OK);
+        $this->setResult($result)->setStatus(true)->setMessage('Berhasil Update Soal')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }
 
