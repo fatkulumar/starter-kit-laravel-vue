@@ -1,53 +1,91 @@
+/* =============================
+   Import CSS dependencies
+   ============================= */
+
+/* Mengimpor semua utilitas dan komponen dari Tailwind CSS */
 @import 'tailwindcss';
 
+/* Mengimpor plugin animasi tambahan (tw-animate-css) */
 @import 'tw-animate-css';
 
+/* =============================
+   Source scanning untuk Tailwind JIT
+   ============================= */
+
+/* Menyediakan path file Blade Laravel untuk scanning Tailwind JIT 
+   agar semua class Tailwind yang dipakai di file ini bisa ter-generate */
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
+/* =============================
+   Custom Variant
+   ============================= */
+
+/* Membuat variant custom `dark` 
+   — akan aktif saat elemen berada di dalam .dark (misalnya <html class="dark">) */
 @custom-variant dark (&:is(.dark *));
 
-@theme inline {
-    --font-sans: Instrument Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+/* =============================
+   Theme Inline (Custom CSS Variables)
+   ============================= */
 
+/* Meng-define variabel CSS yang langsung inline ke dalam Tailwind config
+   — Semua nilai diambil dari root variable yang sebelumnya didefinisikan */
+@theme inline {
+    /* Font utama */
+    --font-sans: Instrument Sans, ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Ukuran radius border */
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
     --radius-sm: calc(var(--radius) - 4px);
 
+    /* Warna background & teks */
     --color-background: var(--background);
     --color-foreground: var(--foreground);
 
+    /* Warna kartu */
     --color-card: var(--card);
     --color-card-foreground: var(--card-foreground);
 
+    /* Warna popover */
     --color-popover: var(--popover);
     --color-popover-foreground: var(--popover-foreground);
 
+    /* Warna utama (primary) */
     --color-primary: var(--primary);
     --color-primary-foreground: var(--primary-foreground);
 
+    /* Warna sekunder */
     --color-secondary: var(--secondary);
     --color-secondary-foreground: var(--secondary-foreground);
 
+    /* Warna muted */
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
 
+    /* Warna aksen */
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
 
+    /* Warna destructive (aksi berbahaya) */
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
 
+    /* Border, input, ring */
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
 
+    /* Warna chart */
     --color-chart-1: var(--chart-1);
     --color-chart-2: var(--chart-2);
     --color-chart-3: var(--chart-3);
     --color-chart-4: var(--chart-4);
     --color-chart-5: var(--chart-5);
 
+    /* Warna sidebar */
     --color-sidebar: var(--sidebar-background);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar-primary: var(--sidebar-primary);
@@ -66,102 +104,238 @@
   If we ever want to remove these styles, we need to add an explicit border
   color utility to any element that depends on these defaults.
 */
+/* ======== BASE LAYER ======== */
 @layer base {
+
     *,
     ::after,
     ::before,
     ::backdrop,
     ::file-selector-button {
+        /* Set warna border default untuk semua elemen & pseudo-element */
+        /* Menggunakan CSS variable --color-gray-200 jika tersedia, 
+           fallback ke currentColor (warna teks elemen) */
         border-color: var(--color-gray-200, currentColor);
     }
 }
 
+/* ======== UTILITIES LAYER ======== */
 @layer utilities {
+
     body,
     html {
+        /* Mendefinisikan variabel font utama untuk seluruh dokumen */
+        /* Urutan font: 
+           - 'Instrument Sans' (jika tersedia)
+           - ui-sans-serif (font sans default UI)
+           - system-ui (font sistem OS)
+           - sans-serif (fallback generik)
+           - Emoji font untuk mendukung karakter emoji */
         --font-sans:
-            'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+            'Instrument Sans',
+            ui-sans-serif,
+            system-ui,
+            sans-serif,
+            'Apple Color Emoji',
+            'Segoe UI Emoji',
+            'Segoe UI Symbol',
+            'Noto Color Emoji';
     }
 }
 
 :root {
+    /* ======== WARNA DASAR & TEKS ======== */
     --background: hsl(0 0% 100%);
+    /* Latar belakang utama aplikasi (putih) */
     --foreground: hsl(0 0% 3.9%);
+    /* Warna teks utama (hampir hitam) */
+
+    /* ======== KOMPONEN CARD ======== */
     --card: hsl(0 0% 100%);
+    /* Latar belakang card */
     --card-foreground: hsl(0 0% 3.9%);
+    /* Teks utama dalam card */
+
+    /* ======== POPOVER / DROPDOWN ======== */
     --popover: hsl(0 0% 100%);
+    /* Latar belakang popover */
     --popover-foreground: hsl(0 0% 3.9%);
+    /* Teks di popover */
+
+    /* ======== PRIMARY (AKSEN UTAMA) ======== */
     --primary: hsl(0 0% 9%);
+    /* Warna utama brand/UI */
     --primary-foreground: hsl(0 0% 98%);
+    /* Teks di atas warna utama (kontras tinggi) */
+
+    /* ======== SECONDARY (AKSEN SEKUNDER) ======== */
     --secondary: hsl(0 0% 92.1%);
+    /* Latar sekunder */
     --secondary-foreground: hsl(0 0% 9%);
+    /* Teks di atas warna sekunder */
+
+    /* ======== MUTED (NETRAL / LEMBUT) ======== */
     --muted: hsl(0 0% 96.1%);
+    /* Latar elemen non-prioritas */
     --muted-foreground: hsl(0 0% 45.1%);
+    /* Teks netral / placeholder */
+
+    /* ======== ACCENT (EFEK INTERAKSI) ======== */
     --accent: hsl(0 0% 96.1%);
+    /* Warna untuk highlight interaksi */
     --accent-foreground: hsl(0 0% 9%);
+    /* Teks di atas warna accent */
+
+    /* ======== DESTRUCTIVE (PERINGATAN / HAPUS) ======== */
     --destructive: hsl(0 84.2% 60.2%);
+    /* Warna tombol aksi berbahaya */
     --destructive-foreground: hsl(0 0% 98%);
+    /* Teks di atas warna destructive */
+
+    /* ======== BORDER, INPUT, RING ======== */
     --border: hsl(0 0% 92.8%);
+    /* Warna border default */
     --input: hsl(0 0% 89.8%);
+    /* Warna latar input */
     --ring: hsl(0 0% 3.9%);
+    /* Warna fokus/outline */
+
+    /* ======== WARNA CHART ======== */
     --chart-1: hsl(12 76% 61%);
+    /* Warna grafik 1 */
     --chart-2: hsl(173 58% 39%);
+    /* Warna grafik 2 */
     --chart-3: hsl(197 37% 24%);
+    /* Warna grafik 3 */
     --chart-4: hsl(43 74% 66%);
+    /* Warna grafik 4 */
     --chart-5: hsl(27 87% 67%);
+    /* Warna grafik 5 */
+
+    /* ======== UKURAN & RADIUS ======== */
     --radius: 0.5rem;
+    /* Radius border standar untuk elemen */
+
+    /* ======== WARNA SIDEBAR ======== */
     --sidebar-background: hsl(0 0% 98%);
+    /* Latar belakang sidebar */
     --sidebar-foreground: hsl(240 5.3% 26.1%);
+    /* Teks sidebar */
     --sidebar-primary: hsl(0 0% 10%);
+    /* Warna utama item aktif di sidebar */
     --sidebar-primary-foreground: hsl(0 0% 98%);
+    /* Teks di atas item aktif */
     --sidebar-accent: hsl(0 0% 94%);
+    /* Warna hover sidebar */
     --sidebar-accent-foreground: hsl(0 0% 30%);
+    /* Teks di atas hover */
     --sidebar-border: hsl(0 0% 91%);
+    /* Warna garis pemisah sidebar */
     --sidebar-ring: hsl(217.2 91.2% 59.8%);
+    /* Warna ring fokus item sidebar */
     --sidebar: hsl(0 0% 98%);
+    /* Latar sidebar utama */
 }
 
 .dark {
+    /* ======== WARNA DASAR & TEKS (DARK MODE) ======== */
     --background: hsl(0 0% 3.9%);
+    /* Latar belakang utama (hampir hitam) */
     --foreground: hsl(0 0% 98%);
+    /* Teks utama (putih hampir penuh) */
+
+    /* ======== KOMPONEN CARD ======== */
     --card: hsl(0 0% 3.9%);
+    /* Latar belakang card */
     --card-foreground: hsl(0 0% 98%);
+    /* Teks utama dalam card */
+
+    /* ======== POPOVER / DROPDOWN ======== */
     --popover: hsl(0 0% 3.9%);
+    /* Latar popover */
     --popover-foreground: hsl(0 0% 98%);
+    /* Teks di popover */
+
+    /* ======== PRIMARY (AKSEN UTAMA) ======== */
     --primary: hsl(0 0% 98%);
+    /* Warna utama brand/UI */
     --primary-foreground: hsl(0 0% 9%);
+    /* Teks di atas warna utama */
+
+    /* ======== SECONDARY (AKSEN SEKUNDER) ======== */
     --secondary: hsl(0 0% 14.9%);
+    /* Latar sekunder */
     --secondary-foreground: hsl(0 0% 98%);
+    /* Teks di atas warna sekunder */
+
+    /* ======== MUTED (NETRAL / LEMBUT) ======== */
     --muted: hsl(0 0% 16.08%);
+    /* Latar elemen non-prioritas */
     --muted-foreground: hsl(0 0% 63.9%);
+    /* Teks netral / placeholder */
+
+    /* ======== ACCENT (EFEK INTERAKSI) ======== */
     --accent: hsl(0 0% 14.9%);
+    /* Warna hover/aksen */
     --accent-foreground: hsl(0 0% 98%);
+    /* Teks di atas aksen */
+
+    /* ======== DESTRUCTIVE (PERINGATAN / HAPUS) ======== */
     --destructive: hsl(0 84% 60%);
+    /* Warna tombol aksi berbahaya */
     --destructive-foreground: hsl(0 0% 98%);
+    /* Teks di atas destructive */
+
+    /* ======== BORDER, INPUT, RING ======== */
     --border: hsl(0 0% 14.9%);
+    /* Warna border default */
     --input: hsl(0 0% 14.9%);
+    /* Latar input */
     --ring: hsl(0 0% 83.1%);
+    /* Warna fokus/outline */
+
+    /* ======== WARNA CHART (DARK MODE) ======== */
     --chart-1: hsl(220 70% 50%);
+    /* Warna grafik 1 */
     --chart-2: hsl(160 60% 45%);
+    /* Warna grafik 2 */
     --chart-3: hsl(30 80% 55%);
+    /* Warna grafik 3 */
     --chart-4: hsl(280 65% 60%);
+    /* Warna grafik 4 */
     --chart-5: hsl(340 75% 55%);
+    /* Warna grafik 5 */
+
+    /* ======== SIDEBAR (DARK MODE) ======== */
     --sidebar-background: hsl(0 0% 7%);
+    /* Latar sidebar */
     --sidebar-foreground: hsl(0 0% 95.9%);
+    /* Teks sidebar */
     --sidebar-primary: hsl(360, 100%, 100%);
+    /* Warna item aktif */
     --sidebar-primary-foreground: hsl(0 0% 100%);
+    /* Teks item aktif */
     --sidebar-accent: hsl(0 0% 15.9%);
+    /* Hover sidebar */
     --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+    /* Teks di atas hover */
     --sidebar-border: hsl(0 0% 15.9%);
+    /* Garis pemisah sidebar */
     --sidebar-ring: hsl(217.2 91.2% 59.8%);
+    /* Ring fokus sidebar */
     --sidebar: hsl(240 5.9% 10%);
+    /* Latar sidebar utama */
 }
 
+/* ======== BASE LAYER (TAILWIND) ======== */
 @layer base {
     * {
         @apply border-border outline-ring/50;
+        /* Terapkan warna border & outline dari variabel */
     }
+
     body {
         @apply bg-background text-foreground;
+        /* Gunakan latar & teks sesuai tema */
     }
 }
