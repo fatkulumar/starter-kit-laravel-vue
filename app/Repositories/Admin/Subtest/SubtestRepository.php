@@ -29,7 +29,7 @@ class SubtestRepository extends Repository implements SubtestRepositoryInterface
         $tryoutId = $payload['tryout_id'];
         $minutes = $payload['minutes'];
         return Cache::remember($cacheKey, now()->addMinutes($minutes), function () use ($search, $paginate, $tryoutId) {
-            return $this->model::where('tryout_id', $tryoutId)->filter($search)->paginate($paginate);
+            return $this->model::with(['subject:id,name'])->where('tryout_id', $tryoutId)->filter($search)->paginate($paginate);
         });
     }
 
@@ -38,7 +38,7 @@ class SubtestRepository extends Repository implements SubtestRepositoryInterface
      */
     public function getSubtestWhereTryoutId(string $tryoutId): object
     {
-        return $this->model::where('tryout_id', $tryoutId)->first();
+        return $this->model::with(['subject:id,name'])->where('tryout_id', $tryoutId)->first();
     }
 
     /**

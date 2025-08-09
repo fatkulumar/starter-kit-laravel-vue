@@ -7,7 +7,7 @@ import type { Pagination } from "@/types/pagination";
 
 export type GradeListResponse = ApiResponse<PaginatedData<Grade>>
 
-export const useGradeStore = defineStore('grade-admin', {
+export const useGradeStore = defineStore('grade-all', {
     state: (): {
         grades: Grade[],
         isLoading: boolean
@@ -44,7 +44,7 @@ export const useGradeStore = defineStore('grade-admin', {
             const searchQuery = search ?? this.searchQuery;
 
             const isSearching = !!searchQuery;
-            const cacheKey = isSearching ? `search_grade_admin_${searchQuery}` : `page_${page}`;
+            const cacheKey = isSearching ? `search_grade_subject_${searchQuery}` : `page_${page}`;
 
             try {
                 if (this.gradeCache.has(cacheKey)) {
@@ -78,8 +78,8 @@ export const useGradeStore = defineStore('grade-admin', {
                 }
 
                 const url = isSearching
-                    ? `/apiadmin/dashboard/grade?search=${encodeURIComponent(searchQuery)}`
-                    : `/apiadmin/dashboard/grade?page=${page}`;
+                    ? `/api/dashboard/grade?search=${encodeURIComponent(searchQuery)}`
+                    : `/api/dashboard/grade?page=${page}`;
 
                 const response = await axios.get<GradeListResponse>(url);
                 const gradeData = response.data.data;
@@ -107,7 +107,7 @@ export const useGradeStore = defineStore('grade-admin', {
 
                 this.gradeCache.set(cacheKey, response.data);
             } catch (err: any) {
-                this.error = err?.response?.data || { message: 'Gagal mengambil data tryout' };
+                this.error = err?.response?.data || { message: 'Gagal mengambil data jenjang' };
             } finally {
                 this.isLoading = false;
             }

@@ -28,7 +28,7 @@ require __DIR__.'/admin/event/api/event.php';
 require __DIR__.'/admin/tryout/view/tryout.php';
 require __DIR__.'/admin/tryout/api/tryout.php';
 
-require __DIR__.'/admin/grade/api/grade.php';
+require __DIR__.'/grade/api/grade.php';
 
 require __DIR__.'/admin/order/api/order.php';
 require __DIR__.'/admin/order/view/order.php';
@@ -38,3 +38,5 @@ require __DIR__.'/admin/subtest/view/subtest.php';
 
 require __DIR__.'/admin/question/api/question.php';
 require __DIR__.'/admin/question/view/question.php';
+
+require __DIR__.'/subject/api/subject.php';

@@ -37,6 +37,7 @@ const { subtestStore, subtests } = defineProps({
                 <tr>
                     <th scope="col" class="px-6 py-3">No</th>
                     <th scope="col" class="px-6 py-3">Judul</th>
+                    <th scope="col" class="px-6 py-3">Mata Pelajaran</th>
                     <th scope="col" class="px-6 py-3">Jumlah Pertanyaan</th>
                     <th scope="col" class="px-6 py-3">Jumlah Menit</th>
                     <th scope="col" class="px-6 py-3"></th>
@@ -57,10 +58,11 @@ const { subtestStore, subtests } = defineProps({
                             {{ index + 1 + (currentPage - 1) * perPage }}
                         </th>
                         <td class="px-6 py-4">{{ item.title }}</td>
+                        <td class="px-6 py-4">{{ item.subject?.name }}</td>
                         <td class="px-6 py-4">{{ item.amount_question }}</td>
                         <td class="px-6 py-4">{{ item.amount_minutes }}</td>
-                        <td class="px-6 py-4">
-                            <Link class="px-2 py-1 bg-green-400 text-white rounded-md font-semibold" :href="`question?subtest_code=${item.subtest_code}`">Buat Soal</Link>
+                        <td>
+                            <Link class="px-2 py-1 w-full bg-green-400 text-white rounded-md font-semibold" :href="`question?subtest_code=${item.subtest_code}`">Buat Soal</Link>
                         </td>
                         <td class="px-6 py-4">
                             <a href="#" class="flex gap-2 font-medium text-blue-600 dark:text-blue-500 cursor-pointer">

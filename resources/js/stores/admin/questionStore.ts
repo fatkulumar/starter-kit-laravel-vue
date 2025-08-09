@@ -7,7 +7,6 @@ import type { Pagination } from "@/types/pagination";
 import { useForm } from "@inertiajs/vue3";
 import { showSuccess, showError } from '@/utils/alert'
 
-
 export type QuestionListResponse = ApiResponse<PaginatedData<Question>>
 
 interface QuestionForm {

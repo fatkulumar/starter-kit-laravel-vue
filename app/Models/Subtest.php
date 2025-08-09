@@ -17,6 +17,7 @@ class Subtest extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
+        'subject_id',
         'tryout_id',
         'subtest_code',
         'title',
@@ -56,5 +57,13 @@ class Subtest extends Model
                 $subtest->subtest_code = $subtest_code;
             }
         });
+    }
+
+     /**
+     * Relation to Subject.
+     */
+    public function subject(): BelongsTo
+    {
+        return $this->belongsTo(Subject::class);
     }
 }

@@ -11,6 +11,7 @@ export type SubtestListResponse = ApiResponse<PaginatedData<Subtest>>
 interface SubtestForm {
     [key: string]: any;
     id: string;
+    subject_id: string;
     title: string;
     tryout_id: string;
     amount_question: number;
@@ -41,6 +42,7 @@ export const useSubtestStore = defineStore('subtest-admin', {
         showModal: false,
         form: useForm<SubtestForm>({
             id: '',
+            subject_id: '',
             title: '',
             tryout_id: '',
             amount_question: 0,
@@ -142,6 +144,7 @@ export const useSubtestStore = defineStore('subtest-admin', {
 
             formData.append('title', this.form.title);
             formData.append('tryout_id', this.form.tryout_id);
+            formData.append('subject_id', this.form.subject_id);
             formData.append('amount_question', String(this.form.amount_question));
             formData.append('amount_minutes', String(this.form.amount_minutes));
             
@@ -179,6 +182,7 @@ export const useSubtestStore = defineStore('subtest-admin', {
             this.form.tryout_id = item.tryout_id;
             this.form.amount_question = item.amount_question;
             this.form.amount_minutes = item.amount_minutes;
+            this.form.subject_id = item.subject_id;
             this.showModal = true;
         },
 
@@ -227,6 +231,7 @@ export const useSubtestStore = defineStore('subtest-admin', {
         hanldeResetForm(): void {
             this.form.id = '';
             this.form.title = '';
+            this.form.subject_id = '';
             this.form.amount_question = 0;
             this.form.amount_minutes = 0;
         },

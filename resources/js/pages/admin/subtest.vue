@@ -15,6 +15,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LoaderCircle } from 'lucide-vue-next';
 import { Tryout } from '@/types/Tryout';
+import { useSubjectStore } from '@/stores/subjectStore';
+import Select from '@/components/ui/select/select.vue';
 
 const props = withDefaults(
   defineProps<{
@@ -25,11 +27,13 @@ const props = withDefaults(
   }
 );
 
-const subtestStore = useSubtestStore()
+const subtestStore = useSubtestStore();
+const subjectStore = useSubjectStore();
 
 onMounted(async() => {
     subtestStore.form.tryout_id = props.tryout.id ?? '';
-    await subtestStore.fetchSubtest?.(props.tryout.id)
+    subtestStore.fetchSubtest(props.tryout.id);
+    subjectStore.fetchSubject();
 })
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -52,7 +56,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
                 <div class="relative flex items-center">
                     <SearchIcon class="w-8 h-8" />
-                    <Input :tabIndex="2" @input="subtestStore.handleSearch" v-model="subtestStore.searchQuery" type="text"
+                    <Input @input="subtestStore.handleSearch" v-model="subtestStore.searchQuery" type="text"
                         placeholder="Cari..."
                         class="w-full pl-16 pr-4 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
                 </div>
@@ -69,21 +73,26 @@ const breadcrumbs: BreadcrumbItem[] = [
             <form enctype="multipart/form-data" class="space-y-3" @submit.prevent="subtestStore.handleSave">
 
                 <Label for="title">Judul</Label>
-                <Input id="title" type="text" autofocus required :tabindex="2" autocomplete="title"
+                <Input id="title" type="text" autofocus required :tabindex="1" autocomplete="title"
                     v-model="subtestStore.form.title" placeholder="Masukkan Judul" />
                 <InputError :message="subtestStore.error?.title?.[0]" />
 
                 <Label for="amount_question">Jumlah Pertanyaan</Label>
-                <Input id="amount_question" type="number" required :tabindex="14" autocomplete="amount_question"
+                <Input id="amount_question" type="number" required :tabindex="2" autocomplete="amount_question"
                     v-model="subtestStore.form.amount_question" />
                 <InputError :message="subtestStore.error?.amount_question?.[0]" />
 
                 <Label for="amount_minutes">Jumlah Menit</Label>
-                <Input id="amount_minutes" type="number" required :tabindex="14" autocomplete="amount_minutes"
+                <Input id="amount_minutes" type="number" required :tabindex="3" autocomplete="amount_minutes"
                     v-model="subtestStore.form.amount_minutes" />
                 <InputError :message="subtestStore.error?.amount_minutes?.[0]" />
 
-                <Button type="submit" class="mt-2 w-full" :tabindex="15" :disabled="subtestStore.isLoading">
+                <Label for="subject_id">Mata Pelajaran</Label>
+                <Select id="subject_id" tabindex="4" v-model="subtestStore.form.subject_id"
+                    :options="subjectStore.subjectOptions" placeholder="Pilih Mata Pelajaran" class="mt-2" />
+                <InputError :message="subtestStore.error?.subject_id?.[0]" />
+
+                <Button type="submit" class="mt-2 w-full" tabindex="5" :disabled="subtestStore.isLoading">
                     <LoaderCircle v-if="subtestStore.isLoading" class="h-4 w-4 animate-spin" />
                     Simpan
                 </Button>

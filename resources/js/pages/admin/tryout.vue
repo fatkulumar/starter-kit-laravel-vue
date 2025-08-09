@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label';
 import Select from '@/components/ui/select/select.vue';
 import { LoaderCircle } from 'lucide-vue-next';
 import Textarea from '@/components/ui/textarea/Textarea.vue';
-import { useGradeStore } from '@/stores/admin/gradeStore';
+import { useGradeStore } from '@/stores/gradeStore';
 
 const tryoutStore = useTryoutStore();
 const gradeStore = useGradeStore();

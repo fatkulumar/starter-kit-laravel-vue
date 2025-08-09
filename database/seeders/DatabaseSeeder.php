@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
         Role::firstOrCreate(['name' => 'member']);
         $this->call([
             AccountAdminSeeder::class,
-            GradeSeeder::class
+            GradeSeeder::class,
+            SubjectSeeder::class
         ]);
         \App\Models\User::factory()->count(10)->create();
         $events = \App\Models\Event::factory()->count(5)->create();
@@ -32,10 +33,6 @@ class DatabaseSeeder extends Seeder
         \App\Models\Order::factory()->count(5)->create();
         \App\Models\Payment::factory()->count(5)->create();
         \App\Models\Subtest::factory()->count(30)->create();
-
-        $this->call([
-            SubjectSeeder::class
-        ]);
         
         \App\Models\Question::factory()->count(30)->create();
 

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('subtests', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->foreignUuid('subject_id')->nullable()->references('id')->on('subjects')->nullOnDelete();
             $table->string('subtest_code');
             $table->foreignUuid('tryout_id')->references('id')->on('tryouts')->onDelete('cascade');
             $table->string('title');

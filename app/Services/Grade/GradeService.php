@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services\Admin\Grade;
+namespace App\Services\Grade;
 
-use App\Repositories\Admin\Grade\GradeRepository;
-use App\Services\Admin\Grade\GradeServiceInterface;
+use App\Repositories\Grade\GradeRepository;
+use App\Services\Grade\GradeServiceInterface;
 use App\Services\Service;
 
 class GradeService extends Service implements GradeServiceInterface
@@ -21,8 +21,8 @@ class GradeService extends Service implements GradeServiceInterface
     /**
      * List data paginate and search.
      */
-    public function getGrades(array $payload): object
+    public function getGrades(): object
     {
-        return $this->gradeRepository->all($payload);
+        return $this->gradeRepository->all();
     }
 }

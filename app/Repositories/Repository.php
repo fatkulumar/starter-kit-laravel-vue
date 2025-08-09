@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 
 class Repository implements InterfaceRepository
@@ -11,23 +12,25 @@ class Repository implements InterfaceRepository
     /**
      * List all data.
      */
-    public function all(array $payload): object
+    public function all(array $payload = []): object
     {
-        $search = $payload['search'];
-        $cacheKey = $payload['cacheKey'];
-        $paginate = $payload['paginate'];
-        $minutes = $payload['minutes'];
+        $search   = Arr::get($payload, 'search');
+        $cacheKey = Arr::get($payload, 'cacheKey', 'default_key');
+        $paginate = Arr::get($payload, 'paginate');
+        $minutes  = Arr::get($payload, 'minutes', 5);
 
         return Cache::remember($cacheKey, now()->addMinutes($minutes), function () use ($search, $paginate) {
             $query = $this->model::query();
 
-            if (!empty($search)) {
-                $query->filter($search); 
+            if (!empty($search) && method_exists($this->model, 'scopeFilter')) {
+                $query->filter($search);
             }
 
-            return $paginate
-                ? $query->paginate($paginate)
-                : (object) $query->get();
+            if ($paginate) {
+                return $query->paginate($paginate);
+            }
+
+            return $query->get();
         });
     }
 

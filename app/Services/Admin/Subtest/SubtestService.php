@@ -34,6 +34,7 @@ class SubtestService extends Service implements SubtestServiceInterface
     {
         $data = [
             'title' => $dto->title,
+            'subject_id' => $dto->subject_id,
             'tryout_id' => $dto->tryout_id,
             'amount_question' => $dto->amount_question,
             'amount_minutes' => $dto->amount_minutes,
@@ -55,6 +56,7 @@ class SubtestService extends Service implements SubtestServiceInterface
 
         if ($dto->title !== null) $updateData['title'] = $dto->title;
         if ($dto->tryout_id !== null) $updateData['tryout_id'] = $dto->tryout_id;
+        if ($dto->subject_id !== null) $updateData['subject_id'] = $dto->subject_id;
         if ($dto->amount_question !== null) $updateData['amount_question'] = $dto->amount_question;
         if ($dto->amount_minutes !== null) $updateData['amount_minutes'] = $dto->amount_minutes;
 

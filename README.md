@@ -15,6 +15,7 @@
 - [Laravel Breeze And Inertia Vue](https://laravel.com/docs/12.x/starter-kits#breeze-and-inertia)
 - [Axios 1.10.0](https://axios-http.com/docs/intro)
 - [Pinia 0.11.1](https://vuejs.org/guide/quick-start)
+- [Vue Sweetalert 5.0.11](https://www.npmjs.com/package/vue-sweetalert2)
 
 ##### Requirements
 - [PHP >= 8.2](https://laravel.com/docs/12.x/deployment)

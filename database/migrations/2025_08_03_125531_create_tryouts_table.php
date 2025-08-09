@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignUuid('grade_id')->references('id')->on('grades');
             $table->string('thumbnail')->nullable(); // opsional: thumbnail atau banner
             $table->foreignUuid('event_id')->references('id')->on('events')->onDelete('cascade'); // relasi opsional ke event
+            $table->foreignUuid('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('title')->index();
             $table->text('description')->nullable();
             $table->timestamp('start_time'); // waktu mulai tryout

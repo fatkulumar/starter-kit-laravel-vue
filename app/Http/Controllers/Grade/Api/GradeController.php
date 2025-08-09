@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Grade\Api;
+namespace App\Http\Controllers\Grade\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\Admin\Grade\GradeService;
+use App\Services\Grade\GradeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -24,14 +24,7 @@ class GradeController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $search = $request->query('search');
-        $page = $request->query('page', 1);
-        $payload = [
-            'search' => $search,
-            'cacheKey' => 'grades_admin:search=' . ($search ?: 'all') . ':page=' . $page,
-            'minutes' => 10,
-        ];
-        $result = $this->gradeService->getGrades($payload);
+        $result = $this->gradeService->getGrades();
         $this->setResult($result)->setStatus(true)->setMessage('Success Get Data')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }

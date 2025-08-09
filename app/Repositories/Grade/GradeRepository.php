@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Admin\Grade;
+namespace App\Repositories\Grade;
 
 use App\Models\Grade;
 use App\Repositories\Repository;

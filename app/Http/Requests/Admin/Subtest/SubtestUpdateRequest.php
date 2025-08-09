@@ -25,6 +25,7 @@ class SubtestUpdateRequest extends FormRequest
             'id' => 'required|string|max:36',
             'title' => 'required|string|max:255',
             'tryout_id' => 'required|uuid|exists:tryouts,id',
+            'subject_id' => 'nullable|uuid|exists:subjects,id',
             'amount_question' => 'required|integer|min:1',
             'amount_minutes' => 'required|integer|min:1',
         ];
@@ -43,6 +44,10 @@ class SubtestUpdateRequest extends FormRequest
             'tryout_id.required' => 'Tryout wajib diisi.',
             'tryout_id.uuid' => 'Format ID tryout tidak valid.',
             'tryout_id.exists' => 'Tryout yang dipilih tidak ditemukan.',
+
+            'subject_id.required' => 'Mata Pelajaran wajib diisi.',
+            'subject_id.uuid' => 'Format ID Mata Pelajaran tidak valid.',
+            'subject_id.exists' => 'Mata Pelajaran yang dipilih tidak ditemukan.',
 
             'amount_question.required' => 'Jumlah soal wajib diisi.',
             'amount_question.integer' => 'Jumlah soal harus berupa angka.',
