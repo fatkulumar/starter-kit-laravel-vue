@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import HomeIcon from './partials/HomeIcon.vue';
 import RightArrowIcon from './partials/RightArrowIcon.vue';
+import AppearanceTabs from '@/components/partials/ApperaanceTabs.vue'
 
 interface BreadcrumbItemType {
   title: string;
@@ -14,7 +15,8 @@ defineProps<{
 </script>
 
 <template>
-  <nav class="flex" aria-label="Breadcrumb">
+  <nav class="flex gap-3" aria-label="Breadcrumb">
+    <AppearanceTabs />
     <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
       <li v-if="$page.props.auth?.user?.role == 'admin'" class="inline-flex items-center">
         <Link

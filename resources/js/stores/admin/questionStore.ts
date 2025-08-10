@@ -4,8 +4,8 @@ import axios from '@/lib/axios'
 import type { ApiResponse } from "@/types/ApiResponse";
 import type { PaginatedData } from "@/types/PaginatedData";
 import type { Pagination } from "@/types/pagination";
-import { useForm } from "@inertiajs/vue3";
 import { showSuccess, showError } from '@/utils/alert'
+import { reactive } from "vue";
 
 export type QuestionListResponse = ApiResponse<PaginatedData<Question>>
 
@@ -45,7 +45,7 @@ export const useQuestionStore = defineStore('question-admin', {
         searchQuery: '',
         questionCache: new Map<string, QuestionListResponse>(),
         showModal: false,
-        form: useForm<QuestionForm>({
+        form: reactive<QuestionForm>({
             id: '',
             subtest_id: '',
             subject_id: '',

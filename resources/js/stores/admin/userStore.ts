@@ -4,7 +4,7 @@ import axios from '@/lib/axios'
 import type { ApiResponse } from "@/types/ApiResponse";
 import type { PaginatedData } from "@/types/PaginatedData";
 import type { Pagination } from "@/types/pagination";
-import { useForm } from "@inertiajs/vue3";
+import { reactive } from "vue";
 
 export type UserListResponse = ApiResponse<PaginatedData<User>>
 
@@ -55,7 +55,7 @@ export const useUserStore = defineStore('user-admin', {
         searchQuery: '',
         userCache: new Map<string, UserListResponse>(),
         showModal: false,
-        form: useForm<UserForm>({
+        form: reactive<UserForm>({
             id: '',
             name: '',
             email: '',

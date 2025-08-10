@@ -4,7 +4,7 @@ import axios from '@/lib/axios'
 import type { ApiResponse } from "@/types/ApiResponse";
 import type { PaginatedData } from "@/types/PaginatedData";
 import type { Pagination } from "@/types/pagination";
-import { useForm } from "@inertiajs/vue3";
+import { reactive } from "vue";
 
 export type SubtestListResponse = ApiResponse<PaginatedData<Subtest>>
 
@@ -40,7 +40,7 @@ export const useSubtestStore = defineStore('subtest-admin', {
         searchQuery: '',
         subtestCache: new Map<string, SubtestListResponse>(),
         showModal: false,
-        form: useForm<SubtestForm>({
+        form: reactive<SubtestForm>({
             id: '',
             subject_id: '',
             title: '',

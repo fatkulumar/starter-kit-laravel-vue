@@ -4,8 +4,8 @@ import axios from '@/lib/axios'
 import type { ApiResponse } from "@/types/ApiResponse";
 import type { PaginatedData } from "@/types/PaginatedData";
 import type { Pagination } from "@/types/pagination";
-import { useForm } from "@inertiajs/vue3";
 import { formatDatetimeLocal } from '@/utils/datetime'
+import { reactive } from "vue";
 
 export type EventListResponse = ApiResponse<PaginatedData<Event>>
 
@@ -52,7 +52,7 @@ export const useEventStore = defineStore('event-admin', {
         searchQuery: '',
         eventCache: new Map<string, EventListResponse>(),
         showModal: false,
-        form: useForm<EventForm>({
+        form: reactive<EventForm>({
             id: '',
             title: '',
             description: '',

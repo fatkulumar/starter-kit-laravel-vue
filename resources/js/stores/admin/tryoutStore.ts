@@ -4,9 +4,9 @@ import axios from '@/lib/axios'
 import type { ApiResponse } from "@/types/ApiResponse";
 import type { PaginatedData } from "@/types/PaginatedData";
 import type { Pagination } from "@/types/pagination";
-import { useForm } from "@inertiajs/vue3";
 import { formatDatetimeLocal } from '@/utils/datetime';
 import { formatRupiah } from "@/utils/formatRupiah";
+import { reactive } from "vue";
 
 export type TryoutListResponse = ApiResponse<PaginatedData<Tryout>>
 
@@ -52,7 +52,7 @@ export const useTryoutStore = defineStore('tryout-admin', {
         searchQuery: '',
         tryoutCache: new Map<string, TryoutListResponse>(),
         showModal: false,
-        form: useForm<TryoutForm>({
+        form: reactive<TryoutForm>({
             id: '',
             thumbnail: null,
             start_time: '',

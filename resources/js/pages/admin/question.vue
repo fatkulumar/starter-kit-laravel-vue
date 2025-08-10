@@ -1,24 +1,18 @@
 <script setup lang="ts">
-import SubtestsTable from '@/components/admin/subtest/SubtestsTable.vue';
-import Modal from '@/components/partials/Modal.vue';
-import Pagination from '@/components/partials/Pagination.vue';
-import PlusIcon from '@/components/partials/PlusIcon.vue';
-import SearchIcon from '@/components/partials/SearchIcon.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { useSubtestStore } from '@/stores/admin/subtestStore';
 import { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import { onMounted } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LoaderCircle } from 'lucide-vue-next';
-import { Tryout } from '@/types/Tryout';
 import { Subtest } from '@/types/Subtest';
-import Textarea from '@/components/ui/textarea/Textarea.vue';
+// import Textarea from '@/components/ui/textarea/Textarea.vue';
 import { useQuestionStore } from '@/stores/admin/questionStore';
 import Select from '@/components/ui/select/select.vue';
+import Editor from 'primevue/editor';
+import FocusTrap from 'primevue/focustrap';
 
 const props = withDefaults(
     defineProps<{
@@ -93,9 +87,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                     </div>
 
                     <div class="flex flex-col w-full">
-                        <Textarea id="option_a" autofocus tabindex="1" v-model="questionStore.form.option_a"
+                        <Editor v-focustrap v-model="questionStore.form.option_a" editorStyle="height: 100px" />
+                        <!-- <Textarea id="option_a" autofocus tabindex="1" v-model="questionStore.form.option_a"
                             class="w-full rounded-md border border-green-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
-                            placeholder="Masukkan jawaban..." />
+                            placeholder="Masukkan jawaban..." /> -->
                         <InputError :message="questionStore.error?.option_a?.[0]" />
                     </div>
                 </div>
@@ -106,9 +101,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <Label for="option_b">B</Label>
                     </div>
                     <div class="flex flex-col w-full">
-                        <Textarea id="option_b" autofocus tabindex="2" v-model="questionStore.form.option_b"
+                        <Editor v-model="questionStore.form.option_b" editorStyle="height: 100px" />
+                        <!-- <Textarea id="option_b" autofocus tabindex="2" v-model="questionStore.form.option_b"
                             class="w-full rounded-md border border-green-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
-                            placeholder="Masukkan jawaban..." />
+                            placeholder="Masukkan jawaban..." /> -->
                         <InputError :message="questionStore.error?.option_b?.[0]" />
                     </div>
                 </div>
@@ -119,9 +115,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <Label for="option_c">C</Label>
                     </div>
                     <div class="flex flex-col w-full">
-                        <Textarea id="option_c" autofocus tabindex="3" v-model="questionStore.form.option_c"
+                        <Editor v-model="questionStore.form.option_c" editorStyle="height: 100px" />
+                        <!-- <Textarea id="option_c" autofocus tabindex="3" v-model="questionStore.form.option_c"
                             class="w-full rounded-md border border-green-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
-                            placeholder="Masukkan jawaban..." />
+                            placeholder="Masukkan jawaban..." /> -->
                         <InputError :message="questionStore.error?.option_c?.[0]" />
                     </div>
                 </div>
@@ -132,9 +129,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <Label for="option_d">D</Label>
                     </div>
                     <div class="flex flex-col w-full">
-                        <Textarea id="option_d" autofocus tabindex="4" v-model="questionStore.form.option_d"
+                        <Editor v-model="questionStore.form.option_d" editorStyle="height: 100px" />
+                        <!-- <Textarea id="option_d" autofocus tabindex="4" v-model="questionStore.form.option_d"
                             class="w-full rounded-md border border-green-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
-                            placeholder="Masukkan jawaban..." />
+                            placeholder="Masukkan jawaban..." /> -->
                         <InputError :message="questionStore.error?.option_d?.[0]" />
                     </div>
                 </div>
@@ -145,9 +143,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <Label for="option_e">E</Label>
                     </div>
                     <div class="flex flex-col w-full">
-                        <Textarea id="option_e" autofocus tabindex="5" v-model="questionStore.form.option_e"
+                        <Editor v-model="questionStore.form.option_e" editorStyle="height: 100px" />
+                        <!-- <Textarea id="option_e" autofocus tabindex="5" v-model="questionStore.form.option_e"
                             class="w-full rounded-md border border-green-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
-                            placeholder="Masukkan jawaban..." />
+                            placeholder="Masukkan jawaban..." /> -->
                         <InputError :message="questionStore.error?.option_e?.[0]" />
                     </div>
                 </div>
@@ -168,9 +167,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <Label for="explanation">Penjelasan</Label>
                     </div>
                     <div class="flex flex-col w-full">
-                        <Textarea id="explanation" autofocus tabindex="7" v-model="questionStore.form.explanation"
+                        <Editor v-model="questionStore.form.explanation" editorStyle="height: 100px" />
+                        <!-- <Textarea id="explanation" autofocus tabindex="7" v-model="questionStore.form.explanation"
                             class="w-full rounded-md border border-green-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
-                            placeholder="Masukkan jawaban..." />
+                            placeholder="Masukkan jawaban..." /> -->
                         <InputError :message="questionStore.error?.explanation?.[0]" />
                     </div>
                 </div>
@@ -181,31 +181,5 @@ const breadcrumbs: BreadcrumbItem[] = [
                 </div>
             </form>
         </div>
-
-        <!-- <Modal :show="subtestStore.showModal" @close="subtestStore.handleCloseModal" class="max-w-xl">
-            <h2 class="mb-5 truncate leading-tight font-semibold">{{ subtestStore.form.id ? 'Form Edit Event' : 'Form Tambah Event' }}</h2>
-            <form enctype="multipart/form-data" class="space-y-3" @submit.prevent="subtestStore.handleSave">
-
-                <Label for="title">Judul</Label>
-                <Input id="title" type="text" autofocus required :tabindex="2" autocomplete="title"
-                    v-model="subtestStore.form.title" placeholder="Masukkan Judul" />
-                <InputError :message="subtestStore.error?.title?.[0]" />
-
-                <Label for="amount_question">Jumlah Pertanyaan</Label>
-                <Input id="amount_question" type="number" required :tabindex="14" autocomplete="amount_question"
-                    v-model="subtestStore.form.amount_question" />
-                <InputError :message="subtestStore.error?.amount_question?.[0]" />
-
-                <Label for="amount_minutes">Jumlah Menit</Label>
-                <Input id="amount_minutes" type="number" required :tabindex="14" autocomplete="amount_minutes"
-                    v-model="subtestStore.form.amount_minutes" />
-                <InputError :message="subtestStore.error?.amount_minutes?.[0]" />
-
-                <Button type="submit" class="mt-2 w-full" :tabindex="15" :disabled="subtestStore.isLoading">
-                    <LoaderCircle v-if="subtestStore.isLoading" class="h-4 w-4 animate-spin" />
-                    Simpan
-                </Button>
-            </form>
-        </Modal> -->
     </AppLayout>
 </template>

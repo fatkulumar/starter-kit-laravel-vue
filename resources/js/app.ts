@@ -12,6 +12,11 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+import Aura from '@primeuix/themes/aura';
+import Lara from '@primeuix/themes/lara';
+import Nora from '@primeuix/themes/nora';
+
+import PrimeVue from 'primevue/config';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
@@ -22,6 +27,11 @@ createInertiaApp({
             .use(ZiggyVue)
             .use(createPinia())
             .use(VueSweetalert2)
+            .use(PrimeVue, {
+                theme: {
+                    preset: Aura
+                }
+            })
             .mount(el);
     },
     progress: {
