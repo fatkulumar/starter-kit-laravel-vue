@@ -59,6 +59,7 @@ class EventService extends Service implements EventServiceInterface
             'location' => $dto->location,
             'link_zoom' => $dto->link_zoom,
             'quota' => $dto->quota,
+            'is_publish' => $dto->is_publish,
         ];
 
 
@@ -91,35 +92,34 @@ class EventService extends Service implements EventServiceInterface
         $updateData = [];
 
         if ($dto->title !== null) $updateData['title'] = $dto->title;
-        if ($dto->description !== null) $updateData['description'] = $dto->description;
+        $updateData['description'] = $dto->description;
+        if ($dto->round !== null) $updateData['round'] = $dto->round;
         if ($dto->start_time !== null) $updateData['start_time'] = $dto->start_time;
         if ($dto->end_time !== null) $updateData['end_time'] = $dto->end_time;
         if ($dto->registration_deadline !== null) $updateData['registration_deadline'] = $dto->registration_deadline;
-        if ($dto->preliminary_date !== null) $updateData['preliminary_date'] = $dto->preliminary_date;
+        $updateData['preliminary_date'] = $dto->preliminary_date;
         if ($dto->final_date !== null) $updateData['final_date'] = $dto->final_date;
-        if ($dto->whatsapp_group_link !== null) $updateData['whatsapp_group_link'] = $dto->whatsapp_group_link;
-        if ($dto->guidebook_link !== null) $updateData['guidebook_link'] = $dto->guidebook_link;
-        if ($dto->location !== null) $updateData['location'] = $dto->location;
+        $updateData['whatsapp_group_link'] = $dto->whatsapp_group_link;
+        $updateData['guidebook_link'] = $dto->guidebook_link;
+        $updateData['location'] = $dto->location;
         if ($dto->is_online !== null) $updateData['is_online'] = $dto->is_online;
-        if ($dto->link_zoom !== null) $updateData['link_zoom'] = $dto->link_zoom;
+        $updateData['link_zoom'] = $dto->link_zoom;
         if ($dto->quota !== null) $updateData['quota'] = $dto->quota;
-
-        $eventRepository->fill($updateData);
+        if ($dto->is_publish !== null) $updateData['is_publish'] = $dto->is_publish;
 
         if ($dto->banner) {
             $this->fileSettings();
 
-            if ($dto->banner && $eventRepository->banner) {
+            if ($eventRepository->banner) {
                 $this->deleteFile($eventRepository->banner);
             }
 
             $uploadBanner = $this->uploadFile($dto->banner);
 
-            if ($dto->banner !== null) {
-                $updateData['banner'] = $uploadBanner;
-            }
+            $updateData['banner'] = $uploadBanner;
         }
 
+        $eventRepository->fill($updateData);
         $eventRepository->save();
 
         Cache::flush();

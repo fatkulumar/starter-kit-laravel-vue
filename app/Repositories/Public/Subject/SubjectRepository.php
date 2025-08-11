@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Subject;
+namespace App\Repositories\Public\Subject;
 
 use App\Models\Subject;
 use App\Repositories\Repository;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Subject;
+namespace App\Services\Public\Subject;
 
 interface SubjectServiceInterface
 {

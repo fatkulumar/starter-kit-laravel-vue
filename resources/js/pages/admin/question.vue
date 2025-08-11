@@ -72,112 +72,117 @@ const breadcrumbs: BreadcrumbItem[] = [
             </div>
 
             <form @submit.prevent="questionStore.handleSave">
-                <div class="flex justify-between items-center mb-2">
-                    <p>{{ props.subtest.title }}</p>
-                    <Button class="cursor-pointer mt-2" type="submit">
-                        <LoaderCircle v-if="questionStore.isLoading" class="h-4 w-4 animate-spin" />
-                        Simpan
-                    </Button>
-                </div>
+                <div class="flex flex-col gap-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <p>{{ props.subtest.title }}</p>
+                        <Button class="cursor-pointer mt-2" type="submit">
+                            <LoaderCircle v-if="questionStore.isLoading" class="h-4 w-4 animate-spin" />
+                            Simpan
+                        </Button>
+                    </div>
 
-                <div class="flex gap-3 rounded-md bg-green-100 p-3 shadow-sm ring-1 ring-green-300">
                     <div
-                        class="flex h-9 w-9 items-center justify-center rounded-full bg-green-500 text-white font-bold">
-                        <Label for="option_a">A</Label>
-                    </div>
-
-                    <div class="flex flex-col w-full">
-                        <Editor v-focustrap v-model="questionStore.form.option_a" editorStyle="height: 100px" />
-                        <!-- <Textarea id="option_a" autofocus tabindex="1" v-model="questionStore.form.option_a"
+                        class="flex items-center gap-3 rounded-md dark:bg-sidebar bg-but p-3 shadow-sm ring-1 ring-green-300">
+                        <div
+                            class="flex h-9 w-9 items-center justify-center rounded-full bg-green-500 text-white font-bold">
+                            <Label for="option_a">A</Label>
+                        </div>
+                        <div class="flex flex-col w-full">
+                            <Editor v-focustrap v-model="questionStore.form.option_a" editorStyle="height: 100px" />
+                            <!-- <Textarea id="option_a" autofocus tabindex="1" v-model="questionStore.form.option_a"
                             class="w-full rounded-md border border-green-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
                             placeholder="Masukkan jawaban..." /> -->
-                        <InputError :message="questionStore.error?.option_a?.[0]" />
+                            <InputError :message="questionStore.error?.option_a?.[0]" />
+                        </div>
                     </div>
-                </div>
 
-                <div class="flex items-center gap-3 rounded-md bg-green-100 p-3 shadow-sm ring-1 ring-green-300">
-                    <div
-                        class="flex h-9 w-9 items-center justify-center rounded-full bg-green-500 text-white font-bold">
-                        <Label for="option_b">B</Label>
-                    </div>
-                    <div class="flex flex-col w-full">
-                        <Editor v-model="questionStore.form.option_b" editorStyle="height: 100px" />
-                        <!-- <Textarea id="option_b" autofocus tabindex="2" v-model="questionStore.form.option_b"
+                    <div class="flex items-center gap-3 rounded-md dark:bg-sidebar bg-green-100 p-3 shadow-sm ring-1 ring-green-300">
+                        <div
+                            class="flex h-9 w-9 items-center justify-center rounded-full bg-green-500 text-white font-bold">
+                            <Label for="option_b">B</Label>
+                        </div>
+                        <div class="flex flex-col w-full">
+                            <Editor v-model="questionStore.form.option_b" editorStyle="height: 100px" />
+                            <!-- <Textarea id="option_b" autofocus tabindex="2" v-model="questionStore.form.option_b"
                             class="w-full rounded-md border border-green-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
                             placeholder="Masukkan jawaban..." /> -->
-                        <InputError :message="questionStore.error?.option_b?.[0]" />
+                            <InputError :message="questionStore.error?.option_b?.[0]" />
+                        </div>
                     </div>
-                </div>
 
-                <div class="flex items-center gap-3 rounded-md bg-green-100 p-3 shadow-sm ring-1 ring-green-300">
-                    <div
-                        class="flex h-9 w-9 items-center justify-center rounded-full bg-green-500 text-white font-bold">
-                        <Label for="option_c">C</Label>
-                    </div>
-                    <div class="flex flex-col w-full">
-                        <Editor v-model="questionStore.form.option_c" editorStyle="height: 100px" />
-                        <!-- <Textarea id="option_c" autofocus tabindex="3" v-model="questionStore.form.option_c"
+                    <div class="flex items-center gap-3 rounded-md dark:bg-sidebar bg-green-100 p-3 shadow-sm ring-1 ring-green-300">
+                        <div
+                            class="flex h-9 w-9 items-center justify-center rounded-full bg-green-500 text-white font-bold">
+                            <Label for="option_c">C</Label>
+                        </div>
+                        <div class="flex flex-col w-full">
+                            <Editor v-model="questionStore.form.option_c" editorStyle="height: 100px" />
+                            <!-- <Textarea id="option_c" autofocus tabindex="3" v-model="questionStore.form.option_c"
                             class="w-full rounded-md border border-green-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
                             placeholder="Masukkan jawaban..." /> -->
-                        <InputError :message="questionStore.error?.option_c?.[0]" />
+                            <InputError :message="questionStore.error?.option_c?.[0]" />
+                        </div>
                     </div>
-                </div>
 
-                <div class="flex items-center gap-3 rounded-md bg-green-100 p-3 shadow-sm ring-1 ring-green-300">
-                    <div
-                        class="flex h-9 w-9 items-center justify-center rounded-full bg-green-500 text-white font-bold">
-                        <Label for="option_d">D</Label>
-                    </div>
-                    <div class="flex flex-col w-full">
-                        <Editor v-model="questionStore.form.option_d" editorStyle="height: 100px" />
-                        <!-- <Textarea id="option_d" autofocus tabindex="4" v-model="questionStore.form.option_d"
+                    <div class="flex items-center gap-3 rounded-md dark:bg-sidebar bg-green-100 p-3 shadow-sm ring-1 ring-green-300">
+                        <div
+                            class="flex h-9 w-9 items-center justify-center rounded-full bg-green-500 text-white font-bold">
+                            <Label for="option_d">D</Label>
+                        </div>
+                        <div class="flex flex-col w-full">
+                            <Editor v-model="questionStore.form.option_d" editorStyle="height: 100px" />
+                            <!-- <Textarea id="option_d" autofocus tabindex="4" v-model="questionStore.form.option_d"
                             class="w-full rounded-md border border-green-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
                             placeholder="Masukkan jawaban..." /> -->
-                        <InputError :message="questionStore.error?.option_d?.[0]" />
+                            <InputError :message="questionStore.error?.option_d?.[0]" />
+                        </div>
                     </div>
-                </div>
 
-                <div class="flex items-center gap-3 rounded-md bg-green-100 p-3 shadow-sm ring-1 ring-green-300">
-                    <div
-                        class="flex h-9 w-9 items-center justify-center rounded-full bg-green-500 text-white font-bold">
-                        <Label for="option_e">E</Label>
-                    </div>
-                    <div class="flex flex-col w-full">
-                        <Editor v-model="questionStore.form.option_e" editorStyle="height: 100px" />
-                        <!-- <Textarea id="option_e" autofocus tabindex="5" v-model="questionStore.form.option_e"
+                    <div class="flex items-center gap-3 rounded-md dark:bg-sidebar bg-green-100 p-3 shadow-sm ring-1 ring-green-300">
+                        <div
+                            class="flex h-9 w-9 items-center justify-center rounded-full bg-green-500 text-white font-bold">
+                            <Label for="option_e">E</Label>
+                        </div>
+                        <div class="flex flex-col w-full">
+                            <Editor v-model="questionStore.form.option_e" editorStyle="height: 100px" />
+                            <!-- <Textarea id="option_e" autofocus tabindex="5" v-model="questionStore.form.option_e"
                             class="w-full rounded-md border border-green-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
                             placeholder="Masukkan jawaban..." /> -->
-                        <InputError :message="questionStore.error?.option_e?.[0]" />
+                            <InputError :message="questionStore.error?.option_e?.[0]" />
+                        </div>
                     </div>
-                </div>
 
-                <div class="flex items-center gap-3 rounded-md bg-green-100 p-3 shadow-sm ring-1 ring-green-300">
-                    <div class="px-3 py-1 rounded-full bg-green-500 text-white text-sm font-semibold whitespace-nowrap">
-                        <Label for="correct_option">Jawaban Benar</Label>
+                    <div class="flex items-center gap-3 rounded-md dark:bg-sidebar bg-green-100 p-3 shadow-sm ring-1 ring-green-300">
+                        <div
+                            class="px-3 py-1 rounded-full bg-green-500 text-white text-sm font-semibold whitespace-nowrap">
+                            <Label for="correct_option">Jawaban Benar</Label>
+                        </div>
+                        <div class="flex flex-col w-full">
+                            <Select id="is_online" v-model="questionStore.form.correct_answer" :tabindex="6"
+                                :options="questionStore.isCorrectAnswerOptions" placeholder="Pilih Status"
+                                class="mt-2" />
+                            <InputError :message="questionStore.error?.correct_option?.[0]" />
+                        </div>
                     </div>
-                    <div class="flex flex-col w-full">
-                        <Select id="is_online" v-model="questionStore.form.correct_answer" :tabindex="6"
-                            :options="questionStore.isCorrectAnswerOptions" placeholder="Pilih Status" class="mt-2" />
-                        <InputError :message="questionStore.error?.correct_option?.[0]" />
-                    </div>
-                </div>
 
-                <div class="flex items-center gap-3 rounded-md bg-green-100 p-3 shadow-sm ring-1 ring-green-300">
-                    <div class="px-3 py-1 rounded-full bg-green-500 text-white text-sm font-semibold whitespace-nowrap">
-                        <Label for="explanation">Penjelasan</Label>
-                    </div>
-                    <div class="flex flex-col w-full">
-                        <Editor v-model="questionStore.form.explanation" editorStyle="height: 100px" />
-                        <!-- <Textarea id="explanation" autofocus tabindex="7" v-model="questionStore.form.explanation"
+                    <div class="flex items-center gap-3 rounded-md dark:bg-sidebar bg-green-100 p-3 shadow-sm ring-1 ring-green-300">
+                        <div
+                            class="px-3 py-1 rounded-full bg-green-500 text-white text-sm font-semibold whitespace-nowrap">
+                            <Label for="explanation">Penjelasan</Label>
+                        </div>
+                        <div class="flex flex-col w-full">
+                            <Editor v-model="questionStore.form.explanation" editorStyle="height: 100px" />
+                            <!-- <Textarea id="explanation" autofocus tabindex="7" v-model="questionStore.form.explanation"
                             class="w-full rounded-md border border-green-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
                             placeholder="Masukkan jawaban..." /> -->
-                        <InputError :message="questionStore.error?.explanation?.[0]" />
+                            <InputError :message="questionStore.error?.explanation?.[0]" />
+                        </div>
                     </div>
-                </div>
 
-                <div class="flex justify-between items-center mt-2">
-                    <p>{{ props.subtest.title }}</p>
-                    <Button class="cursor-pointer" type="submit">Simpan</Button>
+                    <div class="flex justify-between items-center mt-2">
+                        <p>{{ props.subtest.title }}</p>
+                        <Button class="cursor-pointer" type="submit">Simpan</Button>
+                    </div>
                 </div>
             </form>
         </div>

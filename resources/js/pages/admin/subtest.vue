@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LoaderCircle } from 'lucide-vue-next';
 import { Tryout } from '@/types/Tryout';
-import { useSubjectStore } from '@/stores/subjectStore';
+import { useSubjectStore } from '@/stores/public/subjectStore';
 import Select from '@/components/ui/select/select.vue';
 
 const props = withDefaults(

@@ -10,18 +10,20 @@ class EventDTO
         public readonly ?string $id,
         public readonly string $title,
         public readonly ?string $description,
+        public readonly int $round,
         public readonly UploadedFile|string|null $banner,
         public readonly string $start_time,
         public readonly string $end_time,
         public readonly string $registration_deadline,
-        public readonly string $preliminary_date,
+        public readonly ?string $preliminary_date,
         public readonly string $final_date,
         public readonly ?string $whatsapp_group_link,
         public readonly ?string $guidebook_link,
         public readonly ?string $location,
         public readonly bool $is_online,
         public readonly ?string $link_zoom,
-        public readonly ?int $quota,
+        public readonly int $quota,
+        public readonly bool $is_publish,
     ){}
 
     public static function fromArray(array $data): self
@@ -29,6 +31,7 @@ class EventDTO
         return new self(
             id: $data['id'] ?? null,
             title: $data['title'],
+            round: $data['round'],
             description: $data['description'] ?? null,
             banner: $data['banner'] ?? null,
             start_time: $data['start_time'],
@@ -40,6 +43,7 @@ class EventDTO
             guidebook_link: $data['guidebook_link'],
             location: $data['location'],
             is_online: (bool) ($data['is_online'] ?? true),
+            is_publish: (bool) ($data['is_publish'] ?? true),
             link_zoom: $data['link_zoom'] ?? null,
             quota: isset($data['quota']) ? (int) $data['quota'] : null,
         );

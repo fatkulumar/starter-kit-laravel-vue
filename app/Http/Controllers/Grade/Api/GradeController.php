@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Grade\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\Grade\GradeService;
+use App\Services\Public\Grade\GradeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Subject;
+namespace App\Repositories\Public\Subject;
 
 interface SubjectRepositoryInterface
 {

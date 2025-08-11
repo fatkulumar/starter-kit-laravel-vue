@@ -33,6 +33,8 @@ class EventFactory extends Factory
             'description' => $this->faker->optional()->paragraph(),
             'banner' => $this->faker->optional()->imageUrl(800, 400, 'event', true, 'Banner'),
 
+            'round' => $this->faker->randomElement([1, 2]),
+
             'start_time' => $startTime,
             'end_time' => $endTime,
 
@@ -48,6 +50,8 @@ class EventFactory extends Factory
             'link_zoom' => $linkZoom,
 
             'quota' => $this->faker->optional()->numberBetween(100, 1000),
+
+            'is_publish' => $this->faker->boolean(),
         ];
     }
 }

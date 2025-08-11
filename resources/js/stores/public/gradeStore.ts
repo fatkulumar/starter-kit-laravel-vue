@@ -1,63 +1,63 @@
-import type { Subject } from "@/types/Subject";
+import type { Grade } from "@/types/Grade";
 import { defineStore } from "pinia";
 import axios from '@/lib/axios'
 import type { ApiResponse } from "@/types/ApiResponse";
 import type { PaginatedData } from "@/types/PaginatedData";
 import type { Pagination } from "@/types/pagination";
 
-export type SubjectListResponse = ApiResponse<PaginatedData<Subject>>
+export type GradeListResponse = ApiResponse<PaginatedData<Grade>>
 
-export const useSubjectStore = defineStore('subject-all', {
+export const useGradeStore = defineStore('grade-public', {
     state: (): {
-        subjects: Subject[],
+        grades: Grade[],
         isLoading: boolean
         error: Record<string, any> | null,
         pagination: Pagination | null,
         page: number
         searchQuery: string,
-        subjectCache: Map<string, SubjectListResponse>,
+        gradeCache: Map<string, GradeListResponse>,
     } => ({
-        subjects: [] as Subject[],
+        grades: [] as Grade[],
         isLoading: false,
         error: null,
         pagination: null as Pagination | null,
         page: 1,
         searchQuery: '',
-        subjectCache: new Map<string, SubjectListResponse>(),
+        gradeCache: new Map<string, GradeListResponse>(),
     }),
     getters: {
-        subjectOptions(state): { label: string; value: string | number }[] {
+        gradeOptions(state): { label: string; value: string | number }[] {
             return [
-                { label: 'Optional', value: '' },
-                ...state.subjects.map((subject: Subject) => ({
-                    label: subject.name,
-                    value: subject.id,
+                { label: 'Pilih Jenjang', value: '' },
+                ...state.grades.map((grade: Grade) => ({
+                    label: grade.name,
+                    value: grade.id,
                 })),
             ];
         }
     },
     actions: {
-        async fetchSubject(page = 1, search?: string): Promise<void> {
+        async fetchGrade(page = 1, search?: string): Promise<void> {
             this.isLoading = true;
             this.error = null;
 
             const searchQuery = search ?? this.searchQuery;
 
             const isSearching = !!searchQuery;
-            const cacheKey = isSearching ? `search_subject_all_${searchQuery}` : `page_${page}`;
+            const cacheKey = isSearching ? `search_grade_subject_${searchQuery}` : `page_${page}`;
 
             try {
-                if (this.subjectCache.has(cacheKey)) {
-                    const cached = this.subjectCache.get(cacheKey)!;
+                if (this.gradeCache.has(cacheKey)) {
+                    const cached = this.gradeCache.get(cacheKey)!;
 
                     if (cached && typeof cached === 'object' && 'data' in cached) {
                         const data = cached.data;
 
                         if (Array.isArray(data)) {
-                            this.subjects = data;
+                            this.grades = data;
                             this.pagination = null;
                         } else {
-                            this.subjects = data.data;
+                            this.grades = data.data;
                             this.pagination = {
                                 current_page: data.current_page,
                                 per_page: data.per_page,
@@ -78,36 +78,36 @@ export const useSubjectStore = defineStore('subject-all', {
                 }
 
                 const url = isSearching
-                    ? `/api/dashboard/subject?search=${encodeURIComponent(searchQuery)}`
-                    : `/api/dashboard/subject?page=${page}`;
+                    ? `/api/dashboard/grade?search=${encodeURIComponent(searchQuery)}`
+                    : `/api/dashboard/grade?page=${page}`;
 
-                const response = await axios.get<SubjectListResponse>(url);
-                const subjectData = response.data.data;
+                const response = await axios.get<GradeListResponse>(url);
+                const gradeData = response.data.data;
 
-                if (Array.isArray(subjectData)) {
-                    this.subjects = subjectData;
+                if (Array.isArray(gradeData)) {
+                    this.grades = gradeData;
                     this.pagination = null;
                 } else {
-                    this.subjects = subjectData.data;
+                    this.grades = gradeData.data;
                     this.pagination = {
-                        current_page: subjectData.current_page,
-                        per_page: subjectData.per_page,
-                        total: subjectData.total,
-                        last_page: subjectData.last_page,
-                        next_page_url: subjectData.next_page_url,
-                        prev_page_url: subjectData.prev_page_url,
-                        from: subjectData.from,
-                        to: subjectData.to,
-                        path: subjectData.path,
-                        links: subjectData.links,
+                        current_page: gradeData.current_page,
+                        per_page: gradeData.per_page,
+                        total: gradeData.total,
+                        last_page: gradeData.last_page,
+                        next_page_url: gradeData.next_page_url,
+                        prev_page_url: gradeData.prev_page_url,
+                        from: gradeData.from,
+                        to: gradeData.to,
+                        path: gradeData.path,
+                        links: gradeData.links,
                     };
                 }
 
                 this.page = page;
 
-                this.subjectCache.set(cacheKey, response.data);
+                this.gradeCache.set(cacheKey, response.data);
             } catch (err: any) {
-                this.error = err?.response?.data || { message: 'Gagal mengambil data mata pelajaran' };
+                this.error = err?.response?.data || { message: 'Gagal mengambil data jenjang' };
             } finally {
                 this.isLoading = false;
             }

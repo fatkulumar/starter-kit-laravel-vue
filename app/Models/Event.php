@@ -28,6 +28,7 @@ class Event extends Model
         'event_code',
         'description',
         'banner',
+        'round',
         'start_time',
         'end_time',
         'registration_deadline',
@@ -39,6 +40,7 @@ class Event extends Model
         'location',
         'link_zoom',
         'quota',
+        'is_publish'
     ];
 
     /**

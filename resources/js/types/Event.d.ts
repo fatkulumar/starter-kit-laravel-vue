@@ -5,6 +5,7 @@ export interface Event {
   description?: string;
   banner?: string;
   banner_url: string;
+  round: number;
   start_time: string; 
   end_time: string;
   registration_deadline: string;
@@ -18,6 +19,7 @@ export interface Event {
   quota: number;
   created_at: string;
   updated_at: string;
+  is_publish: boolean;
 
   start_time_formatted: string;
   end_time_formatted: string;
@@ -25,4 +27,5 @@ export interface Event {
   preliminary_date_formatted: string;
   final_date_formatted: string;
   tryouts_count: number;
+  registration_end_formatted: string;
 }

@@ -6,6 +6,7 @@ import type { PaginatedData } from "@/types/PaginatedData";
 import type { Pagination } from "@/types/pagination";
 import { formatDatetimeLocal } from '@/utils/datetime'
 import { reactive } from "vue";
+import { useEventStore as useEventPublicStore } from "../public/evenStore";
 
 export type EventListResponse = ApiResponse<PaginatedData<Event>>
 
@@ -26,6 +27,8 @@ interface EventForm {
     is_online: string;
     link_zoom?: string;
     quota: number;
+    round: number;
+    is_publish: boolean;
 }
 
 export const useEventStore = defineStore('event-admin', {
@@ -42,7 +45,8 @@ export const useEventStore = defineStore('event-admin', {
         previewBanner: string,
         checkedAll: boolean,
         selectedIds: string[],
-        expandedIndex: number | null
+        expandedIndex: number | null,
+        isWebinar: boolean,
     } => ({
         events: [] as Event[],
         isLoading: false,
@@ -67,12 +71,15 @@ export const useEventStore = defineStore('event-admin', {
             location: '',
             is_online: '0',
             link_zoom: '',
-            quota: 0
+            quota: 0,
+            round: 1,
+            is_publish: false
         }),
         previewBanner: '',
         checkedAll: false,
         selectedIds: [],
-        expandedIndex: null
+        expandedIndex: null,
+        isWebinar: false
     }),
     getters: {
         isOnlineOptions(state): { label: string; value: string | number }[] {
@@ -184,6 +191,9 @@ export const useEventStore = defineStore('event-admin', {
             formData.append('is_online', this.form.is_online ? '1' : '0');
             formData.append('link_zoom', this.form.link_zoom ?? '');
             formData.append('quota', String(this.form.quota) ?? 0);
+            formData.append('round', String(this.form.round));
+            formData.append('is_webinar', this.form.is_webinar ? '1' : '0');
+            formData.append('is_publish', this.form.is_publish ? '1' : '0');
 
             if (this.form.banner) {
                 formData.append('banner', this.form.banner);
@@ -208,6 +218,8 @@ export const useEventStore = defineStore('event-admin', {
                     this.hanldeResetForm();
                     this.showModal = false;
                     this.error = null;
+                    const eventPublicStore = useEventPublicStore();
+                    eventPublicStore.deleteCache();
                 }
             } catch (err: any) {
                 if (err?.response?.status === 422) {
@@ -224,7 +236,6 @@ export const useEventStore = defineStore('event-admin', {
             this.form.id = item.id;
             this.form.title = item.title;
             this.form.description = item.description ?? '';
-            this.form.banner = item.banner;
             this.previewBanner = item.banner_url;
             this.form.start_time = formatDatetimeLocal(new Date(item.start_time));
             this.form.end_time = formatDatetimeLocal(new Date(item.end_time));
@@ -237,6 +248,7 @@ export const useEventStore = defineStore('event-admin', {
             this.form.is_online = item.is_online ? '1' : '0';
             this.form.link_zoom = item.link_zoom;
             this.form.quota = item.quota;
+            this.form.is_publish = Boolean(item.is_publish);
             this.showModal = true;
         },
 
@@ -380,6 +392,13 @@ export const useEventStore = defineStore('event-admin', {
 
         toggleDetail(index: number): void {
             this.expandedIndex = this.expandedIndex === index ? null : index;
+        },
+
+        checkWebinar()
+        {
+            if (!this.isWebinar) {
+                this.form.link_zoom = '';
+            }
         },
     }
 });

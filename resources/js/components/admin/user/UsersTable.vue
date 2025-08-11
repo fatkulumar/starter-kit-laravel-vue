@@ -42,12 +42,15 @@ const { userStore, users } = defineProps({
                     <th scope="col" class="px-6 py-3 flex gap-2 items-center">
                         <Checkbox class="w-8 h-8" id="checkedAll" v-model="userStore.checkedAll"
                             @update:modelValue="(val) => userStore.toggleSelectAll(users)" />
-                        <TrashIcon @click="userStore.hanldeConfirmDeleteAll" class="w-8 h-8 bg-red-400 rounded-md cursor-pointer p-1" v-if="userStore.selectedIds.length > 0" />
+                        <TrashIcon @click="userStore.hanldeConfirmDeleteAll"
+                            class="w-8 h-8 bg-red-400 rounded-md cursor-pointer p-1"
+                            v-if="userStore.selectedIds.length > 0" />
                     </th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, index) in users" :key="index" class="border-b dark:border-gray-700 border-gray-200">
+                <tr v-for="(item, index) in users" :key="index"
+                    class="border-b dark:border-gray-700 border-gray-200 cursor-pointer hover:bg-gray-50">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {{ index + 1 + (currentPage - 1) * perPage }}
                     </th>
@@ -60,7 +63,8 @@ const { userStore, users } = defineProps({
                     <td class="px-6 py-4">
                         <a href="#" class="flex gap-2 font-medium text-blue-600 dark:text-blue-500 cursor-pointer">
                             <PencilIcon @click="userStore.handleEdit(item)" class="h-8 w-8 bg-red-600 rounded-md p-1" />
-                            <TrashIcon @click="userStore.handleConfirmDelete(item)" class="h-8 w-8 bg-blue-600 rounded-md p-1" />
+                            <TrashIcon @click="userStore.handleConfirmDelete(item)"
+                                class="h-8 w-8 bg-blue-600 rounded-md p-1" />
                         </a>
                     </td>
                     <td class="px-6 py-4">

@@ -18,10 +18,11 @@ return new class extends Migration
             $table->string('title')->index();
             $table->text('description')->nullable();
             $table->string('banner')->nullable(); // gambar/banner event
+            $table->enum('round', [1, 2])->default(1); // jumlah babak , kalau 2 berarti ada penisihan
             $table->timestamp('start_time');
             $table->timestamp('end_time');
             $table->timestamp('registration_deadline'); // batas akhir pendaftaran
-            $table->timestamp('preliminary_date'); // tanggal penyisihan
+            $table->timestamp('preliminary_date')->nullable(); // tanggal penyisihan
             $table->timestamp('final_date'); // tanggal final
             $table->string('whatsapp_group_link')->nullable(); // link grup WA peserta
             $table->string('guidebook_link')->nullable(); // link panduan / buku teknis
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->boolean('is_online')->default(true);
             $table->string('link_zoom')->nullable(); // link Zoom/Gmeet jika online
             $table->integer('quota')->nullable(); // batas peserta (opsional)
+            $table->boolean('is_publish')->default(false);
             $table->timestamps();
         });
     }

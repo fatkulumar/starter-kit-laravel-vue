@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Services\Grade;
+namespace App\Services\Public\Grade;
 
-use App\Repositories\Grade\GradeRepository;
-use App\Services\Grade\GradeServiceInterface;
+use App\Repositories\Public\Grade\GradeRepository;
 use App\Services\Service;
 
 class GradeService extends Service implements GradeServiceInterface

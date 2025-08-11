@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Services\Subject;
+namespace App\Services\Public\Subject;
 
-use App\Repositories\Subject\SubjectRepository;
-use App\Services\Subject\SubjectServiceInterface;
+use App\Repositories\Public\Subject\SubjectRepository;
 use App\Services\Service;
 
 class SubjectService extends Service implements SubjectServiceInterface

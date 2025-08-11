@@ -245,7 +245,7 @@
     /* Teks utama (putih hampir penuh) */
 
     /* ======== KOMPONEN CARD ======== */
-    --card: hsl(0 0% 3.9%);
+    --card: hsl(131, 61%, 75%);
     /* Latar belakang card */
     --card-foreground: hsl(0 0% 98%);
     /* Teks utama dalam card */

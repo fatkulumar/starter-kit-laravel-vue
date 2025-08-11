@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Grade;
+namespace App\Repositories\Public\Grade;
 
 interface GradeRepositoryInterface
 {

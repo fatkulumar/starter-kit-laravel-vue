@@ -8,7 +8,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { useEventStore } from '@/stores/admin/eventStore';
 import { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,6 +29,17 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: 'event',
     },
 ];
+
+const todayDateTime = computed(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+});
+
 </script>
 
 <template>
@@ -63,7 +74,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <Label for="banner">Banner</Label>
                 <Input id="banner" type="file" autofocus :tabindex="1" accept="image/jpg,image/jpeg,image/png"
                     autocomplete="banner" @change="eventStore.handleFileChange" />
-                <InputError :message="eventStore.error?.photo?.[0]" />
+                <InputError :message="eventStore.error?.banner?.[0]" />
 
                 <Label for="title">Judul</Label>
                 <Input id="title" type="text" required :tabindex="2" autocomplete="title"
@@ -77,37 +88,66 @@ const breadcrumbs: BreadcrumbItem[] = [
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-3">
+                        <div>
+                            <Label for="round-1">Jumlah Babak</Label>
+
+                            <div class="mt-2">
+                                1:
+                                <input id="round-1" type="radio" name="round" required :tabindex="6"
+                                    autocomplete="round" value="1" v-model="eventStore.form.round" />
+                            </div>
+
+                            <div>
+                                2:
+                                <input id="round-2" type="radio" name="round" required :tabindex="6"
+                                    autocomplete="round" value="2" v-model="eventStore.form.round" />
+                            </div>
+                        </div>
+                    </div>
+
+                     <div class="space-y-3">
+                        <Label for="start_time">Is Publish</Label>
+                        <input class="w-6 h-6" type="checkbox"
+                            :tabindex="4" autocomplete="start_time" v-model="eventStore.form.is_publish"
+                            :min="todayDateTime" />
+                        <InputError :message="eventStore.error?.start_time?.[0]" />
+                    </div>
+
+                    <div class="space-y-3">
                         <Label for="start_time">Mulai</Label>
-                        <Input id="start_time" type="datetime-local" required :tabindex="4" autocomplete="start_time"
-                            v-model="eventStore.form.start_time" />
+                        <Input :readonly="!!eventStore.form.start_time" id="start_time" type="datetime-local" required
+                            :tabindex="4" autocomplete="start_time" v-model="eventStore.form.start_time"
+                            :min="todayDateTime" />
                         <InputError :message="eventStore.error?.start_time?.[0]" />
                     </div>
 
                     <div class="space-y-3">
                         <Label for="end_time">Selesai</Label>
                         <Input id="end_time" type="datetime-local" required :tabindex="5" autocomplete="end_time"
-                            v-model="eventStore.form.end_time" />
+                            v-model="eventStore.form.end_time" :min="todayDateTime" />
                         <InputError :message="eventStore.error?.end_time?.[0]" />
                     </div>
 
                     <div class="space-y-3">
                         <Label for="registration_deadline">Batas Registrasi</Label>
                         <Input id="registration_deadline" type="datetime-local" required :tabindex="6"
-                            autocomplete="registration_deadline" v-model="eventStore.form.registration_deadline" />
+                            autocomplete="registration_deadline" v-model="eventStore.form.registration_deadline"
+                            :min="todayDateTime" />
                         <InputError :message="eventStore.error?.registration_deadline?.[0]" />
                     </div>
 
-                    <div class="space-y-3">
-                        <Label for="preliminary_date">Batas Pra-Acara</Label>
+                    <div class="space-y-3" v-if="eventStore.form.round == 2">
+                        <Label for="preliminary_date">Babak Penyisihan</Label>
                         <Input id="preliminary_date" type="datetime-local" required :tabindex="7"
-                            autocomplete="preliminary_date" v-model="eventStore.form.preliminary_date" />
+                            autocomplete="preliminary_date" v-model="eventStore.form.preliminary_date"
+                            :min="todayDateTime" />
                         <InputError :message="eventStore.error?.preliminary_date?.[0]" />
                     </div>
 
                     <div class="space-y-3">
                         <Label for="final_date">Final</Label>
                         <Input id="final_date" type="datetime-local" required :tabindex="8" autocomplete="final_date"
-                            v-model="eventStore.form.final_date" />
+                            v-model="eventStore.form.final_date" :min="todayDateTime" />
                         <InputError :message="eventStore.error?.final_date?.[0]" />
                     </div>
 
@@ -134,9 +174,17 @@ const breadcrumbs: BreadcrumbItem[] = [
                     v-model="eventStore.form.location" placeholder="Masukkan Placeholder" />
                 <InputError :message="eventStore.error?.location?.[0]" />
 
-                <Label for="link_zoom">Link Zoom</Label>
-                <Textarea class="w-full" id="link_zoom" required :tabindex="13" autocomplete="link_zoom"
-                    v-model="eventStore.form.link_zoom" placeholder="Masukkan Placeholder" />
+                <div class="flex justify-between items-center">
+                    <Label for="link_zoom">Link Zoom</Label>
+                    <div class="flex items-center gap-1">
+                        <label for="webinar">Webinar</label>
+                        <input id="webinar" @click="eventStore.checkWebinar" v-model="eventStore.isWebinar"
+                            type="checkbox" />
+                    </div>
+                </div>
+                <Textarea :readonly="!eventStore.isWebinar" class="w-full" id="link_zoom" :tabindex="13"
+                    autocomplete="link_zoom" v-model="eventStore.form.link_zoom"
+                    :placeholder="!eventStore.isWebinar ? 'Tidak Perlu Diisi' : 'Masukkan Placeholder'" />
                 <InputError :message="eventStore.error?.link_zoom?.[0]" />
 
                 <Label for="quota">Kuota</Label>

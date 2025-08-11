@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Subject\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\Subject\SubjectService;
+use App\Services\Public\Subject\SubjectService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

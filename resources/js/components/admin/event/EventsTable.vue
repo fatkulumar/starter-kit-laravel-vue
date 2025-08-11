@@ -38,7 +38,7 @@ const { eventStore, events } = defineProps({
                     <th scope="col" class="px-6 py-3">Thumbnail</th>
                     <th scope="col" class="px-6 py-3">Judul</th>
                     <th scope="col" class="px-6 py-3">Mulai</th>
-                    <th scope="col" class="px-6 py-3">Kuota</th>
+                    <th scope="col" class="px-6 py-3">Publish</th>
                     <th scope="col" class="px-6 py-3">Tryout</th>
                     <th scope="col" class="px-6 py-3">Action</th>
                     <th scope="col" class="px-6 py-3 flex gap-2 items-center">
@@ -63,7 +63,9 @@ const { eventStore, events } = defineProps({
                         </td>
                         <td @click="eventStore.toggleDetail(index)" class="px-6 py-4">{{ item.title }}</td>
                         <td @click="eventStore.toggleDetail(index)" class="px-6 py-4">{{ item.start_time_formatted }}</td>
-                        <td @click="eventStore.toggleDetail(index)" class="px-6 py-4">{{ item.quota }}</td>
+                        <td @click="eventStore.toggleDetail(index)" class="px-6 py-4">
+                            {{ Boolean(item.is_publish) ? 'Publish' : 'Tidak Publish' }}
+                        </td>
                         <td class="px-6 py-4">
                             <Link :href="`tryout?event_code=${item.event_code}`" title="Lihat Tryouts"
                                 class="block w-full h-full bg-gray-200 text-black text-center rounded hover:bg-gray-600 hover:text-white transition-all px-2 py-3">
@@ -89,6 +91,14 @@ const { eventStore, events } = defineProps({
                         <td colspan="10" class="px-6 py-4 bg-gray-100 text-sm text-gray-700">
                             <table class="w-full table-auto border border-gray-300 rounded">
                                 <tbody>
+                                    <tr class="border-b">
+                                        <td class="px-4 py-2 font-medium w-1/4">Jumlah Babak</td>
+                                        <td class="px-4 py-2">{{ item.round }}</td>
+                                    </tr>
+                                    <tr class="border-b">
+                                        <td class="px-4 py-2 font-medium w-1/4">Kuota</td>
+                                        <td class="px-4 py-2">{{ item.quota }}</td>
+                                    </tr>
                                     <tr class="border-b">
                                         <td class="px-4 py-2 font-medium w-1/4">Selesai</td>
                                         <td class="px-4 py-2">{{ item.end_time_formatted }}</td>

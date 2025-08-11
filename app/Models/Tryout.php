@@ -133,4 +133,11 @@ class Tryout extends Model
     {
         return $this->belongsToMany(User::class, 'orders');
     }
+
+    // without append
+    public function withoutAppends(array $except = []): static
+    {
+        $appends = array_diff($this->getAppends(), $except);
+        return $this->setAppends($appends);
+    }
 }
