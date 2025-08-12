@@ -5,10 +5,10 @@ import type { ApiResponse } from "@/types/ApiResponse";
 import type { PaginatedData } from "@/types/PaginatedData";
 import type { Pagination } from "@/types/pagination";
 import { formatRupiah } from "@/utils/formatRupiah";
-import { showSuccess, showError } from '@/utils/alert';
-import { Purchase } from "@/types/Purchase";
+import { usePurchaseStore } from "./purchaseStore";
+import { TryoutItem } from "@/components/admin/student/TryoutSelection.vue";
 
-export type TryoutListResponse = ApiResponse<PaginatedData<Tryout>>
+export type TryoutListResponse = ApiResponse<PaginatedData<TryoutItem>>
 
 export interface Task {
     label: string;
@@ -18,7 +18,7 @@ export interface Task {
 
 export const useTryoutStore = defineStore('tryout-public', {
     state: (): {
-        tryouts: Tryout[],
+        tryouts: TryoutItem[],
         isLoading: boolean
         error: Record<string, any> | null,
         pagination: Pagination | null,
@@ -28,14 +28,9 @@ export const useTryoutStore = defineStore('tryout-public', {
         prefixCacheKey: string,
         modalGetTryout: boolean,
         selectedIds: string[],
-        modalUploadRequirements: boolean,
-        // file upload requirement
-        requirementFiles: Record<string, File | null>, // file tiap requirement
-        requirementPreviews: Record<string, string>, // preview tiap requirement
-        tasks: Task[],
         amount: number
     } => ({
-        tryouts: [] as Tryout[],
+        tryouts: [] as TryoutItem[],
         isLoading: false,
         error: null,
         pagination: null as Pagination | null,
@@ -45,15 +40,6 @@ export const useTryoutStore = defineStore('tryout-public', {
         prefixCacheKey: '',
         modalGetTryout: false,
         selectedIds: [],
-        modalUploadRequirements: false,
-        requirementFiles: {},          // key = nama requirement, value = File/null
-        requirementPreviews: {},
-        tasks: [
-            { label: 'Follow Instagram', file: null as File | null, preview: '' },
-            // { label: 'Komen dan tag 10 Teman postingan Instagram', file: null as File | null, preview: '' },
-            // { label: 'Share postingan ini di story kamu dan tag instagram', file: null as File | null, preview: '' },
-            // { label: 'Share postingan instagram ke 3 grup belajar kamu', file: null as File | null, preview: '' }
-        ],
         amount: 0
     }),
     actions: {
@@ -146,13 +132,15 @@ export const useTryoutStore = defineStore('tryout-public', {
 
         // show modal list tryout
         async handleShowModalGetTtryout(eventId: string): Promise<void> {
-            this.fetchTryoutByEventId(eventId).then(() => this.modalGetTryout = true);
+            const tryoutStore = useTryoutStore();
+            this.fetchTryoutByEventId(eventId).then(() => tryoutStore.modalGetTryout = true);
         },
 
         // close modalGetTryout
         async handleCloseModalGetTryout(): Promise<void> {
             this.modalGetTryout = false;
             this.selectedIds = [];
+            this.amount = 0;
         },
 
         // select tryout
@@ -176,105 +164,12 @@ export const useTryoutStore = defineStore('tryout-public', {
 
         // show modal upload requirement
         handleShowModalRequirement(): void {
+            const purchaseStore = usePurchaseStore();
             this.modalGetTryout = false;
-            this.modalUploadRequirements = true;
+            purchaseStore.modalUploadRequirements = true;
         },
 
-        // close modal upload requirement
-        async handleCloseModalUploadRequirements(): Promise<void> {
-            this.modalGetTryout = true;
-            this.modalUploadRequirements = false;
-            this.requirementFiles = {};          // key = nama requirement, value = File/null
-            this.requirementPreviews = {};
-
-            this.tasks = this.tasks.map(task => ({
-                ...task,
-                file: null,
-                preview: ''
-            }));
-        },
-
-        // reset form
-        handleResetForm(): void {
-            this.selectedIds = [];
-        },
-
-        /** ---------------------- REQUIREMENT FILE HANDLER ---------------------- **/
-        setRequirementFile(key: string, file: File): void {
-            this.requirementFiles[key] = file;
-            this.requirementPreviews[key] = URL.createObjectURL(file);
-        },
-        getRequirementPreview(key: string): string {
-            return this.requirementPreviews[key] || '';
-        },
-        hasRequirementFile(key: string): boolean {
-            return !!this.requirementFiles[key];
-        },
-
-        /** ---------------------- UPLOAD REQUIREMENTS ---------------------- **/
-        handleFileChange(e: Event, index: number) {
-            const target = e.target as HTMLInputElement
-            if (target.files && target.files[0]) {
-                const file = target.files[0]
-                this.tasks[index].file = file
-                this.tasks[index].preview = URL.createObjectURL(file)
-            }
-        },
-
-        async uploadRequirements() {
-            this.isLoading = true;
-            try {
-                const formData = new FormData();
-
-                // sertakan selectedIds
-                this.selectedIds.forEach((id, idx) => {
-                    formData.append(`tryout_id[${idx}]`, id);
-                });
-
-                formData.append('amount', String(this.amount));
-
-                // sertakan label + file (jika ada)
-                this.tasks.forEach((task, i) => {
-                    formData.append(`tasks[${i}][label]`, task.label);
-                    if (task.file) {
-                        formData.append(`tasks[${i}][file]`, task.file);
-                    }
-                });
-
-                // POST pakai form-data langsung
-                const response = await axios.post<ApiResponse<Purchase>>('/api/student/purchase', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
-
-                if (response?.status === 200) {
-                    showSuccess(response.data.message);
-                    this.error = null;
-                    this.modalUploadRequirements = false;
-                    this.modalGetTryout = false;
-                }
-
-            } catch (err: any) {
-                if (err?.response?.status === 422) {
-                    this.error = err.response.data.errors || { message: 'Data tidak valid' };
-                    const errors = err.response.data.errors || {}
-                    showError(errors);
-                } else {
-                    this.error = err?.response?.data || { message: 'Gagal submit data pembelian' };
-                }
-            } finally {
-                this.isLoading = false;
-            }
-        },
-
-        // remove file selected
-        removeFile(index: number) {
-            this.tasks[index].file = null
-            this.tasks[index].preview = ''
-        },
-
-        // conver to rupiah format'
+        // // convert to rupiah format'
         formatRupiah(value: number | string): string {
             return formatRupiah(value);
         }

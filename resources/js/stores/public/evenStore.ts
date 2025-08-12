@@ -30,7 +30,7 @@ export const useEventStore = defineStore('event-public', {
     }),
     actions: {
         // fetch event where publish
-        async fetchEvents(page = 1, search?: string): Promise<void> {
+        async fetchEventsPublish(page = 1, search?: string): Promise<void> {
             this.isLoading = true;
             this.error = null;
 

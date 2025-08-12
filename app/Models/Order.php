@@ -52,4 +52,12 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     *  relation to purchase
+     */
+    public function purchase()
+    {
+        return $this->hasOne(Purchase::class, 'order_id');
+    }
 }

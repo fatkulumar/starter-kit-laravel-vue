@@ -7,7 +7,7 @@ import { onMounted } from 'vue';
 const eventStore = useEventStore();
 
 onMounted(() => {
-    eventStore.fetchEvents();
+    eventStore.fetchEventsPublish();
 });
 
 </script>

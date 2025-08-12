@@ -56,4 +56,15 @@ class OrderRepository extends Repository implements OrderRepositoryInterface
             ->distinct('user_id')
             ->count('user_id');
     }
+
+    /**
+     * Find by user_id and tryout_id
+     */
+    public function findOrderByUserIdTryoutId(string $userId, string $tryoutId): object
+    {
+        return $this->model::with(['purchase:id,order_id,proof'])
+                ->where('user_id', $userId)
+                ->where('tryout_id', $tryoutId)
+                ->first(['id', 'user_id', 'tryout_id']);
+    }
 }

@@ -13,6 +13,7 @@ use App\Repositories\Student\Purchase\PurchaseRepository;
 use App\Services\Service;
 use App\Traits\FileUpload;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class PurchaseService extends Service implements PurchaseServiceInterface
@@ -62,12 +63,19 @@ class PurchaseService extends Service implements PurchaseServiceInterface
                 ];
                 $order = $this->orderRepository->updateOrCreate($whereOrder, $dataOrder);
 
-                // loop semua tasks dan simpan ke purchases
                 foreach ($dto->tasks as $task) {
                     $this->fileSettings();
+                    $order = $this->orderRepository->findOrderByUserIdTryoutId(Auth::id(), $tryout);
+                    if ($order && $order->purchase) {
+                        $proof = $order->purchase->proof;
+                        if ($this->isFileExists($proof)) {
+                            $this->deleteFile($proof);
+                        }
+                    }
+                   
                     $filePath = null;
                     if (!empty($task['file'])) {
-                        $filePath = $this->uploadFile($task['file']); // pakai trait FileUpload
+                        $filePath = $this->uploadFile($task['file']);
                     }
 
                     $this->purchaseRepository->updateOrCreate(
@@ -79,6 +87,8 @@ class PurchaseService extends Service implements PurchaseServiceInterface
 
             DB::commit();
 
+            Cache::flush();
+            
             return (object)[
                 'status' => true,
                 'message' => 'Pembelian berhasil, menunggu konfirmasi',

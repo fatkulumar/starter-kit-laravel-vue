@@ -7,7 +7,9 @@ import Modal from './Modal.vue';
 import Button from '../ui/button/Button.vue';
 import ModalUploadRequirements from '../admin/student/ModalUploadRequirements.vue';
 import TryoutSelection from '../admin/student/TryoutSelection.vue';
+import { usePurchaseStore } from '@/stores/student/purchaseStore';
 const tryoutStore = useTryoutStore();
+const purchaseStore = usePurchaseStore();
 
 defineProps<{
     event: Event
@@ -93,11 +95,11 @@ defineProps<{
 
 
         <!-- modal upload requirement -->
-        <Modal :show="tryoutStore.modalUploadRequirements" @close="tryoutStore.handleCloseModalUploadRequirements"
+        <Modal :show="purchaseStore.modalUploadRequirements" @close="purchaseStore.handleCloseModalUploadRequirements"
             class="max-w-3xl">
-            <ModalUploadRequirements :tasks="tryoutStore.tasks" :isLoading="tryoutStore.isLoading"
-                @file-change="tryoutStore.handleFileChange" @remove-file="tryoutStore.removeFile"
-                @upload="tryoutStore.uploadRequirements" />
+            <ModalUploadRequirements :tasks="purchaseStore.tasks" :isLoading="purchaseStore.isLoading"
+                @file-change="purchaseStore.handleFileChange" @remove-file="purchaseStore.removeFile"
+                @upload="purchaseStore.uploadRequirements" />
         </Modal>
     </div>
 </template>

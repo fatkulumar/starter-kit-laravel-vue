@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import Button from "@/components/ui/button/Button.vue";
 import { useTryoutStore } from "@/stores/student/tryoutStore";
+import { Order } from "@/types/Order";
 import { CheckCheck } from "lucide-vue-next";
 
-interface TryoutItem {
+export interface TryoutItem {
   id: number | string;
   title: string;
   start_time_formatted: string;
   end_time_formatted: string;
   price: number;
+  orders: Order[];
 }
 
 type TryoutStoreType = ReturnType<typeof useTryoutStore>;
@@ -36,8 +38,9 @@ const onShowRequirements = () => emits("show-requirements");
     <div
       v-for="(item, index) in tryouts"
       :key="index"
-      class="flex justify-between items-center border border-card rounded-md p-4 mb-3 shadow-sm cursor-pointer"
-      @click="onToggleSelect(String(item.id))"
+      class="flex justify-between items-center border rounded-md p-4 mb-3 shadow-sm"
+      :class="[ item.orders[0]?.user_id === $page.props.auth.user.id ? 'cursor-not-allowed' : 'border-card cursor-pointer' ]"
+      @click="item.orders[0]?.user_id !== $page.props.auth.user.id && onToggleSelect(String(item.id))"
     >
       <div>
         <h3 class="font-bold text-lg">{{ item.title }}</h3>
@@ -49,9 +52,8 @@ const onShowRequirements = () => emits("show-requirements");
       <CheckCheck v-if="selectedIds.includes(item.id)" class="text-card" />
     </div>
 
-    <div class="w-full flex justify-between items-center">
+    <div class="w-full flex justify-between items-center" v-if="selectedIds.length > 0">
       <Button
-        v-if="selectedIds.length > 0"
         @click="onShowRequirements"
         class="cursor-pointer"
       >
