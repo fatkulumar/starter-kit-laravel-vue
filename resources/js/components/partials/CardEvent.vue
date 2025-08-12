@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { Event } from '@/types/Event';
 import { Link } from '@inertiajs/vue3';
-import { BookmarkCheck, Calendar, HandMetal, NotebookPen, LogIn, CheckCheck } from 'lucide-vue-next';
+import { BookmarkCheck, Calendar, HandMetal, NotebookPen, LogIn } from 'lucide-vue-next';
 import { useTryoutStore } from '@/stores/public/tryoutStore';
 import Modal from './Modal.vue';
 import Button from '../ui/button/Button.vue';
+import ModalUploadRequirements from '../admin/student/ModalUploadRequirements.vue';
+import TryoutSelection from '../admin/student/TryoutSelection.vue';
 const tryoutStore = useTryoutStore();
 
 defineProps<{
@@ -15,12 +17,10 @@ defineProps<{
 <template>
     <div
         class="relative flex flex-col w-96 bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300">
-        <!-- Banner -->
         <div class="relative h-56">
             <img :src="event.banner_url" :alt="event.title" class="w-full h-full object-cover" />
         </div>
 
-        <!-- Content -->
         <div class="p-5 flex-1 flex flex-col">
             <h3 class="text-lg font-semibold text-slate-800 mb-3 leading-tight line-clamp-2">
                 {{ event.title }}
@@ -65,9 +65,8 @@ defineProps<{
                 </div>
             </div>
 
-            <!-- Actions -->
             <div class="mt-5 flex gap-3" v-if="$page.props.auth.user">
-                <Button @click="tryoutStore.handleShowModal(event.id)"
+                <Button @click="tryoutStore.handleShowModalGetTtryout(event.id)"
                     class="flex-1 rounded-lg bg-indigo-600 py-2 text-center text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400">
                     Daftar
                 </Button>
@@ -85,24 +84,20 @@ defineProps<{
             </div>
         </div>
 
-        <Modal :show="tryoutStore.modalGetTryout" @close="tryoutStore.handleCloseModal" class="max-w-xl">
-            <h2 class="mb-5 truncate leading-tight font-semibold">Silahkan Pilih</h2>
-            <div v-for="(item, index) in tryoutStore.tryouts" :key="index"
-                class="flex justify-between items-center border border-card rounded-md p-4 mb-3 shadow-sm"
-                @click="tryoutStore.toggleSelectOne(item.id)">
-                <div>
-                    <h3 class="font-bold text-lg">{{ item.title }}</h3>
-                    <p class="text-sm text-gray-700">
-                        {{ item.start_time_formatted }} - {{ item.end_time_formatted }}
-                    </p>
-                </div>
-
-                <CheckCheck v-if="tryoutStore.selectedIds.includes(item.id)" class="text-card" />
-            </div>
-            <div class="w-full">
-                <Button class="mx-auto block cursor-pointer">Kirim</Button>
-            </div>
+        <!-- modal tryout selection -->
+        <Modal :show="tryoutStore.modalGetTryout" @close="tryoutStore.handleCloseModalGetTryout" class="max-w-xl">
+            <TryoutSelection :tryouts="tryoutStore.tryouts" :selectedIds="tryoutStore.selectedIds"
+                @toggle-select="tryoutStore.toggleSelectOne"
+                @show-requirements="tryoutStore.handleShowModalRequirement" />
         </Modal>
 
+
+        <!-- modal upload requirement -->
+        <Modal :show="tryoutStore.modalUploadRequirements" @close="tryoutStore.handleCloseModalUploadRequirements"
+            class="max-w-3xl">
+            <ModalUploadRequirements :tasks="tryoutStore.tasks" :isLoading="tryoutStore.isLoading"
+                @file-change="tryoutStore.handleFileChange" @remove-file="tryoutStore.removeFile"
+                @upload="tryoutStore.uploadRequirements" />
+        </Modal>
     </div>
 </template>

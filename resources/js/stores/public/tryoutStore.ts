@@ -19,6 +19,11 @@ export const useTryoutStore = defineStore('tryout-public', {
         prefixCacheKey: string,
         modalGetTryout: boolean,
         selectedIds: string[],
+        modalUploadRequirements: boolean,
+        // file upload requirement
+        requirementFiles: Record<string, File | null>, // file tiap requirement
+        requirementPreviews: Record<string, string>, // preview tiap requirement
+        tasks: { label: string, file: File | null, preview: string }[]
     } => ({
         tryouts: [] as Tryout[],
         isLoading: false,
@@ -30,8 +35,18 @@ export const useTryoutStore = defineStore('tryout-public', {
         prefixCacheKey: '',
         modalGetTryout: false,
         selectedIds: [],
+        modalUploadRequirements: false,
+        requirementFiles: {},          // key = nama requirement, value = File/null
+        requirementPreviews: {},
+        tasks: [
+            { label: 'Follow Instagram', file: null as File | null, preview: '' },
+            { label: 'Komen dan tag 10 Teman postingan Instagram', file: null as File | null, preview: '' },
+            { label: 'Share postingan ini di story kamu dan tag instagram', file: null as File | null, preview: '' },
+            { label: 'Share postingan instagram ke 3 grup belajar kamu', file: null as File | null, preview: '' }
+        ],
     }),
     actions: {
+        // fetch tryout by event id
         async fetchTryoutByEventId(eventId = '', page = 1, search?: string): Promise<void> {
             this.isLoading = true;
             this.error = null;
@@ -109,6 +124,7 @@ export const useTryoutStore = defineStore('tryout-public', {
             }
         },
 
+        // delete cache
         async deleteCache(): Promise<void> {
             [...this.tryoutsCache.keys()]
                 .filter(key =>
@@ -117,16 +133,18 @@ export const useTryoutStore = defineStore('tryout-public', {
                 .forEach(key => this.tryoutsCache.delete(key));
         },
 
-        async handleShowModal(eventId: string): Promise<void> {
+        // show modal list tryout
+        async handleShowModalGetTtryout(eventId: string): Promise<void> {
             this.fetchTryoutByEventId(eventId).then(() => this.modalGetTryout = true);
         },
 
-        async handleCloseModal(): Promise<void> {
+        // close modalGetTryout
+        async handleCloseModalGetTryout(): Promise<void> {
             this.modalGetTryout = false;
         },
 
+        // select tryout
         toggleSelectOne(tryoutId: string): void {
-            console.log(tryoutId)
             if (this.selectedIds.includes(tryoutId)) {
                 this.selectedIds = this.selectedIds.filter(id => id !== tryoutId);
             } else {
@@ -134,10 +152,74 @@ export const useTryoutStore = defineStore('tryout-public', {
             }
         },
 
-        // check id in selectedIds
-        checkIds(id: string): boolean
-        {
+        // check id tryout in selectedIds
+        checkIds(id: string): boolean {
             return this.selectedIds.includes(id);
+        },
+
+        // show modal upload requirement
+        handleShowModalRequirement(): void {
+            this.modalGetTryout = false;
+            this.modalUploadRequirements = true;
+        },
+
+        // close modal upload requirement
+        async handleCloseModalUploadRequirements(): Promise<void> {
+            this.modalGetTryout = true;
+            this.modalUploadRequirements = false;
+        },
+
+        // reset form
+        handleResetForm(): void {
+            this.selectedIds = [];
+        },
+
+        /** ---------------------- REQUIREMENT FILE HANDLER ---------------------- **/
+        setRequirementFile(key: string, file: File): void {
+            this.requirementFiles[key] = file;
+            this.requirementPreviews[key] = URL.createObjectURL(file);
+        },
+        getRequirementPreview(key: string): string {
+            return this.requirementPreviews[key] || '';
+        },
+        hasRequirementFile(key: string): boolean {
+            return !!this.requirementFiles[key];
+        },
+
+        /** ---------------------- UPLOAD REQUIREMENTS ---------------------- **/
+        handleFileChange(e: Event, index: number) {
+            const target = e.target as HTMLInputElement
+            if (target.files && target.files[0]) {
+                const file = target.files[0]
+                this.tasks[index].file = file
+                this.tasks[index].preview = URL.createObjectURL(file)
+            }
+        },
+
+        async uploadRequirements() {
+            this.isLoading = true
+            try {
+                const formData = new FormData()
+                this.tasks.forEach((task, i) => {
+                    if (task.file) {
+                        formData.append(`task_${i}`, task.file)
+                    }
+                })
+                const response = await axios.post('/api/requirements', {
+                    method: 'POST',
+                    body: formData
+                })
+                this.modalUploadRequirements = false
+            } catch (err) {
+                console.error(err)
+            } finally {
+                this.isLoading = false
+            }
+        },
+
+        removeFile(index: number) {
+            this.tasks[index].file = null
+            this.tasks[index].preview = ''
         }
     }
 });
