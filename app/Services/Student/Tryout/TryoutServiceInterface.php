@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Services\Public\Tryout;
-
-use App\DataTransferObjects\TryoutDTO;
+namespace App\Services\Student\Tryout;
 
 interface TryoutServiceInterface
 {

@@ -4,7 +4,7 @@ import axios from '@/lib/axios'
 import type { ApiResponse } from "@/types/ApiResponse";
 import type { PaginatedData } from "@/types/PaginatedData";
 import type { Pagination } from "@/types/pagination";
-import { showSuccess, showError } from '@/utils/alert'
+import { showSuccess, showError } from '@/utils/alert';
 import { reactive } from "vue";
 
 export type QuestionListResponse = ApiResponse<PaginatedData<Question>>

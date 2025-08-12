@@ -11,4 +11,5 @@ enum PaymentMethodEnum: string
     case OVO = 'ovo';
     case BRI_VA = 'bri_va';
     case ADMIN = 'admin';
+    case SELF = 'self';
 }

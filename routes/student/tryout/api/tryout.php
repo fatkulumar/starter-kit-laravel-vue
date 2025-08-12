@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Public\Tryout\Api\TryoutController;
+use App\Http\Controllers\Student\Tryout\Api\TryoutController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api/public')->as('api.')->group(function () {

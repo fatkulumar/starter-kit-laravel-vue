@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Public\Tryout;
+namespace App\Services\Student\Tryout;
 
-use App\Repositories\Public\Tryout\TryoutRepository;
+use App\Repositories\Student\Tryout\TryoutRepository;
 use App\Services\Service;
 use App\Traits\FileUpload;
 

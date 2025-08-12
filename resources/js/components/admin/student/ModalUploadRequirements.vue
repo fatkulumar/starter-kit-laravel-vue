@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Upload } from "lucide-vue-next";
+import Button from "@/components/ui/button/Button.vue";
 
 interface TaskItem {
   label: string;
@@ -62,7 +63,6 @@ const onUpload = () => emits("upload");
           </template>
         </label>
 
-        <!-- tombol hapus di luar label -->
         <button
           v-if="task.preview"
           type="button"

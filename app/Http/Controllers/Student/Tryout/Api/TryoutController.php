@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Public\Tryout\Api;
+namespace App\Http\Controllers\Student\Tryout\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\Public\Tryout\TryoutService;
+use App\Services\Student\Tryout\TryoutService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

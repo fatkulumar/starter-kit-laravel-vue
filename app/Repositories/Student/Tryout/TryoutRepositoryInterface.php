@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Public\Tryout;
+namespace App\Repositories\Student\Tryout;
 
 interface TryoutRepositoryInterface
 {

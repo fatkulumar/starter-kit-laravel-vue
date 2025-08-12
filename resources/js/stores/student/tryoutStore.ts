@@ -4,8 +4,17 @@ import axios from '@/lib/axios'
 import type { ApiResponse } from "@/types/ApiResponse";
 import type { PaginatedData } from "@/types/PaginatedData";
 import type { Pagination } from "@/types/pagination";
+import { formatRupiah } from "@/utils/formatRupiah";
+import { showSuccess, showError } from '@/utils/alert';
+import { Purchase } from "@/types/Purchase";
 
 export type TryoutListResponse = ApiResponse<PaginatedData<Tryout>>
+
+export interface Task {
+    label: string;
+    file: File | null;
+    preview: string;
+}
 
 export const useTryoutStore = defineStore('tryout-public', {
     state: (): {
@@ -23,7 +32,8 @@ export const useTryoutStore = defineStore('tryout-public', {
         // file upload requirement
         requirementFiles: Record<string, File | null>, // file tiap requirement
         requirementPreviews: Record<string, string>, // preview tiap requirement
-        tasks: { label: string, file: File | null, preview: string }[]
+        tasks: Task[],
+        amount: number
     } => ({
         tryouts: [] as Tryout[],
         isLoading: false,
@@ -40,10 +50,11 @@ export const useTryoutStore = defineStore('tryout-public', {
         requirementPreviews: {},
         tasks: [
             { label: 'Follow Instagram', file: null as File | null, preview: '' },
-            { label: 'Komen dan tag 10 Teman postingan Instagram', file: null as File | null, preview: '' },
-            { label: 'Share postingan ini di story kamu dan tag instagram', file: null as File | null, preview: '' },
-            { label: 'Share postingan instagram ke 3 grup belajar kamu', file: null as File | null, preview: '' }
+            // { label: 'Komen dan tag 10 Teman postingan Instagram', file: null as File | null, preview: '' },
+            // { label: 'Share postingan ini di story kamu dan tag instagram', file: null as File | null, preview: '' },
+            // { label: 'Share postingan instagram ke 3 grup belajar kamu', file: null as File | null, preview: '' }
         ],
+        amount: 0
     }),
     actions: {
         // fetch tryout by event id
@@ -141,6 +152,7 @@ export const useTryoutStore = defineStore('tryout-public', {
         // close modalGetTryout
         async handleCloseModalGetTryout(): Promise<void> {
             this.modalGetTryout = false;
+            this.selectedIds = [];
         },
 
         // select tryout
@@ -150,6 +162,11 @@ export const useTryoutStore = defineStore('tryout-public', {
             } else {
                 this.selectedIds.push(tryoutId);
             }
+
+            // Hitung ulang total harga berdasarkan selectedIds
+            this.amount = this.tryouts
+                .filter(t => this.selectedIds.includes(String(t.id)))
+                .reduce((sum, t) => sum + t.price, 0);
         },
 
         // check id tryout in selectedIds
@@ -167,6 +184,14 @@ export const useTryoutStore = defineStore('tryout-public', {
         async handleCloseModalUploadRequirements(): Promise<void> {
             this.modalGetTryout = true;
             this.modalUploadRequirements = false;
+            this.requirementFiles = {};          // key = nama requirement, value = File/null
+            this.requirementPreviews = {};
+
+            this.tasks = this.tasks.map(task => ({
+                ...task,
+                file: null,
+                preview: ''
+            }));
         },
 
         // reset form
@@ -197,29 +222,61 @@ export const useTryoutStore = defineStore('tryout-public', {
         },
 
         async uploadRequirements() {
-            this.isLoading = true
+            this.isLoading = true;
             try {
-                const formData = new FormData()
+                const formData = new FormData();
+
+                // sertakan selectedIds
+                this.selectedIds.forEach((id, idx) => {
+                    formData.append(`tryout_id[${idx}]`, id);
+                });
+
+                formData.append('amount', String(this.amount));
+
+                // sertakan label + file (jika ada)
                 this.tasks.forEach((task, i) => {
+                    formData.append(`tasks[${i}][label]`, task.label);
                     if (task.file) {
-                        formData.append(`task_${i}`, task.file)
+                        formData.append(`tasks[${i}][file]`, task.file);
                     }
-                })
-                const response = await axios.post('/api/requirements', {
-                    method: 'POST',
-                    body: formData
-                })
-                this.modalUploadRequirements = false
-            } catch (err) {
-                console.error(err)
+                });
+
+                // POST pakai form-data langsung
+                const response = await axios.post<ApiResponse<Purchase>>('/api/student/purchase', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                if (response?.status === 200) {
+                    showSuccess(response.data.message);
+                    this.error = null;
+                    this.modalUploadRequirements = false;
+                    this.modalGetTryout = false;
+                }
+
+            } catch (err: any) {
+                if (err?.response?.status === 422) {
+                    this.error = err.response.data.errors || { message: 'Data tidak valid' };
+                    const errors = err.response.data.errors || {}
+                    showError(errors);
+                } else {
+                    this.error = err?.response?.data || { message: 'Gagal submit data pembelian' };
+                }
             } finally {
-                this.isLoading = false
+                this.isLoading = false;
             }
         },
 
+        // remove file selected
         removeFile(index: number) {
             this.tasks[index].file = null
             this.tasks[index].preview = ''
+        },
+
+        // conver to rupiah format'
+        formatRupiah(value: number | string): string {
+            return formatRupiah(value);
         }
     }
 });

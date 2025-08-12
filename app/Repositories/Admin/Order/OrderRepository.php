@@ -20,14 +20,6 @@ class OrderRepository extends Repository implements OrderRepositoryInterface
     }
 
     /**
-     * Update or create..
-     */
-    public function updateOrCreate(array $where, array $data): object
-    {
-        return $this->model::updateOrCreate($where, $data);
-    }
-
-    /**
      * Generate order number.
      */
     public function generateUniqueOrderNumber(): string

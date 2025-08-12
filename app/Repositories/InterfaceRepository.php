@@ -11,4 +11,5 @@ interface InterfaceRepository
     public function show(string $id): object;
     public function update(string $id, array $data): bool;
     public function delete(string $id);
+    public function updateOrCreate(array $where, array $data): object;
 }

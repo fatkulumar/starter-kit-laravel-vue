@@ -25,12 +25,4 @@ class QuestionRepository extends Repository implements QuestionRepositoryInterfa
     {
         return $this->model::where('subtest_id', $subtestId)->get();
     }
-
-    /**
-     * create or update.
-     */
-    public function updateOrCreate(array $where, array $data): object
-    {
-        return $this->model::updateOrCreate($where, $data);
-    }
 }

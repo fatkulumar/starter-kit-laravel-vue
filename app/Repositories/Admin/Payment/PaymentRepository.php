@@ -18,14 +18,6 @@ class PaymentRepository extends Repository implements PaymentRepositoryInterface
         $this->model = $model;
     }
 
-    /**
-     * Update or create..
-     */
-    public function updateOrCreate(array $where, array $data): object
-    {
-        return $this->model::updateOrCreate($where, $data);
-    }
-
      /**
      * Generate payment number.
      */

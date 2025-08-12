@@ -49,5 +49,10 @@ require __DIR__.'/public/subject/api/subject.php';
 require __DIR__.'/public/grade/api/grade.php';
 // public event
 require __DIR__.'/public/event/api/event.php';
-// public tryout
-require __DIR__.'/public/tryout/api/tryout.php';
+
+
+
+// student tryout
+require __DIR__.'/student/tryout/api/tryout.php';
+// student purchase
+require __DIR__.'/student/purchase/api/purchase.php';

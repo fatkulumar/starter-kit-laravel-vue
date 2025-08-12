@@ -73,4 +73,9 @@ class Repository implements InterfaceRepository
     {
         return $this->model->destroy();
     }
+
+    public function updateOrCreate(array $where, array $data): object
+    {
+        return $this->model::updateOrCreate($where, $data);
+    }
 }

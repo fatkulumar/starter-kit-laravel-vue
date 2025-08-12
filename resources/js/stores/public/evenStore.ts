@@ -4,7 +4,7 @@ import axios from '@/lib/axios'
 import type { ApiResponse } from "@/types/ApiResponse";
 import type { PaginatedData } from "@/types/PaginatedData";
 import type { Pagination } from "@/types/pagination";
-import { useTryoutStore } from "./tryoutStore";
+import { useTryoutStore } from "../student/tryoutStore";
 
 export type EventListResponse = ApiResponse<PaginatedData<Event>>
 

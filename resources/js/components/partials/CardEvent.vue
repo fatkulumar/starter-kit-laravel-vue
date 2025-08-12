@@ -2,7 +2,7 @@
 import { Event } from '@/types/Event';
 import { Link } from '@inertiajs/vue3';
 import { BookmarkCheck, Calendar, HandMetal, NotebookPen, LogIn } from 'lucide-vue-next';
-import { useTryoutStore } from '@/stores/public/tryoutStore';
+import { useTryoutStore } from '@/stores/student/tryoutStore';
 import Modal from './Modal.vue';
 import Button from '../ui/button/Button.vue';
 import ModalUploadRequirements from '../admin/student/ModalUploadRequirements.vue';
@@ -88,7 +88,7 @@ defineProps<{
         <Modal :show="tryoutStore.modalGetTryout" @close="tryoutStore.handleCloseModalGetTryout" class="max-w-xl">
             <TryoutSelection :tryouts="tryoutStore.tryouts" :selectedIds="tryoutStore.selectedIds"
                 @toggle-select="tryoutStore.toggleSelectOne"
-                @show-requirements="tryoutStore.handleShowModalRequirement" />
+                @show-requirements="tryoutStore.handleShowModalRequirement" :amount="tryoutStore.amount" :tryout-store="tryoutStore" />
         </Modal>
 
 

@@ -8,4 +8,5 @@ enum PaymentGatewayEnum: string
     case TRIPAY = 'tripay';
     case XENDIT = 'xendit';
     case ADMIN = 'admin';
+    case SELF = 'self';
 }

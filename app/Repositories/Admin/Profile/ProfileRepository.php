@@ -16,12 +16,4 @@ class ProfileRepository extends Repository implements ProfileRepositoryInterface
     {
         $this->model = $model;
     }
-
-    /** 
-     * update or create by id 
-    */
-    public function updateOrCreate(array $where, array $data): object
-    {
-        return $this->model::updateOrCreate($where, $data);
-    }
 }

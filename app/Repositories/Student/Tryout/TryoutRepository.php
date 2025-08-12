@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Public\Tryout;
+namespace App\Repositories\Student\Tryout;
 
 use App\Models\Tryout;
 use App\Repositories\Repository;
@@ -28,7 +28,7 @@ class TryoutRepository extends Repository implements TryoutRepositoryInterface
         $minutes = $payload['minutes'];
         return Cache::remember($cacheKey, now()->addMinutes($minutes), function () use ($event_id) {
             return $this->model::where('event_id', $event_id)
-                ->select('id', 'title')
+                ->select('id', 'title', 'price')
                 ->get()->each->withoutAppends(['thumbnail_url']);
         });
     }
