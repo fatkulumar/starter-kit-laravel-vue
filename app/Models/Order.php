@@ -56,8 +56,8 @@ class Order extends Model
     /**
      *  relation to purchase
      */
-    public function purchase()
+    public function purchases()
     {
-        return $this->hasOne(Purchase::class, 'order_id');
+        return $this->hasMany(Purchase::class);
     }
 }

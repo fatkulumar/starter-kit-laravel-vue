@@ -6,5 +6,5 @@ use App\DataTransferObjects\EventDTO;
 
 interface EventServiceInterface
 {
-    public function getEvents(array $paginate): object;
+    public function getEventPublish(array $paginate): object;
 }

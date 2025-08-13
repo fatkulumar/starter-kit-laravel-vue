@@ -32,6 +32,11 @@ const mainNavItemsAdmin: NavItem[] = [
         href: '/admin/dashboard/user',
         icon: LayoutGrid,
     },
+    {
+        title: 'Purchases',
+        href: '/admin/dashboard/purchase',
+        icon: LayoutGrid,
+    },
 ];
 
 const footerNavItems: NavItem[] = [

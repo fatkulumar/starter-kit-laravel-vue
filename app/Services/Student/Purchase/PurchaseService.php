@@ -8,7 +8,9 @@ use App\DataTransferObjects\TryoutDTO;
 use App\Enums\OrderStatusEnum;
 use App\Enums\PaymentGatewayEnum;
 use App\Enums\PaymentMethodEnum;
+use App\Enums\PaymentStatusEnum;
 use App\Repositories\Admin\Order\OrderRepository;
+use App\Repositories\Admin\Payment\PaymentRepository;
 use App\Repositories\Student\Purchase\PurchaseRepository;
 use App\Services\Service;
 use App\Traits\FileUpload;
@@ -19,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 class PurchaseService extends Service implements PurchaseServiceInterface
 {
     use FileUpload;
-    private $purchaseRepository, $orderRepository;
+    private $purchaseRepository, $orderRepository, $paymentRepository;
 
     /**
      * iniliazed from trait FileUpload.
@@ -36,10 +38,11 @@ class PurchaseService extends Service implements PurchaseServiceInterface
     /**
      * Create a new class instance.
      */
-    public function __construct(PurchaseRepository $purchaseRepository, OrderRepository $orderRepository)
+    public function __construct(PurchaseRepository $purchaseRepository, OrderRepository $orderRepository, PaymentRepository $paymentRepository)
     {
         $this->purchaseRepository = $purchaseRepository;
         $this->orderRepository = $orderRepository;
+        $this->paymentRepository = $paymentRepository;
     }
 
     /**
@@ -50,6 +53,7 @@ class PurchaseService extends Service implements PurchaseServiceInterface
         DB::beginTransaction();
         try {
             foreach ($dto->tryout_id as $tryout) {
+                // Data order
                 $whereOrder = [
                     'user_id'   => Auth::id(),
                     'tryout_id' => $tryout,
@@ -63,34 +67,42 @@ class PurchaseService extends Service implements PurchaseServiceInterface
                 ];
                 $order = $this->orderRepository->updateOrCreate($whereOrder, $dataOrder);
 
+                $wherePayment = [
+                    'order_id' => $order->id,
+                ];
+                $dataPayment = [
+                    'payment_gateway'   => $order->payment_gateway,
+                    'payment_method'    => $order->payment_method,
+                    'reference'         => $this->paymentRepository->generateUniquePaymentNumber(),
+                    'amount_paid'       => $order->amount,
+                    'status'            => PaymentStatusEnum::PENDING->value,
+                    'order_number'      => $order->order_number,
+                ];
+                $this->paymentRepository->updateOrCreate($wherePayment, $dataPayment);
+
+                // Loop setiap task (bukti upload)
                 foreach ($dto->tasks as $task) {
                     $this->fileSettings();
-                    $order = $this->orderRepository->findOrderByUserIdTryoutId(Auth::id(), $tryout);
-                    if ($order && $order->purchase) {
-                        $proof = $order->purchase->proof;
-                        if ($this->isFileExists($proof)) {
-                            $this->deleteFile($proof);
-                        }
-                    }
-                   
+
                     $filePath = null;
                     if (!empty($task['file'])) {
                         $filePath = $this->uploadFile($task['file']);
                     }
 
-                    $this->purchaseRepository->updateOrCreate(
-                        ['order_id' => $order->id],
-                        ['proof' => $filePath, 'label' => $task['label']]
-                    );
+                    // Simpan record baru untuk setiap task
+                    $this->purchaseRepository->store([
+                        'order_id' => $order->id,
+                        'proof'    => $filePath,
+                        'label'    => $task['label'],
+                    ]);
                 }
             }
 
             DB::commit();
-
             Cache::flush();
-            
+
             return (object)[
-                'status' => true,
+                'status'  => true,
                 'message' => 'Pembelian berhasil, menunggu konfirmasi',
             ];
         } catch (\Throwable $e) {

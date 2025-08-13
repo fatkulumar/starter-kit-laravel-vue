@@ -31,7 +31,7 @@ class EventController extends Controller
         $page = $request->query('page', 1);
         $payload = [
             'search' => $search,
-            'cacheKey' => 'events_admin:search=' . ($search ?: 'all') . ':page=' . $page,
+            'cacheKey' => 'events_admin:search=' . ($search ?: 'all') . ':page_events_admin=' . $page,
             'paginate' => 10,
             'minutes' => 10,
         ];

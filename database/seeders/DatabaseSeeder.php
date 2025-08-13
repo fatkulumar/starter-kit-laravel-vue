@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
         \App\Models\Payment::factory()->count(5)->create();
         \App\Models\Subtest::factory()->count(30)->create();
         \App\Models\Question::factory()->count(30)->create();
+        \App\Models\Purchase::factory()->count(5)->create();
 
         // User::factory()->create([
         //     'name' => 'Test User',

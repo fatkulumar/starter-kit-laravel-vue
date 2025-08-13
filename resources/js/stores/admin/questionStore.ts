@@ -80,7 +80,7 @@ export const useQuestionStore = defineStore('question-admin', {
             const searchQuery = search ?? this.searchQuery;
 
             const isSearching = !!searchQuery;
-            const cacheKey = isSearching ? `search_question_admin_${searchQuery}_${this.form.subtest_id}` : `page_${page}_${this.form.subtest_id}`;
+            const cacheKey = isSearching ? `search_question_admin_${searchQuery}_${this.form.subtest_id}` : `page_question_admin_${page}_${this.form.subtest_id}`;
 
             try {
                 if (this.questionCache.has(cacheKey)) {
@@ -110,8 +110,8 @@ export const useQuestionStore = defineStore('question-admin', {
                 }
 
                 const url = isSearching
-                    ? `/apiadmin/dashboard/question?search=${encodeURIComponent(searchQuery)}&subtest_id=${this.form.subtest_id}`
-                    : `/apiadmin/dashboard/question?page=${page}&subtest_id=${this.form.subtest_id}`;
+                    ? `/api/dashboard/question?search=${encodeURIComponent(searchQuery)}&subtest_id=${this.form.subtest_id}`
+                    : `/api/dashboard/question?page=${page}&subtest_id=${this.form.subtest_id}`;
 
                 const response = await axios.get<QuestionListResponse>(url);
                 const questionData = response.data.data;
@@ -150,8 +150,8 @@ export const useQuestionStore = defineStore('question-admin', {
 
             const isEdit = !!this.form.id;
             const url = isEdit
-                ? `/apiadmin/dashboard/question/${this.form.id}`
-                : `/apiadmin/dashboard/question`;
+                ? `/api/dashboard/question/${this.form.id}`
+                : `/api/dashboard/question`;
 
             const formData = new FormData();
             if (isEdit) {
@@ -214,7 +214,7 @@ export const useQuestionStore = defineStore('question-admin', {
 
         async handleDelete(id: string) {
             this.isLoading = true;
-            const url = `/apiadmin/dashboard/question/${id}`
+            const url = `/api/dashboard/question/${id}`
             try {
                 const response = await axios.delete<ApiResponse<string>>(url);
                 if (response?.status === 200) {

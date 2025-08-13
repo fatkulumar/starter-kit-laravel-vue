@@ -21,7 +21,7 @@ class EventRepository extends Repository implements EventRepositoryInterface
     /**
      * List all data pagninate.
      */
-    public function getEvents(array $payload): object
+    public function getEventPublish(array $payload): object
     {
         $cacheKey = $payload['cacheKey'];
         $minutes = $payload['minutes'];

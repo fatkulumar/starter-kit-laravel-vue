@@ -24,7 +24,7 @@ class PurchaseStoreRequest extends FormRequest
         return [
             'tasks' => 'required|array',
             'tasks.*.label' => 'required|string|max:255',
-            'tasks.*.file' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'tasks.*.file' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
             'tryout_id' => 'required|array',
             'amount' => 'required|integer',
         ];
@@ -43,7 +43,8 @@ class PurchaseStoreRequest extends FormRequest
             'tasks.*.label.string' => 'Label tugas harus berupa teks.',
             'tasks.*.label.max' => 'Label tugas tidak boleh lebih dari :max karakter.',
 
-            'tasks.*.file.image' => 'File pada tugas harus berupa gambar.',
+            'tasks.*.file.required' => 'Butki wajib di isi.',
+            'tasks.*.file.image' => 'Bukti pada tugas harus berupa gambar.',
             'tasks.*.file.mimes' => 'Format gambar harus jpg, jpeg, png, atau webp.',
             'tasks.*.file.max' => 'Ukuran gambar maksimal 2MB.',
 

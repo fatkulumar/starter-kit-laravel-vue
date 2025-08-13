@@ -98,7 +98,7 @@ export const useTryoutStore = defineStore('tryout-admin', {
             const searchQuery = search ?? this.searchQuery;
             
             const isSearching = !!searchQuery;
-            const cacheKey = isSearching ? `search_tryout_admin_event_id_${event_id}_${searchQuery}` : `page_${page}_event_id_${event_id}`;
+            const cacheKey = isSearching ? `search_tryout_admin_event_id_${event_id}_${searchQuery}` : `page_tryout_admin_event_id_${page}_event_id_${event_id}`;
             
             try {
                 this.event_id = event_id;
@@ -133,8 +133,8 @@ export const useTryoutStore = defineStore('tryout-admin', {
                 }
 
                 const url = isSearching
-                    ? `/apiadmin/dashboard/tryout?search=${encodeURIComponent(searchQuery)}&event_id=${event_id}`
-                    : `/apiadmin/dashboard/tryout?page=${page}&event_id=${event_id}`;
+                    ? `/api/dashboard/tryout?search=${encodeURIComponent(searchQuery)}&event_id=${event_id}`
+                    : `/api/dashboard/tryout?page=${page}&event_id=${event_id}`;
 
                 const response = await axios.get<TryoutListResponse>(url);
                 const tryoutData = response.data.data;
@@ -173,8 +173,8 @@ export const useTryoutStore = defineStore('tryout-admin', {
 
             const isEdit = !!this.form.id;
             const url = isEdit
-                ? `/apiadmin/dashboard/tryout/${this.form.id}`
-                : `/apiadmin/dashboard/tryout`;
+                ? `/api/dashboard/tryout/${this.form.id}`
+                : `/api/dashboard/tryout`;
 
             const formData = new FormData();
             if (isEdit) {
@@ -250,7 +250,7 @@ export const useTryoutStore = defineStore('tryout-admin', {
         async handleDelete(id: string) {
             this.isLoading = true;
             const method = 'delete';
-            const url = `/apiadmin/dashboard/tryout/${id}`
+            const url = `/api/dashboard/tryout/${id}`
             try {
                 const response = await axios.delete<ApiResponse<string>>(url);
                 if (response?.status === 200) {
@@ -340,7 +340,7 @@ export const useTryoutStore = defineStore('tryout-admin', {
         async handleDeleteAll() {
             this.isLoading = true;
             const method = 'post';
-            const url = `/apiadmin/dashboard/apiadmin/dashboard/tryout/delete-all `
+            const url = `/api/dashboard/api/dashboard/tryout/delete-all `
             const form = {
                 ids: this.selectedIds
             }

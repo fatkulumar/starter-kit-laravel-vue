@@ -11,22 +11,25 @@ use App\Enums\PaymentStatusEnum;
 use App\Repositories\Admin\Order\OrderRepository;
 use App\Repositories\Admin\Payment\PaymentRepository;
 use App\Repositories\Admin\User\UserRepository;
+use App\Repositories\Student\Purchase\PurchaseRepository;
 use App\Services\Admin\Order\OrderServiceInterface;
 use App\Services\Service;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class OrderService extends Service implements OrderServiceInterface
 {
-    private $orderRepository, $userRepository, $paymentRepository;
+    private $orderRepository, $userRepository, $paymentRepository, $purchaseRepository;
 
     /**
      * Create a new class instance.
      */
-    public function __construct(OrderRepository $orderRepository, UserRepository $userRepository, PaymentRepository $paymentRepository)
+    public function __construct(OrderRepository $orderRepository, UserRepository $userRepository, PaymentRepository $paymentRepository, PurchaseRepository $purchaseRepository)
     {
         $this->orderRepository = $orderRepository;
         $this->userRepository = $userRepository;
         $this->paymentRepository = $paymentRepository;
+        $this->purchaseRepository = $purchaseRepository;
     }
 
     /**
@@ -95,7 +98,14 @@ class OrderService extends Service implements OrderServiceInterface
                     'order_number'      => $order->order_number,
                 ];
                 $this->paymentRepository->updateOrCreate($wherePayment, $dataPayment);
+
+                $this->purchaseRepository->updateOrCreate(
+                    ['order_id' => $order->id],
+                    ['proof' => 'money.png', 'label' => 'Gift dari admin']
+                );
             }
+
+            Cache::flush();
 
             DB::commit();
 

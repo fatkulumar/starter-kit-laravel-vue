@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('purchases', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('order_id')->references('id')->on('orders')->onDelete('cascade');
-            $table->string('proof')->nullable(); // bukti pembayaran
+            $table->string('proof'); // bukti pembayaran
             $table->string('label'); // label bukti
             $table->timestamps();
         });

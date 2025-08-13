@@ -34,8 +34,8 @@ class EventService extends Service implements EventServiceInterface
     /**
      * List data paginate and search.
      */
-    public function getEvents(array $payload): object
+    public function getEventPublish(array $payload): object
     {
-        return $this->eventRepository->getEvents($payload);
+        return $this->eventRepository->getEventPublish($payload);
     }
 }

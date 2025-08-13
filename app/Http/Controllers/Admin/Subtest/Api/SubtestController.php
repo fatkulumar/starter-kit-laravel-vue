@@ -32,7 +32,7 @@ class SubtestController extends Controller
         $tryoutId = $request->query('tryout_id');
         $payload = [
             'search' => $search,
-            'cacheKey' => 'subtests_admin:search=' . ($search ?: 'all') . $tryoutId . ':page=' . $page . '_' . $tryoutId,
+            'cacheKey' => 'subtests_admin:search=' . ($search ?: 'all') . $tryoutId . ':page_subtests_admin=' . $page . '_' . $tryoutId,
             'paginate' => 10,
             'minutes' => 10,
             'tryout_id' => $tryoutId

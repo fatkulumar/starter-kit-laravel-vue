@@ -56,7 +56,7 @@ export const useHasOrderStore = defineStore('has-order-tryout-admin', {
             const isSearching = !!searchQuery;
             const cacheKey = isSearching
                 ? `search_has_order_admin_${tryoutId}_${searchQuery}`
-                : `page_${page}_${tryoutId}`;
+                : `page_has_order_admin_${page}_${tryoutId}`;
 
             try {
                 this.tryoutId = tryoutId
@@ -88,8 +88,8 @@ export const useHasOrderStore = defineStore('has-order-tryout-admin', {
                 }
 
                 const url = isSearching
-                    ? `/apiadmin/dashboard/order/has-order?search=${encodeURIComponent(searchQuery)}&tryout_id=${tryoutId}`
-                    : `/apiadmin/dashboard/order/has-order?page=${page}&tryout_id=${tryoutId}`;
+                    ? `/api/dashboard/order/has-order?search=${encodeURIComponent(searchQuery)}&tryout_id=${tryoutId}`
+                    : `/api/dashboard/order/has-order?page=${page}&tryout_id=${tryoutId}`;
 
                 const response = await axios.get<OrderListResponse>(url);
                 const resultData = response.data.data;
@@ -164,8 +164,8 @@ export const useHasOrderStore = defineStore('has-order-tryout-admin', {
         //         }
 
         //         const url = isSearching
-        //             ? `/apiadmin/dashboard/tryout?search=${encodeURIComponent(searchQuery)}&tryout_id=${tryout_id}`
-        //             : `/apiadmin/dashboard/tryout?page=${page}&tryout_id=${tryout_id}`;
+        //             ? `/api/dashboard/tryout?search=${encodeURIComponent(searchQuery)}&tryout_id=${tryout_id}`
+        //             : `/api/dashboard/tryout?page=${page}&tryout_id=${tryout_id}`;
 
         //         const response = await axios.get<TryoutListResponse>(url);
         //         const tryoutData = response.data.data;

@@ -4,5 +4,5 @@ namespace App\Repositories\Public\Event;
 
 interface EventRepositoryInterface
 {
-    public function getEvents(array $payload): object;
+    public function getEventPublish(array $payload): object;
 }

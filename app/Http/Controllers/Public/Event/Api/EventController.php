@@ -21,7 +21,7 @@ class EventController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): JsonResponse
+    public function getEventPublish(Request $request): JsonResponse
     {
         $search = $request->query('search');
         $page = $request->query('page', 1);
@@ -29,7 +29,7 @@ class EventController extends Controller
             'cacheKey' => 'events_public:search=' . ($search ?: 'all') . ':page=' . $page . '_public',
             'minutes' => 10,
         ];
-        $result = $this->eventService->getEvents($payload);
+        $result = $this->eventService->getEventPublish($payload);
         $this->setResult($result)->setStatus(true)->setMessage('Success Get Data')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }

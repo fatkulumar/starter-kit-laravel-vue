@@ -92,7 +92,7 @@ export const useUserStore = defineStore('user-admin', {
             const searchQuery = search ?? this.searchQuery;
 
             const isSearching = !!searchQuery;
-            const cacheKey = isSearching ? `search_user_admin_${searchQuery}` : `search_users_has_not_tryout_admin__page_${page}`;
+            const cacheKey = isSearching ? `search_users_has_not_tryout_admin_page_${searchQuery}` : `search_users_has_not_tryout_admin_page_${page}`;
 
             try {
                 if (this.userCache.has(cacheKey)) {
@@ -122,8 +122,8 @@ export const useUserStore = defineStore('user-admin', {
                 }
 
                 const url = isSearching
-                    ? `/apiadmin/dashboard/user?search=${encodeURIComponent(searchQuery)}`
-                    : `/apiadmin/dashboard/user?page=${page}`;
+                    ? `/api/dashboard/user?search=${encodeURIComponent(searchQuery)}`
+                    : `/api/dashboard/user?page=${page}`;
 
                 const response = await axios.get<UserListResponse>(url);
                 const userData = response.data.data;
@@ -162,8 +162,8 @@ export const useUserStore = defineStore('user-admin', {
 
             const isEdit = !!this.form.id;
             const url = isEdit
-                ? `/apiadmin/dashboard/user/${this.form.id}`
-                : `/apiadmin/dashboard/user`;
+                ? `/api/dashboard/user/${this.form.id}`
+                : `/api/dashboard/user`;
 
             const formData = new FormData();
             if (isEdit) {
@@ -223,7 +223,7 @@ export const useUserStore = defineStore('user-admin', {
         async handleDelete(id: string) {
             this.isLoading = true;
             const method = 'delete';
-            const url = `/apiadmin/dashboard/user/${id}`
+            const url = `/api/dashboard/user/${id}`
             try {
                 const response = await axios.delete<ApiResponse<string>>(url);
                 if (response?.status === 200) {
@@ -307,7 +307,7 @@ export const useUserStore = defineStore('user-admin', {
         async handleDeleteAll() {
             this.isLoading = true;
             const method = 'post';
-            const url = `/apiadmin/dashboard/user/delete-all `
+            const url = `/api/dashboard/user/delete-all `
             const form = {
                 ids: this.selectedIds
             }
@@ -389,8 +389,8 @@ export const useUserStore = defineStore('user-admin', {
                 }
 
                 const url = isSearching
-                    ? `/apiadmin/dashboard/user/not-has-tryout?search=${encodeURIComponent(searchQuery)}`
-                    : `/apiadmin/dashboard/user/not-has-tryout?page=${page}`;
+                    ? `/api/dashboard/user/not-has-tryout?search=${encodeURIComponent(searchQuery)}`
+                    : `/api/dashboard/user/not-has-tryout?page=${page}`;
 
                 const responseNotHasTryout = await axios.get<UserListResponse>(url);
                 const userDataNotHasTryout = responseNotHasTryout.data.data;

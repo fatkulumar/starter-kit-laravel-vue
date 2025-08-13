@@ -8,4 +8,5 @@ interface OrderRepositoryInterface
     public function findByTryoutId(array $payload): object;
     public function findByTryoutIdCount(string $tryoutId): int;
     public function findOrderByUserIdTryoutId(string $userId, string $tryoutId): object;
+    public function getPurchases(array $payload): object;
 }

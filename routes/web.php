@@ -40,6 +40,9 @@ require __DIR__.'/admin/subtest/view/subtest.php';
 // admin question
 require __DIR__.'/admin/question/api/question.php';
 require __DIR__.'/admin/question/view/question.php';
+// admin purchase
+require __DIR__.'/admin/purchase/api/purchase.php';
+require __DIR__.'/admin/purchase/view/purchase.php';
 
 
 

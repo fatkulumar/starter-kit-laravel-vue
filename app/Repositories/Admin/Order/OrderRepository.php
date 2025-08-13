@@ -63,8 +63,29 @@ class OrderRepository extends Repository implements OrderRepositoryInterface
     public function findOrderByUserIdTryoutId(string $userId, string $tryoutId): object
     {
         return $this->model::with(['purchase:id,order_id,proof'])
-                ->where('user_id', $userId)
-                ->where('tryout_id', $tryoutId)
-                ->first(['id', 'user_id', 'tryout_id']);
+            ->where('user_id', $userId)
+            ->where('tryout_id', $tryoutId)
+            ->first(['id', 'user_id', 'tryout_id']);
+    }
+
+    /**
+     * Get for purchase admin.
+     */
+    public function getPurchases(array $payload): object
+    {
+        $search = $payload['search'];
+        $cacheKey = $payload['cacheKey'];
+        $paginate = $payload['paginate'];
+        $minutes = $payload['minutes'];
+        return Cache::remember($cacheKey, now()->addMinutes($minutes), function () use ($search, $paginate) {
+            return $this->model::with([
+                    'user:id,name,email',
+                    'purchases:id,order_id,proof',
+                    'tryout:id,title'
+                ])
+                ->select('id', 'user_id', 'tryout_id', 'amount', 'status')
+                ->filter($search)
+                ->paginate($paginate);
+        });
     }
 }

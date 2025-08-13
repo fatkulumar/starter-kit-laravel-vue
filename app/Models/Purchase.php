@@ -53,4 +53,25 @@ class Purchase extends Model
             ? asset($this->settings['path'] . $this->proof)
             : null;
     }
+
+    /**
+     * Filtering.
+     */
+    public function scopeFilter($query, $search)
+    {
+        $query->when($search, function ($q) use ($search) {
+            $search = strtolower($search);
+
+            $q->where(function ($subQuery) use ($search) {
+                $subQuery
+                    ->whereHas('order.user', function ($q2) use ($search) {
+                        $q2->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
+                            ->orWhereRaw('LOWER(email) LIKE ?', ["%{$search}%"]);
+                    })
+                    ->orWhereHas('order.tryout', function ($q3) use ($search) {
+                        $q3->whereRaw('LOWER(title) LIKE ?', ["%{$search}%"]);
+                    });
+            });
+        });
+    }
 }

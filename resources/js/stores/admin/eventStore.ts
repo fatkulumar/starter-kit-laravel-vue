@@ -98,7 +98,7 @@ export const useEventStore = defineStore('event-admin', {
             const searchQuery = search ?? this.searchQuery;
 
             const isSearching = !!searchQuery;
-            const cacheKey = isSearching ? `search_event_admin_${searchQuery}` : `page_${page}`;
+            const cacheKey = isSearching ? `search_event_admin_${searchQuery}` : `page_event_admin_${page}`;
 
             try {
                 if (this.eventCache.has(cacheKey)) {
@@ -128,8 +128,8 @@ export const useEventStore = defineStore('event-admin', {
                 }
 
                 const url = isSearching
-                    ? `/apiadmin/dashboard/event?search=${encodeURIComponent(searchQuery)}`
-                    : `/apiadmin/dashboard/event?page=${page}`;
+                    ? `/api/dashboard/event?search=${encodeURIComponent(searchQuery)}`
+                    : `/api/dashboard/event?page=${page}`;
 
                 const response = await axios.get<EventListResponse>(url);
                 const eventData = response.data.data;
@@ -168,8 +168,8 @@ export const useEventStore = defineStore('event-admin', {
 
             const isEdit = !!this.form.id;
             const url = isEdit
-                ? `/apiadmin/dashboard/event/${this.form.id}`
-                : `/apiadmin/dashboard/event`;
+                ? `/api/dashboard/event/${this.form.id}`
+                : `/api/dashboard/event`;
 
             const formData = new FormData();
             if (isEdit) {
@@ -254,7 +254,7 @@ export const useEventStore = defineStore('event-admin', {
 
         async handleDelete(id: string) {
             this.isLoading = true;
-            const url = `/apiadmin/dashboard/event/${id}`
+            const url = `/api/dashboard/event/${id}`
             try {
                 const response = await axios.delete<ApiResponse<string>>(url);
                 if (response?.status === 200) {
@@ -346,7 +346,7 @@ export const useEventStore = defineStore('event-admin', {
 
         async handleDeleteAll() {
             this.isLoading = true;
-            const url = `/apiadmin/dashboard/event/delete-all `
+            const url = `/api/dashboard/event/delete-all `
             const form = {
                 ids: this.selectedIds
             }

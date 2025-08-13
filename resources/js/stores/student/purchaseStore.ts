@@ -23,9 +23,9 @@ export const usePurchaseStore = defineStore('purchase', {
         modalUploadRequirements: false,
         tasks: [
             { label: 'Follow Instagram', file: null, preview: '' },
-            // { label: 'Komen dan tag 10 Teman postingan Instagram', file: null, preview: '' },
-            // { label: 'Share postingan ini di story kamu dan tag instagram', file: null, preview: '' },
-            // { label: 'Share postingan instagram ke 3 grup belajar kamu', file: null, preview: '' }
+            { label: 'Komen dan tag 10 Teman postingan Instagram', file: null, preview: '' },
+            { label: 'Share postingan ini di story kamu dan tag instagram', file: null, preview: '' },
+            { label: 'Share postingan instagram ke 3 grup belajar kamu', file: null, preview: '' }
         ],
         requirementFiles: {},
         requirementPreviews: {},

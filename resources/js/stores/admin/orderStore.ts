@@ -69,7 +69,7 @@ export const useOrderStore = defineStore('order-tryout-admin', {
             const searchQuery = search ?? this.searchQuery;
 
             const isSearching = !!searchQuery;
-            const cacheKey = isSearching ? `search_order_admin_${searchQuery}` : `page_${page}`;
+            const cacheKey = isSearching ? `search_order_admin_${searchQuery}` : `page_order_admin_${page}`;
 
             try {
                 if (this.orderCache.has(cacheKey)) {
@@ -103,8 +103,8 @@ export const useOrderStore = defineStore('order-tryout-admin', {
                 }
 
                 const url = isSearching
-                    ? `/apiadmin/dashboard/order?search=${encodeURIComponent(searchQuery)}`
-                    : `/apiadmin/dashboard/order?page=${page}`;
+                    ? `/api/dashboard/order?search=${encodeURIComponent(searchQuery)}`
+                    : `/api/dashboard/order?page=${page}`;
 
                 const response = await axios.get<OrderListResponse>(url);
                 const orderData = response.data.data;
@@ -145,7 +145,7 @@ export const useOrderStore = defineStore('order-tryout-admin', {
             const trueConfirm = confirm(`Gift ?`)
             if (trueConfirm) {
                 const formData = new FormData();
-                const url = `/apiadmin/dashboard/order/gift-tryout`;
+                const url = `/api/dashboard/order/gift-tryout`;
                 formData.append('_method', 'POST');
                 this.form.user_id.forEach(id => {
                     formData.append('user_id[]', id);

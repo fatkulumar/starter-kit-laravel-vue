@@ -60,7 +60,7 @@ const allFilesUploaded = computed(() => {
     </div>
 
     <div class="w-full mt-6">
-      <Button class="mx-auto block cursor-pointer" :disabled="isLoading || !allFilesUploaded" @click="onUpload">
+      <Button class="mx-auto block cursor-pointer" @click="onUpload">
         <template v-if="isLoading">
           <Loader />
         </template>

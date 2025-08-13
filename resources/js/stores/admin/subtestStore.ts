@@ -60,7 +60,7 @@ export const useSubtestStore = defineStore('subtest-admin', {
             const searchQuery = search ?? this.searchQuery;
 
             const isSearching = !!searchQuery;
-            const cacheKey = isSearching ? `search_subtest_admin_${searchQuery}_${tryoutId}` : `page_${page}_${tryoutId}`;
+            const cacheKey = isSearching ? `search_subtest_admin_${searchQuery}_${tryoutId}` : `page_subtest_${page}_${tryoutId}`;
 
             try {
                 this.form.tryout_id = tryoutId;
@@ -91,8 +91,8 @@ export const useSubtestStore = defineStore('subtest-admin', {
                 }
 
                 const url = isSearching
-                    ? `/apiadmin/dashboard/subtest?search=${encodeURIComponent(searchQuery)}&tryout_id=${tryoutId}`
-                    : `/apiadmin/dashboard/subtest?page=${page}&tryout_id=${tryoutId}`;
+                    ? `/api/dashboard/subtest?search=${encodeURIComponent(searchQuery)}&tryout_id=${tryoutId}`
+                    : `/api/dashboard/subtest?page=${page}&tryout_id=${tryoutId}`;
 
                 const response = await axios.get<SubtestListResponse>(url);
                 const subteststData = response.data.data;
@@ -133,8 +133,8 @@ export const useSubtestStore = defineStore('subtest-admin', {
 
             const isEdit = !!this.form.id;
             const url = isEdit
-                ? `/apiadmin/dashboard/subtest/${this.form.id}`
-                : `/apiadmin/dashboard/subtest`;
+                ? `/api/dashboard/subtest/${this.form.id}`
+                : `/api/dashboard/subtest`;
 
             const formData = new FormData();
             if (isEdit) {
@@ -190,7 +190,7 @@ export const useSubtestStore = defineStore('subtest-admin', {
         async handleDelete(id: string) {
             this.isLoading = true;
             const method = 'delete';
-            const url = `/apiadmin/dashboard/subtest/${id}`
+            const url = `/api/dashboard/subtest/${id}`
             try {
                 const response = await axios.delete<ApiResponse<string>>(url);
                 if (response?.status === 200) {
@@ -269,7 +269,7 @@ export const useSubtestStore = defineStore('subtest-admin', {
         // Delete all.
         async handleDeleteAll() {
             this.isLoading = true;
-            const url = `/apiadmin/dashboard/subtest/delete-all `
+            const url = `/api/dashboard/subtest/delete-all `
             const form = {
                 ids: this.selectedIds
             }
