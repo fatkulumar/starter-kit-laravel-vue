@@ -79,13 +79,40 @@ class OrderRepository extends Repository implements OrderRepositoryInterface
         $minutes = $payload['minutes'];
         return Cache::remember($cacheKey, now()->addMinutes($minutes), function () use ($search, $paginate) {
             return $this->model::with([
-                    'user:id,name,email',
-                    'purchases:id,order_id,proof',
-                    'tryout:id,title'
-                ])
+                'user:id,name,email',
+                'purchases:id,order_id,proof',
+                'tryout:id,title'
+            ])
                 ->select('id', 'user_id', 'tryout_id', 'amount', 'status')
                 ->filter($search)
                 ->paginate($paginate);
         });
+    }
+
+    /**
+     * Get with purchase admin.
+     */
+    public function getOrderWithPurchase(string $orderId): object
+    {
+        return $this->model::with([
+            'user:id,name,email',
+            'purchases:id,order_id,proof',
+            'tryout:id,title'
+        ])
+            ->where('id', $orderId)
+            ->select('id', 'user_id', 'tryout_id', 'amount', 'status')
+            ->first();
+    }
+
+    /**
+     * Change status.
+     */
+    public function updateStatus(array $data): object
+    {
+        $model = $this->model::findOrFail($data['id']);
+        $model->status = $data['status'];
+        $model->save();
+
+        return $model;
     }
 }

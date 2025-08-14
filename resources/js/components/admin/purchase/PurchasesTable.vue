@@ -65,8 +65,8 @@ const { purchaseStore, purchases } = defineProps({
                             <a href="#" class="flex gap-2 font-medium text-blue-600 dark:text-blue-500 cursor-pointer">
                                 <PencilIcon @click="purchaseStore.handleEdit(item)"
                                     class="h-8 w-8 bg-red-600 rounded-md p-1" />
-                                <TrashIcon @click="purchaseStore.handleConfirmDelete(item)"
-                                    class="h-8 w-8 bg-blue-600 rounded-md p-1" />
+                                <!-- <TrashIcon @click="purchaseStore.handleConfirmDelete(item)"
+                                    class="h-8 w-8 bg-blue-600 rounded-md p-1" /> -->
                             </a>
                         </td>
                         <td class="px-6 py-4">

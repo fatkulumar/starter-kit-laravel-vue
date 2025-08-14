@@ -3,7 +3,10 @@
 namespace App\Services\Admin\Purchase;
 
 use App\DataTransferObjects\EventDTO;
+use App\DataTransferObjects\PurchaseAdminDTO;
+use App\Enums\PaymentStatusEnum;
 use App\Repositories\Admin\Order\OrderRepository;
+use App\Repositories\Admin\Payment\PaymentRepository;
 use App\Repositories\Admin\Purchase\PurchaseRepository;
 use App\Services\Service;
 use App\Traits\FileUpload;
@@ -12,7 +15,7 @@ use Illuminate\Support\Facades\Cache;
 class PurchaseService extends Service implements PurchaseServiceInterface
 {
     use FileUpload;
-    private $purchaseRepository, $orderRepository;
+    private $purchaseRepository, $orderRepository, $paymentRepository;
 
     /**
      * iniliazed from trait FileUpload.
@@ -29,10 +32,11 @@ class PurchaseService extends Service implements PurchaseServiceInterface
     /**
      * Create a new class instance.
      */
-    public function __construct(PurchaseRepository $purchaseRepository, OrderRepository $orderRepository)
+    public function __construct(PurchaseRepository $purchaseRepository, OrderRepository $orderRepository, PaymentRepository $paymentRepository)
     {
         $this->purchaseRepository = $purchaseRepository;
         $this->orderRepository = $orderRepository;
+        $this->paymentRepository = $paymentRepository;
     }
 
     /**
@@ -46,87 +50,63 @@ class PurchaseService extends Service implements PurchaseServiceInterface
     /**
      * Create data.
      */
-    public function store(EventDTO $dto): object
-    {
-        $data = [
-            'title' => $dto->title,
-            'description' => $dto->description,
-            'start_time' => $dto->start_time,
-            'end_time' => $dto->end_time,
-            'registration_deadline' => $dto->registration_deadline,
-            'preliminary_date' => $dto->preliminary_date,
-            'final_date' => $dto->final_date,
-            'whatsapp_group_link' => $dto->whatsapp_group_link,
-            'guidebook_link' => $dto->guidebook_link,
-            'location' => $dto->location,
-            'link_zoom' => $dto->link_zoom,
-            'quota' => $dto->quota,
-            'is_publish' => $dto->is_publish,
-        ];
+    // public function store(EventDTO $dto): object
+    // {
+    //     $data = [
+    //         'title' => $dto->title,
+    //         'description' => $dto->description,
+    //         'start_time' => $dto->start_time,
+    //         'end_time' => $dto->end_time,
+    //         'registration_deadline' => $dto->registration_deadline,
+    //         'preliminary_date' => $dto->preliminary_date,
+    //         'final_date' => $dto->final_date,
+    //         'whatsapp_group_link' => $dto->whatsapp_group_link,
+    //         'guidebook_link' => $dto->guidebook_link,
+    //         'location' => $dto->location,
+    //         'link_zoom' => $dto->link_zoom,
+    //         'quota' => $dto->quota,
+    //         'is_publish' => $dto->is_publish,
+    //     ];
 
 
-        $uploadBanner = null;
+    //     $uploadBanner = null;
 
-        if ($dto->banner instanceof \Illuminate\Http\UploadedFile) {
-            $this->fileSettings();
-            $uploadBanner = $this->uploadFile($dto->banner);
-        } else {
-            $uploadBanner = null;
-        }
+    //     if ($dto->banner instanceof \Illuminate\Http\UploadedFile) {
+    //         $this->fileSettings();
+    //         $uploadBanner = $this->uploadFile($dto->banner);
+    //     } else {
+    //         $uploadBanner = null;
+    //     }
 
-        $data['banner'] = $uploadBanner;
+    //     $data['banner'] = $uploadBanner;
 
-        $purchaseRepository = $this->purchaseRepository->store($data);
+    //     $purchaseRepository = $this->purchaseRepository->store($data);
 
-        Cache::flush();
+    //     Cache::flush();
 
-        return $this->purchaseRepository->getEventWithTryoutLatest($purchaseRepository->id);
-    }
+    //     return $this->purchaseRepository->getEventWithTryoutLatest($purchaseRepository->id);
+    // }
 
 
     /**
      * update data.
      */
-    public function update(EventDTO $dto): object
+    public function update(string $status, string $id)
+    // : object
     {
-        $purchaseRepository = $this->purchaseRepository->show($dto->id);
+        return $purchaseRepository = $this->orderRepository->getOrderWithPurchase($id);
 
         $updateData = [];
 
-        if ($dto->title !== null) $updateData['title'] = $dto->title;
-        $updateData['description'] = $dto->description;
-        if ($dto->round !== null) $updateData['round'] = $dto->round;
-        if ($dto->start_time !== null) $updateData['start_time'] = $dto->start_time;
-        if ($dto->end_time !== null) $updateData['end_time'] = $dto->end_time;
-        if ($dto->registration_deadline !== null) $updateData['registration_deadline'] = $dto->registration_deadline;
-        $updateData['preliminary_date'] = $dto->preliminary_date;
-        if ($dto->final_date !== null) $updateData['final_date'] = $dto->final_date;
-        $updateData['whatsapp_group_link'] = $dto->whatsapp_group_link;
-        $updateData['guidebook_link'] = $dto->guidebook_link;
-        $updateData['location'] = $dto->location;
-        if ($dto->is_online !== null) $updateData['is_online'] = $dto->is_online;
-        $updateData['link_zoom'] = $dto->link_zoom;
-        if ($dto->quota !== null) $updateData['quota'] = $dto->quota;
-        if ($dto->is_publish !== null) $updateData['is_publish'] = $dto->is_publish;
-
-        if ($dto->banner) {
-            $this->fileSettings();
-
-            if ($purchaseRepository->banner) {
-                $this->deleteFile($purchaseRepository->banner);
-            }
-
-            $uploadBanner = $this->uploadFile($dto->banner);
-
-            $updateData['banner'] = $uploadBanner;
-        }
+        if ($status !== null) $updateData['status'] = $status;
 
         $purchaseRepository->fill($updateData);
+
         $purchaseRepository->save();
 
         Cache::flush();
 
-        return $this->purchaseRepository->getEventWithTryout($dto->id);
+        return $this->purchaseRepository->getOrderWithPurchase($dto->id);
     }
 
 
@@ -135,10 +115,15 @@ class PurchaseService extends Service implements PurchaseServiceInterface
      */
     public function delete(string $id): bool
     {
-        $data = $this->purchaseRepository->show($id);
-        $this->fileSettings();
-        if ($data->banner && $this->isFileExists($data->banner)) {
-            $this->deleteFile($data->banner);
+        $data = $this->orderRepository->getOrderWithPurchase($id);
+        $purchases = $data->purchases;
+        if ($purchases) {
+            foreach ($purchases as $item) {
+                $this->fileSettings();
+                if ($this->isFileExists($item->proof)) {
+                    $this->deleteFile($item->proof);
+                }
+            }
         }
         Cache::flush();
         return $data->delete($id);
@@ -150,10 +135,16 @@ class PurchaseService extends Service implements PurchaseServiceInterface
     public function destroy(array $ids): array
     {
         foreach ($ids as $id) {
-            $data = $this->purchaseRepository->show($id);
             $this->fileSettings();
-            if ($data->banner && $this->isFileExists($data->banner)) {
-                $this->deleteFile($data->banner);
+            $data = $this->orderRepository->getOrderWithPurchase($id);
+            $purchases = $data->purchases;
+            if ($purchases) {
+                foreach ($purchases as $item) {
+                    $this->fileSettings();
+                    if ($this->isFileExists($item->proof)) {
+                        $this->deleteFile($item->proof);
+                    }
+                }
             }
             $data->delete($id);
         }
@@ -161,19 +152,38 @@ class PurchaseService extends Service implements PurchaseServiceInterface
         return $ids;
     }
 
+    public function confirm(array $data): object
+    {
+        $order =  $this->orderRepository->updateStatus($data);
+        if ($order->status == 'paid') {
+            $dataUpdateStatusPayment = [
+                'order_id' => $order->id,
+                'status' => PaymentStatusEnum::SETTLEMENT->value
+            ];
+            $this->paymentRepository->updateStatus($dataUpdateStatusPayment);
+        }
+        if ($order->status == 'cancelled') {
+            $dataUpdateStatusPayment = [
+                'order_id' => $order->id,
+                'status' => PaymentStatusEnum::CANCEL->value
+            ];
+            $this->paymentRepository->updateStatus($dataUpdateStatusPayment);
+        }
+        return $this->orderRepository->getOrderWithPurchase($order->id);
+    }
     /**
      * find.
      */
-    public function show(string $id): object
-    {
-        return $this->purchaseRepository->show($id);
-    }
+    // public function show(string $id): object
+    // {
+    //     return $this->purchaseRepository->show($id);
+    // }
 
     /**
      * Find by event_code
      */
-    public function findByEventCode(string $eventCode): object
-    {
-        return $this->purchaseRepository->findByEventCode($eventCode);
-    }
+    // public function findByEventCode(string $eventCode): object
+    // {
+    //     return $this->purchaseRepository->findByEventCode($eventCode);
+    // }
 }

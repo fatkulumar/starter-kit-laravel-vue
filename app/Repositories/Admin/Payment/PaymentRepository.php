@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Admin\Payment;
 
+use App\Enums\PaymentStatusEnum;
 use App\Models\Payment;
 use App\Repositories\Repository;
 use Illuminate\Support\Str;
@@ -28,5 +29,15 @@ class PaymentRepository extends Repository implements PaymentRepositoryInterface
         } while ($this->model::where('reference', $paymentNumber)->exists());
 
         return $paymentNumber;
+    }
+
+     /**
+     * Update status.
+     */
+    public function updateStatus(array $data): bool
+    {
+        return $this->model::where('order_id', $data['order_id'])->update([
+            'status' => $data['status']
+        ]);
     }
 }

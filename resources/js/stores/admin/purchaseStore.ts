@@ -37,12 +37,13 @@ export const usePurchaseStore = defineStore('purchase-admin', {
         page: number
         searchQuery: string,
         purchaseCache: Map<string, PurchaseListResponse>,
-        showModal: boolean,
+        showModalConfirm: boolean,
         previewProof: string,
         checkedAll: boolean,
         selectedIds: string[],
         expandedIndex: number | null,
-        form: PurchaseForm
+        form: PurchaseForm,
+        proof: Record<string, any> | null,
     } => ({
         purchases: [] as Order[],
         isLoading: false,
@@ -51,7 +52,7 @@ export const usePurchaseStore = defineStore('purchase-admin', {
         page: 1,
         searchQuery: '',
         purchaseCache: new Map<string, PurchaseListResponse>(),
-        showModal: false,
+        showModalConfirm: false,
         previewProof: '',
         checkedAll: false,
         selectedIds: [],
@@ -63,7 +64,8 @@ export const usePurchaseStore = defineStore('purchase-admin', {
             tryout_title: '',
             status: '',
             amount: 0
-        })
+        }),
+        proof: null
     }),
     getters: {
         isStatusOrderOptions(): { label: string; value: string }[] {
@@ -178,7 +180,7 @@ export const usePurchaseStore = defineStore('purchase-admin', {
                     }
 
                     this.hanldeResetForm();
-                    this.showModal = false;
+                    this.showModalConfirm = false;
                     this.error = null;
                 }
             } catch (err: any) {
@@ -199,36 +201,37 @@ export const usePurchaseStore = defineStore('purchase-admin', {
             this.form.tryout_title = item.tryout?.title;
             this.form.status = item.status;
             this.form.amount = item.amount;
-            this.showModal = true;
+            this.proof = item.purchases;
+            this.showModalConfirm = true;
         },
 
-        async handleDelete(id: string) {
-            this.isLoading = true;
-            const url = `/api/dashboard/purchase/${id}`
-            try {
-                const response = await axios.delete<ApiResponse<string>>(url);
-                if (response?.status === 200) {
-                    this.purchases = this.purchases.filter(purchase => purchase.id !== id);
-                    this.showModal = false;
-                    this.error = null;
-                }
-            } catch (err: any) {
-                if (err?.response?.status === 422) {
-                    this.error = err.response.data.errors || { message: 'Data tidak valid' };
-                } else {
-                    this.error = err?.response?.data || { message: 'Gagal delete data event' };
-                }
-            } finally {
-                this.isLoading = false;
-            }
-        },
+        // async handleDelete(id: string) {
+        //     this.isLoading = true;
+        //     const url = `/api/dashboard/purchase/${id}`
+        //     try {
+        //         const response = await axios.delete<ApiResponse<string>>(url);
+        //         if (response?.status === 200) {
+        //             this.purchases = this.purchases.filter(purchase => purchase.id !== id);
+        //             this.showModalConfirm = false;
+        //             this.error = null;
+        //         }
+        //     } catch (err: any) {
+        //         if (err?.response?.status === 422) {
+        //             this.error = err.response.data.errors || { message: 'Data tidak valid' };
+        //         } else {
+        //             this.error = err?.response?.data || { message: 'Gagal delete data event' };
+        //         }
+        //     } finally {
+        //         this.isLoading = false;
+        //     }
+        // },
 
-        async handleConfirmDelete(item: Order): Promise<void> {
-            // const konfirm = confirm(`Hapus ${item.title}?`)
-            // if (konfirm) {
-            //     await this.handleDelete(item.id);
-            // }
-        },
+        // async handleConfirmDelete(item: Order): Promise<void> {
+        //     const konfirm = confirm(`Hapus ${item.user?.name}?`)
+        //     if (konfirm) {
+        //         await this.handleDelete(item.id);
+        //     }
+        // },
 
         handlePageChange(page: number): void {
             this.fetchPurchases(page);
@@ -256,7 +259,7 @@ export const usePurchaseStore = defineStore('purchase-admin', {
         // },
 
         handleCloseModal(): void {
-            this.showModal = false;
+            this.showModalConfirm = false;
             this.hanldeResetForm();
         },
 
@@ -330,6 +333,50 @@ export const usePurchaseStore = defineStore('purchase-admin', {
         // convert to rupiah
         formatRupiah(value: number | string): string {
             return formatRupiah(value);
+        },
+
+        // confirm purchase
+        async handleConfirmPurchase(name: string | undefined, id: string | undefined): Promise<void> {
+            const konfirm = confirm(`Konfirmasi Pembayaran ${name}?`)
+            if (konfirm) {
+                await this.handleConfirmationPurchase(id, 'paid');
+            }
+        },
+
+         // reject purchase
+        async handleRejectPurchase(name: string | undefined, id: string | undefined): Promise<void> {
+            const konfirm = confirm(`Tolak Pembayaran ${name}?`)
+            if (konfirm) {
+                await this.handleConfirmationPurchase(id, 'cancelled');
+            }
+        },
+
+        // confirmation purchase
+        async handleConfirmationPurchase(id: string | undefined, StatusOrder: string)
+        {
+            this.isLoading = true;
+            const url = `/api/dashboard/purchase/confirm `
+            const form = {
+                id: id,
+                status: StatusOrder
+            }
+            try {
+                const response = await axios.post<ApiResponse<Order>>(url, form);
+                if (response?.status === 200) {
+                    const data = response.data.data;
+                    this.purchases = this.purchases.map(u => u.id === data.id ? data : u);
+                    this.error = null;
+                    this.showModalConfirm = false;
+                }
+            } catch (err: any) {
+                if (err?.response?.status === 422) {
+                    this.error = err.response.data.errors || { message: 'Data tidak valid' };
+                } else {
+                    this.error = err?.response?.data || { message: 'Gagal konfirmasi data purchase' };
+                }
+            } finally {
+                this.isLoading = false;
+            }
         }
     }
 });
