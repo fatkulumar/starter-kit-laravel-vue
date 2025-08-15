@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin\Purchase;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PurchaseDeleteAllRequest extends FormRequest
+class PurchasecConfrimAllRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,14 +22,19 @@ class PurchaseDeleteAllRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ids' => ['required', 'array']
+            'ids' => ['required', 'array'],
+            'status' => 'required', 'string', 'in:panding,paid,failed,cancelled'
         ];
     }
 
     public function messages(): array
     {
-        return [
-            'ids.required' => 'Data wajib diisi.',
+         return [
+            'ids.required'   => 'Data ID pembelian wajib diisi.',
+            'ids.array'      => 'Data ID pembelian harus berupa array.',
+            'status.required'=> 'Status wajib diisi.',
+            'status.string'  => 'Status harus berupa teks.',
+            'status.in'      => 'Status harus salah satu dari: pending, paid, failed, atau cancelled.',
         ];
     }
 }

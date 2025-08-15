@@ -6,6 +6,7 @@ use phpDocumentor\Reflection\Types\Boolean;
 
 interface InterfaceRepository
 {
+    public function getIn(array $ids): object;
     public function all(array $payload): object;
     public function store(array $data): object;
     public function show(string $id): object;

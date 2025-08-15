@@ -65,6 +65,7 @@ const todayDateTime = computed(() => {
                 @page-change="purchaseStore.handlePageChange" />
         </div>
 
+        <!-- modal confirmation and reject -->
         <Modal :show="purchaseStore.showModalConfirm" @close="purchaseStore.handleCloseModal" class="max-w-xl">
             <h2 class="mb-5 truncate leading-tight font-semibold">{{ purchaseStore.form.id ? 'Form Edit Pembayaran' :
                 'Form Tambah Pembayaran' }}</h2>
@@ -98,8 +99,8 @@ const todayDateTime = computed(() => {
 
 
                 <div class="grid grid-cols-2 gap-2">
-                    <Button @click="purchaseStore.handleConfirmPurchase(purchaseStore.form.name, purchaseStore.form.id)" type="button"
-                        class="mt-2 w-full" :tabindex="15" :disabled="purchaseStore.isLoading">
+                    <Button @click="purchaseStore.handleConfirmPurchase(purchaseStore.form.name, purchaseStore.form.id)"
+                        type="button" class="mt-2 w-full" :tabindex="15" :disabled="purchaseStore.isLoading">
                         <LoaderCircle v-if="purchaseStore.isLoading" class="h-4 w-4 animate-spin" />
                         Konfirm
                     </Button>
@@ -107,6 +108,30 @@ const todayDateTime = computed(() => {
                         @click="purchaseStore.handleRejectPurchase(purchaseStore.form.name, purchaseStore.form.id)">
                         <LoaderCircle v-if="purchaseStore.isLoading" class="h-4 w-4 animate-spin" />
                         Reject
+                    </Button>
+                </div>
+            </form>
+        </Modal>
+
+        <!-- modal confirma -->
+        <Modal :show="purchaseStore.showModalConfirmIds" @close="purchaseStore.handleCloseModal" class="max-w-xl">
+            <h2 class="mb-5 truncate leading-tight font-semibold">{{ purchaseStore.form.id ? 'Form Edit Pembayaran' :
+                'Form Tambah Pembayaran' }}</h2>
+            <form enctype="multipart/form-data" class="space-y-3" @submit.prevent="purchaseStore.handleSave">
+                <div class="flex flex-col">
+                    <div class="overflow-auto max-h-64 max-w-full border rounded p-2">
+                        <Label for="status">Mata Pelajaran</Label>
+                        <Select id="status" tabindex="4" v-model="purchaseStore.form.status"
+                            :options="purchaseStore.isStatusOrderOptions" placeholder="Pilih Mata Pelajaran" class="mt-2" />
+                        <InputError :message="purchaseStore.error?.status?.[0]" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <Button @click="purchaseStore.handleSubmitConfirmIds"
+                        type="button" class="mt-2 w-full" :tabindex="15" :disabled="purchaseStore.isLoading">
+                        <LoaderCircle v-if="purchaseStore.isLoading" class="h-4 w-4 animate-spin" />
+                        Submit
                     </Button>
                 </div>
             </form>

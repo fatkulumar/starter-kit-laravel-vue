@@ -30,6 +30,7 @@ class SubtestDeleteAllRequest extends FormRequest
     {
         return [
             'ids.required' => 'Data wajib diisi.',
+            'ids.array' => 'Data wajib array.',
         ];
     }
 }

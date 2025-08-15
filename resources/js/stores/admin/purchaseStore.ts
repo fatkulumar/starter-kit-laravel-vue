@@ -38,6 +38,7 @@ export const usePurchaseStore = defineStore('purchase-admin', {
         searchQuery: string,
         purchaseCache: Map<string, PurchaseListResponse>,
         showModalConfirm: boolean,
+        showModalConfirmIds: boolean,
         previewProof: string,
         checkedAll: boolean,
         selectedIds: string[],
@@ -53,6 +54,7 @@ export const usePurchaseStore = defineStore('purchase-admin', {
         searchQuery: '',
         purchaseCache: new Map<string, PurchaseListResponse>(),
         showModalConfirm: false,
+        showModalConfirmIds: false,
         previewProof: '',
         checkedAll: false,
         selectedIds: [],
@@ -260,6 +262,7 @@ export const usePurchaseStore = defineStore('purchase-admin', {
 
         handleCloseModal(): void {
             this.showModalConfirm = false;
+            this.showModalConfirmIds = false;
             this.hanldeResetForm();
         },
 
@@ -343,7 +346,7 @@ export const usePurchaseStore = defineStore('purchase-admin', {
             }
         },
 
-         // reject purchase
+        // reject purchase
         async handleRejectPurchase(name: string | undefined, id: string | undefined): Promise<void> {
             const konfirm = confirm(`Tolak Pembayaran ${name}?`)
             if (konfirm) {
@@ -352,8 +355,7 @@ export const usePurchaseStore = defineStore('purchase-admin', {
         },
 
         // confirmation purchase
-        async handleConfirmationPurchase(id: string | undefined, StatusOrder: string)
-        {
+        async handleConfirmationPurchase(id: string | undefined, StatusOrder: string) {
             this.isLoading = true;
             const url = `/api/dashboard/purchase/confirm `
             const form = {
@@ -377,6 +379,50 @@ export const usePurchaseStore = defineStore('purchase-admin', {
             } finally {
                 this.isLoading = false;
             }
-        }
+        },
+
+        // hanlde confirm
+        async hanldeConfirm(): Promise<void> {
+            this.showModalConfirmIds = true;
+        },
+
+        // hanlde confirm
+        async handleSubmitConfirmIds(): Promise<void> {
+            this.isLoading = true;
+
+            const url = `/api/dashboard/purchase/confirmation-all`;
+
+
+            const formData = {
+                status: this.form.status,
+                ids: this.selectedIds
+            }
+
+            try {
+                const response = await axios.post<ApiResponse<Order[]>>(url, formData);
+
+                if (response?.status === 200) {
+                    const updatedPurchases = response.data.data;
+
+                    this.purchases = this.purchases.map(u => {
+                        const found = updatedPurchases.find(up => up.id === u.id);
+                        return found ? found : u;
+                    });
+
+                    this.error = null;
+                    this.selectedIds = [];
+                    this.showModalConfirmIds = false;
+                }
+
+            } catch (err: any) {
+                if (err?.response?.status === 422) {
+                    this.error = err.response.data.errors || { message: 'Data tidak valid' };
+                } else {
+                    this.error = err?.response?.data || { message: 'Gagal submit data konfirmasi purchase' };
+                }
+            } finally {
+                this.isLoading = false;
+            }
+        },
     }
 });

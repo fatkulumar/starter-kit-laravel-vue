@@ -29,8 +29,8 @@ class EventDeleteAllRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'ids.required' => 'Data wajib diisi.',
-            'email.array' => 'Data wajib array.'
+            'ids.required'   => 'Data ID wajib diisi.',
+            'ids.array'      => 'Data ID harus berupa array.',
         ];
     }
 }

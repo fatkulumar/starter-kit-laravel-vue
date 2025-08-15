@@ -11,4 +11,5 @@ interface OrderRepositoryInterface
     public function getPurchases(array $payload): object;
     public function getOrderWithPurchase(string $orderId): object;
     public function updateStatus(array $data): object;
+    public function getOrderWithPurchaseWhereIn(array $orderIds): object;
 }

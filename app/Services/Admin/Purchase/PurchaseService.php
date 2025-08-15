@@ -91,65 +91,74 @@ class PurchaseService extends Service implements PurchaseServiceInterface
     /**
      * update data.
      */
-    public function update(string $status, string $id)
-    // : object
-    {
-        return $purchaseRepository = $this->orderRepository->getOrderWithPurchase($id);
+    // public function update(string $status, string $id)
+    // // : object
+    // {
+    //     return $purchaseRepository = $this->orderRepository->getOrderWithPurchase($id);
 
-        $updateData = [];
+    //     $updateData = [];
 
-        if ($status !== null) $updateData['status'] = $status;
+    //     if ($status !== null) $updateData['status'] = $status;
 
-        $purchaseRepository->fill($updateData);
+    //     $purchaseRepository->fill($updateData);
 
-        $purchaseRepository->save();
+    //     $purchaseRepository->save();
 
-        Cache::flush();
+    //     Cache::flush();
 
-        return $this->purchaseRepository->getOrderWithPurchase($dto->id);
-    }
+    //     return $this->purchaseRepository->getOrderWithPurchase($dto->id);
+    // }
 
 
     /**
      * delete one data.
      */
-    public function delete(string $id): bool
-    {
-        $data = $this->orderRepository->getOrderWithPurchase($id);
-        $purchases = $data->purchases;
-        if ($purchases) {
-            foreach ($purchases as $item) {
-                $this->fileSettings();
-                if ($this->isFileExists($item->proof)) {
-                    $this->deleteFile($item->proof);
-                }
-            }
-        }
-        Cache::flush();
-        return $data->delete($id);
-    }
+    // public function delete(string $id): bool
+    // {
+    //     $data = $this->orderRepository->getOrderWithPurchase($id);
+    //     $purchases = $data->purchases;
+    //     if ($purchases) {
+    //         foreach ($purchases as $item) {
+    //             $this->fileSettings();
+    //             if ($this->isFileExists($item->proof)) {
+    //                 $this->deleteFile($item->proof);
+    //             }
+    //         }
+    //     }
+    //     Cache::flush();
+    //     return $data->delete($id);
+    // }
 
     /**
-     * delete many data.
+     * confirmation many data.
      */
-    public function destroy(array $ids): array
+    public function confirmationAll(array $payload): object
     {
+        $ids = $payload['ids'];
+        $status = $payload['status'];
         foreach ($ids as $id) {
-            $this->fileSettings();
-            $data = $this->orderRepository->getOrderWithPurchase($id);
-            $purchases = $data->purchases;
-            if ($purchases) {
-                foreach ($purchases as $item) {
-                    $this->fileSettings();
-                    if ($this->isFileExists($item->proof)) {
-                        $this->deleteFile($item->proof);
-                    }
-                }
+            $data = [
+                'id' => $id,
+                'status' => $status
+            ];
+            $order =  $this->orderRepository->updateStatus($data);
+            if ($order->status == 'paid') {
+                $dataUpdateStatusPayment = [
+                    'order_id' => $order->id,
+                    'status' => PaymentStatusEnum::SETTLEMENT->value
+                ];
+                $this->paymentRepository->updateStatus($dataUpdateStatusPayment);
             }
-            $data->delete($id);
+            if ($order->status == 'cancelled') {
+                $dataUpdateStatusPayment = [
+                    'order_id' => $order->id,
+                    'status' => PaymentStatusEnum::CANCEL->value
+                ];
+                $this->paymentRepository->updateStatus($dataUpdateStatusPayment);
+            }
         }
         Cache::flush();
-        return $ids;
+        return $this->orderRepository->getOrderWithPurchaseWhereIn($ids);
     }
 
     public function confirm(array $data): object
@@ -169,6 +178,7 @@ class PurchaseService extends Service implements PurchaseServiceInterface
             ];
             $this->paymentRepository->updateStatus($dataUpdateStatusPayment);
         }
+        Cache::flush();
         return $this->orderRepository->getOrderWithPurchase($order->id);
     }
     /**

@@ -115,4 +115,19 @@ class OrderRepository extends Repository implements OrderRepositoryInterface
 
         return $model;
     }
+
+     /**
+     * Get with purchase admin.
+     */
+    public function getOrderWithPurchaseWhereIn(array $orderIds): object
+    {
+        return $this->model::with([
+            'user:id,name,email',
+            'purchases:id,order_id,proof',
+            'tryout:id,title'
+        ])
+            ->whereIn('id', $orderIds)
+            ->select('id', 'user_id', 'tryout_id', 'amount', 'status')
+            ->get();
+    }
 }

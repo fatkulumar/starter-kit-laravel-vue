@@ -43,7 +43,7 @@ const { purchaseStore, purchases } = defineProps({
                     <th scope="col" class="px-6 py-3 flex gap-2 items-center">
                         <Checkbox class="w-8 h-8" id="checkedAll" v-model="purchaseStore.checkedAll"
                             @update:modelValue="(val) => purchaseStore.toggleSelectAll(purchases)" />
-                        <TrashIcon @click="purchaseStore.hanldeConfirmDeleteAll"
+                        <PencilIcon @click="purchaseStore.hanldeConfirm"
                             class="w-8 h-8 bg-red-400 rounded-md cursor-pointer p-1"
                             v-if="purchaseStore.selectedIds.length > 0" />
                     </th>

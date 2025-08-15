@@ -33,7 +33,7 @@ class UserDeleteAllRequest extends FormRequest
     {
         return [
             'ids.required' => 'Data wajib diisi.',
-            'email.array' => 'Data wajib array.'
+            'ids.array' => 'Data wajib array.'
         ];
     }
 }

@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Admin\Purchase\Api;
 
-use App\DataTransferObjects\PurchaseAdminDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Purchase\PurchasecConfrimAllRequest;
 use App\Http\Requests\Admin\Purchase\PurchaseConfirmRequest;
-use App\Http\Requests\Admin\Purchase\PurchaseDeleteAllRequest;
 use App\Services\Admin\Purchase\PurchaseService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -85,13 +84,13 @@ class PurchaseController extends Controller
     /**
      * Remove the many data.
      */
-    public function deleteAll(PurchaseDeleteAllRequest $request): JsonResponse
-    {
-        $dataValidate = $request->validated();
-        $result = $this->purchaseService->destroy($dataValidate['ids']);
-        $this->setResult($result)->setStatus(true)->setMessage('Success Delete Data')->setCode(JsonResponse::HTTP_OK);
-        return $this->toJson();
-    }
+    // public function deleteAll(PurchaseDeleteAllRequest $request): JsonResponse
+    // {
+    //     $dataValidate = $request->validated();
+    //     $result = $this->purchaseService->destroy($dataValidate['ids']);
+    //     $this->setResult($result)->setStatus(true)->setMessage('Success Delete Data')->setCode(JsonResponse::HTTP_OK);
+    //     return $this->toJson();
+    // }
 
     /**
      * Confirm purchase.
@@ -101,6 +100,17 @@ class PurchaseController extends Controller
         $dataValidate = $request->validated();
         $result = $this->purchaseService->confirm($dataValidate);
         $this->setResult($result)->setStatus(true)->setMessage('Berhasil Konfrimasi')->setCode(JsonResponse::HTTP_OK);
+        return $this->toJson();
+    }
+
+    /**
+     * Confirmation all purchase status
+     */
+    public function confirmationAll(PurchasecConfrimAllRequest $request): JsonResponse
+    {
+        $dataValidate = $request->validated();
+        $result = $this->purchaseService->confirmationAll($dataValidate);
+        $this->setResult($result)->setStatus(true)->setMessage('Success Confrim Datas')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }
 }

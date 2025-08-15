@@ -9,6 +9,14 @@ class Repository implements InterfaceRepository
 {
     protected $model;
 
+     /**
+     * List where datas.
+     */
+    public function getIn(array $ids): object
+    {
+        return $this->model::whereIn('id', $ids)->get();
+    }
+
     /**
      * List all data.
      */
