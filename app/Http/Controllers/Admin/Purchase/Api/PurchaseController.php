@@ -73,24 +73,10 @@ class PurchaseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): JsonResponse
+    public function update(Request $request, string $id)
     {
-        $status = $request->get('status');
-        $result = $this->purchaseService->update($status, $id);
-        $this->setResult($result)->setStatus(true)->setMessage('Success Save Data')->setCode(JsonResponse::HTTP_OK);
-        return $this->toJson();
+        //
     }
-
-    /**
-     * Remove the many data.
-     */
-    // public function deleteAll(PurchaseDeleteAllRequest $request): JsonResponse
-    // {
-    //     $dataValidate = $request->validated();
-    //     $result = $this->purchaseService->destroy($dataValidate['ids']);
-    //     $this->setResult($result)->setStatus(true)->setMessage('Success Delete Data')->setCode(JsonResponse::HTTP_OK);
-    //     return $this->toJson();
-    // }
 
     /**
      * Confirm purchase.

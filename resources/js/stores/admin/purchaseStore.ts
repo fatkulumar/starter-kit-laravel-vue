@@ -1,4 +1,3 @@
-// import type { Purchase } from "@/types/Purchase";
 import { defineStore } from "pinia";
 import axios from '@/lib/axios'
 import type { ApiResponse } from "@/types/ApiResponse";
@@ -70,6 +69,7 @@ export const usePurchaseStore = defineStore('purchase-admin', {
         proof: null
     }),
     getters: {
+        // for Select option
         isStatusOrderOptions(): { label: string; value: string }[] {
             return [
                 { label: 'Pilih Status', value: '' },
@@ -81,6 +81,7 @@ export const usePurchaseStore = defineStore('purchase-admin', {
         },
     },
     actions: {
+        // get data
         async fetchPurchases(page = 1, search?: string): Promise<void> {
             this.isLoading = true;
             this.error = null;
@@ -153,6 +154,7 @@ export const usePurchaseStore = defineStore('purchase-admin', {
             }
         },
 
+        // save
         async handleSave(): Promise<void> {
             this.isLoading = true;
 
@@ -196,6 +198,7 @@ export const usePurchaseStore = defineStore('purchase-admin', {
             }
         },
 
+        // fill form
         handleEdit(item: Order): void {
             this.form.id = item.id;
             this.form.name = item.user?.name;
@@ -207,65 +210,29 @@ export const usePurchaseStore = defineStore('purchase-admin', {
             this.showModalConfirm = true;
         },
 
-        // async handleDelete(id: string) {
-        //     this.isLoading = true;
-        //     const url = `/api/dashboard/purchase/${id}`
-        //     try {
-        //         const response = await axios.delete<ApiResponse<string>>(url);
-        //         if (response?.status === 200) {
-        //             this.purchases = this.purchases.filter(purchase => purchase.id !== id);
-        //             this.showModalConfirm = false;
-        //             this.error = null;
-        //         }
-        //     } catch (err: any) {
-        //         if (err?.response?.status === 422) {
-        //             this.error = err.response.data.errors || { message: 'Data tidak valid' };
-        //         } else {
-        //             this.error = err?.response?.data || { message: 'Gagal delete data event' };
-        //         }
-        //     } finally {
-        //         this.isLoading = false;
-        //     }
-        // },
-
-        // async handleConfirmDelete(item: Order): Promise<void> {
-        //     const konfirm = confirm(`Hapus ${item.user?.name}?`)
-        //     if (konfirm) {
-        //         await this.handleDelete(item.id);
-        //     }
-        // },
-
         handlePageChange(page: number): void {
             this.fetchPurchases(page);
         },
 
+        // searching
         async handleSearch(): Promise<void> {
             await this.fetchPurchases(this.page, this.searchQuery);
         },
+
 
         hanldeResetForm(): void {
             this.form.id = '';
             this.form.status = '';
         },
 
-        // handleFileChange(event: Event & { target: HTMLInputElement }): void {
-        //     const target = event.target as HTMLInputElement;
-        //     if (target.files && target.files[0]) {
-        //         this.form.banner = target.files[0];
-        //         const reader = new FileReader();
-        //         reader.onload = () => {
-        //             this.previewProof = reader.result as string;
-        //         }
-        //         reader.readAsDataURL(target.files[0]);
-        //     }
-        // },
-
+        // close modal
         handleCloseModal(): void {
             this.showModalConfirm = false;
             this.showModalConfirmIds = false;
             this.hanldeResetForm();
         },
 
+        // select all checkbox
         toggleSelectAll(event: Order[]): void {
             if (this.checkedAll) {
                 this.selectedIds = event.map(u => u.id);
@@ -274,6 +241,7 @@ export const usePurchaseStore = defineStore('purchase-admin', {
             }
         },
 
+        // select on checkbox
         toggleSelectOne(eventId: string): void {
             if (this.selectedIds.includes(eventId)) {
                 this.selectedIds = this.selectedIds.filter(id => id !== eventId);
@@ -283,52 +251,12 @@ export const usePurchaseStore = defineStore('purchase-admin', {
             this.checkedAll = false;
         },
 
+        // check id in selectIds
         syncCheckedAll(events: Order[]): void {
             this.checkedAll = events.length > 0 && events.every(event => this.selectedIds.includes(event.id));
         },
 
-        async handleDeleteAll() {
-            this.isLoading = true;
-            const url = `/api/dashboard/purchase/delete-all `
-            const form = {
-                ids: this.selectedIds
-            }
-            try {
-                const response = await axios.post<ApiResponse<Order>>(url, form);
-                if (response?.status === 200) {
-                    let deleteIds: string[] = [];
-                    const data = response.data.data;
-
-                    if (typeof data === 'string') {
-                        deleteIds = [data];
-                    } else if (Array.isArray(data)) {
-                        deleteIds = data;
-                    } else {
-                        return;
-                    }
-                    this.purchases = this.purchases.filter(purchase => !deleteIds.includes(purchase.id));
-                    this.error = null;
-                    this.checkedAll = false;
-                    this.selectedIds = [];
-                }
-            } catch (err: any) {
-                if (err?.response?.status === 422) {
-                    this.error = err.response.data.errors || { message: 'Data tidak valid' };
-                } else {
-                    this.error = err?.response?.data || { message: 'Gagal delete data purchase' };
-                }
-            } finally {
-                this.isLoading = false;
-            }
-        },
-
-        async hanldeConfirmDeleteAll(): Promise<void> {
-            const konfirm = confirm(`Hapus?`)
-            if (konfirm) {
-                await this.handleDeleteAll();
-            }
-        },
-
+        // toogle detail table
         toggleDetail(index: number): void {
             this.expandedIndex = this.expandedIndex === index ? null : index;
         },

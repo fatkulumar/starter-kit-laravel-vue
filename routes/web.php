@@ -16,11 +16,14 @@ Route::get('member/dashboard', function () {
 })->middleware(['auth', 'verified', 'role:member'])->name('member.dashboard');
 
 Route::get('student/dashboard', function () {
-    return Inertia::render('Dashboard');
+    return Inertia::render('student/Dashboard');
 })->middleware(['auth', 'verified', 'role:student'])->name('student.dashboard');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+
+require __DIR__.'/profile/view/profile.php';
+require __DIR__.'/password/view/password.php';
 
 // admin user
 require __DIR__.'/admin/user/view/user.php';
@@ -59,3 +62,6 @@ require __DIR__.'/public/event/api/event.php';
 require __DIR__.'/student/tryout/api/tryout.php';
 // student purchase
 require __DIR__.'/student/purchase/api/purchase.php';
+// student my event 
+require __DIR__.'/student/event/api/event.php';
+require __DIR__.'/student/event/view/event.php';
