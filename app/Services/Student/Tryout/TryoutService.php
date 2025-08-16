@@ -38,4 +38,12 @@ class TryoutService extends Service implements TryoutServiceInterface
     {
         return $this->tryoutRepository->getTryoutByEventId($payload);
     }
+
+    /**
+     * Get tryout purchased by event_id
+     */
+    public function getTryoutPurchasedByEventId(array $payload): object
+    {
+        return $this->tryoutRepository->getTryoutPurchasedByEventId($payload);
+    }
 }

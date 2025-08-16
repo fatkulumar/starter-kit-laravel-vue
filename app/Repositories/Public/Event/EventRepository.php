@@ -27,7 +27,7 @@ class EventRepository extends Repository implements EventRepositoryInterface
         $minutes = $payload['minutes'];
         return Cache::remember($cacheKey, now()->addMinutes($minutes), function () {
             return $this->model::withCount(['tryouts'])
-                ->select('id', 'title', 'whatsapp_group_link', 'guidebook_link', 'guidebook_link', 'link_zoom', 'quota')
+                ->select('id', 'title', 'whatsapp_group_link', 'guidebook_link', 'link_zoom', 'quota')
                 ->where('is_publish', 1)
                 ->get();
         });

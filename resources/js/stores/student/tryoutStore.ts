@@ -16,7 +16,7 @@ export interface Task {
     preview: string;
 }
 
-export const useTryoutStore = defineStore('tryout-public', {
+export const useTryoutStore = defineStore('tryout-student', {
     state: (): {
         tryouts: TryoutItem[],
         isLoading: boolean
@@ -172,6 +172,82 @@ export const useTryoutStore = defineStore('tryout-public', {
         // // convert to rupiah format'
         formatRupiah(value: number | string): string {
             return formatRupiah(value);
-        }
+        },
+
+         // fetch tryout by event id
+        async fetchTryoutPurchasedByEventId(eventId = '', page = 1, search?: string): Promise<void> {
+            this.isLoading = true;
+            this.error = null;
+
+            const searchQuery = search ?? this.searchQuery;
+
+            const isSearching = !!searchQuery;
+            const cacheKey = isSearching ? `search_tryout_purchased_by_event_id_public_${searchQuery}_${eventId}` : `public_tryout_purchased_by_event_id_page_all_${page}_${eventId}`;
+            this.prefixCacheKey = cacheKey;
+
+            try {
+                if (this.tryoutsCache.has(cacheKey)) {
+                    const cached = this.tryoutsCache.get(cacheKey)!;
+
+                    if (cached && typeof cached === 'object' && 'data' in cached) {
+                        const data = cached.data;
+
+                        if (Array.isArray(data)) {
+                            this.tryouts = data;
+                            this.pagination = null;
+                        } else {
+                            this.tryouts = data.data;
+                            this.pagination = {
+                                current_page: data.current_page,
+                                per_page: data.per_page,
+                                total: data.total,
+                                last_page: data.last_page,
+                                next_page_url: data.next_page_url,
+                                prev_page_url: data.prev_page_url,
+                                from: data.from,
+                                to: data.to,
+                                path: data.path,
+                                links: data.links,
+                            };
+                        }
+
+                        this.page = page;
+                        return;
+                    }
+                }
+
+                const url = `/api/student/tryout-purchased-by-event-id?event_id=${eventId}`
+
+                const response = await axios.get<TryoutListResponse>(url);
+                const tryoutData = response.data.data;
+
+                if (Array.isArray(tryoutData)) {
+                    this.tryouts = tryoutData;
+                    this.pagination = null;
+                } else {
+                    this.tryouts = tryoutData.data;
+                    this.pagination = {
+                        current_page: tryoutData.current_page,
+                        per_page: tryoutData.per_page,
+                        total: tryoutData.total,
+                        last_page: tryoutData.last_page,
+                        next_page_url: tryoutData.next_page_url,
+                        prev_page_url: tryoutData.prev_page_url,
+                        from: tryoutData.from,
+                        to: tryoutData.to,
+                        path: tryoutData.path,
+                        links: tryoutData.links,
+                    };
+                }
+
+                this.page = page;
+
+                this.tryoutsCache.set(cacheKey, response.data);
+            } catch (err: any) {
+                this.error = err?.response?.data || { message: 'Gagal mengambil data tryout' };
+            } finally {
+                this.isLoading = false;
+            }
+        },
     }
 });

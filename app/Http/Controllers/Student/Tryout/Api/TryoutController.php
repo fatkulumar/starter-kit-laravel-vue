@@ -21,15 +21,31 @@ class TryoutController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function getTryoutByEventId(Request $request) : JsonResponse
+    public function getTryoutByEventId(Request $request): JsonResponse
     {
         $event_id = $request->query('event_id');
         $payload = [
-            'cacheKey' => 'tryouts_public_by_event_id=' . ($event_id ?: '_public'),
+            'cacheKey' => 'tryouts_student_by_event_id=' . ($event_id ?: '_student'),
             'minutes' => 10,
             'event_id' => $event_id
         ];
         $result = $this->tryoutService->getTryoutByEventId($payload);
+        $this->setResult($result)->setStatus(true)->setMessage('Success Get Data')->setCode(JsonResponse::HTTP_OK);
+        return $this->toJson();
+    }
+
+    /**
+     * Get tryouts purchased by event_id
+     */
+    public function getTryoutPurchasedByEventId(Request $request): JsonResponse
+    {
+        $event_id = $request->query('event_id');
+        $payload = [
+            'cacheKey' => 'tryouts_student_by_event_id=' . ($event_id ?: '_student'),
+            'minutes' => 10,
+            'event_id' => $event_id
+        ];
+        $result = $this->tryoutService->getTryoutPurchasedByEventId($payload);
         $this->setResult($result)->setStatus(true)->setMessage('Success Get Data')->setCode(JsonResponse::HTTP_OK);
         return $this->toJson();
     }

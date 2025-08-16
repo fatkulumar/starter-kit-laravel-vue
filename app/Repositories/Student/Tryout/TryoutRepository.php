@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Student\Tryout;
 
+use App\Enums\OrderStatusEnum;
 use App\Models\Tryout;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\Cache;
@@ -34,12 +35,30 @@ class TryoutRepository extends Repository implements TryoutRepositoryInterface
                 }])
                 ->where('event_id', $event_id)
                 ->select('id', 'title', 'price')
-                ->get()
+                ->get(['title'])
                 ->each(function ($item) {
                     $item->orders->each(function ($order) {
                         $order->user->makeHidden('role');
                     });
                 });
+        });
+    }
+
+    /**
+     * get tryouts pruchased by event_id
+     */
+    public function getTryoutPurchasedByEventId(array $payload): object
+    {
+        $cacheKey = $payload['cacheKey'];
+        $event_id = $payload['event_id'];
+        $minutes = $payload['minutes'];
+
+        return Cache::remember($cacheKey, now()->addMinutes($minutes), function () use ($event_id) {
+            return $this->model::join('orders', 'orders.tryout_id', '=', 'tryouts.id')
+                ->where('orders.status', OrderStatusEnum::PAID->value)
+                ->where('tryouts.event_id', $event_id)
+                ->select('tryouts.id', 'tryouts.title', 'tryouts.end_time')
+                ->get();
         });
     }
 }

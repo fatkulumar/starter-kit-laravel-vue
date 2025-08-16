@@ -46,7 +46,7 @@ class PurchaseService extends Service implements PurchaseServiceInterface
     }
 
     /**
-     * List data paginate and search.
+     * Save data.
      */
     public function store(PurchaseDTO $dto): object
     {

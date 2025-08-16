@@ -4,5 +4,6 @@ namespace App\Services\Student\Tryout;
 
 interface TryoutServiceInterface
 {
-    public function getTryoutByEventId(array $paginate): object;
+    public function getTryoutByEventId(array $payload): object;
+    public function getTryoutPurchasedByEventId(array $payload): object;
 }
