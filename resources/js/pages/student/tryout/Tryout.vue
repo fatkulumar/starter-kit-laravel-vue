@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Accordion from '@/components/student/Accrodion.vue';
+import AccordionTryout from '@/components/student/AccrodionTryout.vue';
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
 import { useTryoutStore } from '@/stores/student/tryoutStore';
 import { Event } from '@/types/Event';
@@ -16,6 +16,6 @@ onMounted(() => {
 
 <template>
     <DefaultLayout>
-        <Accordion :tryouts="tryoutStore.tryouts" />
+        <AccordionTryout :tryouts="tryoutStore.tryoutsAccordion" />
     </DefaultLayout>
 </template>

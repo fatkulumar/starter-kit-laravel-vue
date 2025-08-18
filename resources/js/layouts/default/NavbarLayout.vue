@@ -101,13 +101,12 @@ const handleLogout = () => {
 
                         <!-- Dropdown Menu -->
                         <div v-if="isOpen"
-                            class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 outline -outline-offset-1 outline-white/10 shadow-lg ring-1 ring-black ring-opacity-5">
-                            settings/profile
+                            class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 outline -outline-offset-1 outline-white/10 shadow-lg ring-1 ring-black ring-opacity-5 z-10">
                             <Link href="/student/dashboard" @click="closeDropdown"
                                 class="block px-4 py-2 text-sm text-gray-300 hover:bg-white/5 cursor-pointer">
                                 Dashboard
                             </Link>
-                            <Link href="student/event" @click="closeDropdown"
+                            <Link href="/student/event" @click="closeDropdown"
                                 class="block px-4 py-2 text-sm text-gray-300 hover:bg-white/5">
                                 Event Ku
                             </Link>
@@ -121,7 +120,7 @@ const handleLogout = () => {
                             </Link>
                             <Link as="button" method="post" :href="route('logout')" @click="handleLogout"
                                 class="w-full flex items-center py-2 text-sm text-gray-300 hover:bg-white/5 text-left cursor-pointer">
-                            Log out
+                                Log out
                             </Link>
                         </div>
                     </div>

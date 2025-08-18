@@ -66,3 +66,6 @@ require __DIR__.'/student/purchase/api/purchase.php';
 // student my event 
 require __DIR__.'/student/event/api/event.php';
 require __DIR__.'/student/event/view/event.php';
+// student startTryout 
+require __DIR__.'/student/startTryout/api/startTryout.php';
+require __DIR__.'/student/startTryout/view/startTryout.php';

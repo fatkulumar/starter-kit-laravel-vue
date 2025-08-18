@@ -7,8 +7,11 @@ import type { Pagination } from "@/types/pagination";
 import { formatRupiah } from "@/utils/formatRupiah";
 import { usePurchaseStore } from "./purchaseStore";
 import { TryoutItem } from "@/components/admin/student/TryoutSelection.vue";
+import { AccordionTryout } from "@/components/student/AccrodionTryout.vue";
+import { router } from '@inertiajs/vue3';
 
 export type TryoutListResponse = ApiResponse<PaginatedData<TryoutItem>>
+export type TryoutAccrodionResponse = ApiResponse<PaginatedData<AccordionTryout>>
 
 export interface Task {
     label: string;
@@ -19,28 +22,34 @@ export interface Task {
 export const useTryoutStore = defineStore('tryout-student', {
     state: (): {
         tryouts: TryoutItem[],
+        tryoutsAccordion: AccordionTryout[],
         isLoading: boolean
         error: Record<string, any> | null,
         pagination: Pagination | null,
         page: number
         searchQuery: string,
         tryoutsCache: Map<string, TryoutListResponse>,
+        tryoutsAccordionCache: Map<string, TryoutAccrodionResponse>,
         prefixCacheKey: string,
         modalGetTryout: boolean,
         selectedIds: string[],
-        amount: number
+        amount: number,
+        aggreStartTryout: boolean
     } => ({
         tryouts: [] as TryoutItem[],
+        tryoutsAccordion: [] as AccordionTryout[],
         isLoading: false,
         error: null,
         pagination: null as Pagination | null,
         page: 1,
         searchQuery: '',
         tryoutsCache: new Map<string, TryoutListResponse>(),
+        tryoutsAccordionCache: new Map<string, TryoutAccrodionResponse>,
         prefixCacheKey: '',
         modalGetTryout: false,
         selectedIds: [],
-        amount: 0
+        amount: 0,
+        aggreStartTryout: false
     }),
     actions: {
         // fetch tryout by event id
@@ -86,8 +95,8 @@ export const useTryoutStore = defineStore('tryout-student', {
                 }
 
                 const url = isSearching
-                    ? `/api/public/tryout-by-event-id?search=${encodeURIComponent(searchQuery)}&event_id=${eventId}`
-                    : `/api/public/tryout-by-event-id?page=${page}&event_id=${eventId}`;
+                    ? `/api/student/tryout-by-event-id?search=${encodeURIComponent(searchQuery)}&event_id=${eventId}`
+                    : `/api/student/tryout-by-event-id?page=${page}&event_id=${eventId}`;
 
                 const response = await axios.get<TryoutListResponse>(url);
                 const tryoutData = response.data.data;
@@ -174,7 +183,7 @@ export const useTryoutStore = defineStore('tryout-student', {
             return formatRupiah(value);
         },
 
-         // fetch tryout by event id
+        // fetch tryout by event id
         async fetchTryoutPurchasedByEventId(eventId = '', page = 1, search?: string): Promise<void> {
             this.isLoading = true;
             this.error = null;
@@ -218,14 +227,14 @@ export const useTryoutStore = defineStore('tryout-student', {
 
                 const url = `/api/student/tryout-purchased-by-event-id?event_id=${eventId}`
 
-                const response = await axios.get<TryoutListResponse>(url);
+                const response = await axios.get<TryoutAccrodionResponse>(url);
                 const tryoutData = response.data.data;
 
                 if (Array.isArray(tryoutData)) {
-                    this.tryouts = tryoutData;
+                    this.tryoutsAccordion = tryoutData;
                     this.pagination = null;
                 } else {
-                    this.tryouts = tryoutData.data;
+                    this.tryoutsAccordion = tryoutData.data;
                     this.pagination = {
                         current_page: tryoutData.current_page,
                         per_page: tryoutData.per_page,
@@ -242,9 +251,32 @@ export const useTryoutStore = defineStore('tryout-student', {
 
                 this.page = page;
 
-                this.tryoutsCache.set(cacheKey, response.data);
+                this.tryoutsAccordionCache.set(cacheKey, response.data);
             } catch (err: any) {
                 this.error = err?.response?.data || { message: 'Gagal mengambil data tryout' };
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
+        async doingTryout(tryoutCode: string) {
+            this.isLoading = true;
+
+            const url = `/api/student/tryout/start`;
+            const payload = { tryout_code: tryoutCode };
+
+            try {
+                const response = await axios.post(url, payload);
+                if (response?.status === 200) {
+                    router.visit(`/student/tryout/doing/${tryoutCode}`); 
+                    this.error = null;
+                }
+            } catch (err: any) {
+                if (err?.response?.status === 422) {
+                    this.error = err.response.data.errors || { message: "Data tidak valid" };
+                } else {
+                    this.error = err?.response?.data || { message: "Gagal submit data tryout" };
+                }
             } finally {
                 this.isLoading = false;
             }
