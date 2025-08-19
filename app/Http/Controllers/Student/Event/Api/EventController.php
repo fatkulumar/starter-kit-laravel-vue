@@ -22,7 +22,7 @@ class EventController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function getEventPurchased(Request $request)
+    public function getEventPurchased(Request $request): JsonResponse
     {
         $userId = Auth::user()->id;
         $payload = [

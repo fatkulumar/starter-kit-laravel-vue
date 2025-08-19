@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('option_c');
             $table->text('option_d');
             $table->text('option_e');
-            $table->string('correct_answer', 1);
+            $table->enum('correct_answer', ['A', 'B', 'C', 'D', 'E']);
             $table->text('explanation');
             $table->timestamps();
         });

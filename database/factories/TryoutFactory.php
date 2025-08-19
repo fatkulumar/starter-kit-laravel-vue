@@ -19,7 +19,8 @@ class TryoutFactory extends Factory
      */
     public function definition(): array
     {
-        $start = $this->faker->dateTimeBetween('+2 weeks', '+3 weeks');
+        // $start = $this->faker->dateTimeBetween('+2 weeks', '+3 weeks');
+        $start = now();
         $end = (clone $start)->modify('+2 hours');
         $duration = 120;
 

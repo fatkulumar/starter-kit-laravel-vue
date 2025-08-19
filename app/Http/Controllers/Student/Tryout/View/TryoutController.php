@@ -50,6 +50,7 @@ class TryoutController extends Controller
             'search' => $request->query('search')
         ];
         $result = $this->tryoutService->getSubtestsAndQuestionByTryoutCode($payload);
+        if($result->status_tryout != 'active') return redirect()->back(); 
         return Inertia::render('student/tryout/Doing', [
             'result' => $result
         ]);

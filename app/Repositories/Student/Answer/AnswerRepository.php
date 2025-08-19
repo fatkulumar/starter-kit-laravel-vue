@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Student\Answer;
 
-use App\Models\Tryout;
+use App\Models\Answer;
 use App\Repositories\Repository;
 
 class AnswerRepository extends Repository implements AnswerRepositoryInterface
@@ -12,7 +12,7 @@ class AnswerRepository extends Repository implements AnswerRepositoryInterface
     /**
      * Create a new class instance.
      */
-    public function __construct(Tryout $model)
+    public function __construct(Answer $model)
     {
         $this->model = $model;
     }

@@ -29,6 +29,7 @@ const emit = defineEmits<{
 function choose(value: string) {
   emit("update:modelValue", value)
 }
+
 </script>
 
 <template>

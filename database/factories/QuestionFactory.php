@@ -18,8 +18,10 @@ class QuestionFactory extends Factory
      */
     public function definition(): array
     {
+        $subtest = Subtest::inRandomOrder()->first();
+        
         return [
-            'subtest_id' => Subtest::factory(),
+            'subtest_id' => $subtest->id,
             'subject_id' => Subject::inRandomOrder()->first()->id,
             'option_a' => $this->faker->sentence,
             'option_b' => $this->faker->sentence,

@@ -67,10 +67,13 @@ onMounted(() => {
       <!-- Persyaratan -->
       <div class="space-y-2">
         <div v-for="req in requirements" :key="req.id" class="flex items-center gap-2">
-          <input type="checkbox" v-model="req.checked" class="w-4 h-4" />
-          <label>{{ req.text }}</label>
+          <input type="checkbox" v-model="req.checked" class="w-4 h-4" :id="'req-' + req.id" />
+          <label :for="'req-' + req.id" class="cursor-pointer">
+            {{ req.text }}
+          </label>
         </div>
       </div>
+
 
       <!-- Tombol mulai -->
       <button :disabled="!canStart" class="px-4 py-2 rounded text-white"

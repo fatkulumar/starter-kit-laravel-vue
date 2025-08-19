@@ -17,7 +17,8 @@ class EventFactory extends Factory
      */
     public function definition(): array
     {
-        $startTime = $this->faker->dateTimeBetween('+1 week', '+2 weeks');
+        // $startTime = $this->faker->dateTimeBetween('+1 week', '+2 weeks');
+        $startTime = now();
         $endTime = (clone $startTime)->modify('+2 days');
         $registrationDeadline = (clone $startTime)->modify('-1 week');
         $preliminaryDate = (clone $startTime)->modify('+3 days');
@@ -36,7 +37,7 @@ class EventFactory extends Factory
             'round' => $this->faker->randomElement([1, 2]),
 
             'start_time' => $startTime,
-            'end_time' => $endTime,
+            'end_time' => $startTime,
 
             'registration_deadline' => $registrationDeadline,
             'preliminary_date' => $preliminaryDate,

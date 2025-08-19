@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Order;
 use App\Models\Subject;
 use App\Models\Tryout;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,8 +19,9 @@ class SubtestFactory extends Factory
      */
     public function definition(): array
     {
+        $order = Order::inRandomOrder()->first();
         return [
-            'tryout_id' => Tryout::factory(),
+            'tryout_id' => $order->tryout_id,
             'subject_id' => Subject::inRandomOrder()->first()->id,
             'title' => $this->faker->sentence(3),
             'amount_question' => $this->faker->numberBetween(5, 100),

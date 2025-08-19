@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import DefaultLayout from "@/layouts/DefaultLayout.vue"
-import QuestionAnswer from "@/components/student/QuestionAnswer.vue";
-import { computed, onMounted, onUnmounted, ref } from "vue"
+import QuestionAnswer from "@/components/student/QuestionAnswer.vue"
+import { computed, onMounted, onUnmounted, ref, watch } from "vue"
+import QuestionNavigator from "@/components/student/QuestionNavigator.vue";
+import { useAnswerStore } from "@/stores/student/answerStore";
+const answerStore = useAnswerStore();
 
 export interface QuestionSubtest {
   id: string;
@@ -25,6 +28,8 @@ export interface SubtestQuestion {
   amount_minutes: number;
   questions: QuestionSubtest[];
   end_at: string;
+  start_at: string;
+  duration: number;
   finish_at: string | null;
 }
 
@@ -33,34 +38,51 @@ const props = defineProps<{ result: SubtestQuestion }>()
 // simpan jawaban user
 const answers = ref<Record<string, string | null>>(
   Object.fromEntries(props.result.questions.map(q => [q.id, null]))
-);
+)
+
+// index soal aktif
+const currentIndex = ref(0)
+
+// navigasi soal
+const nextQuestion = () => {
+  if (currentIndex.value < props.result.questions.length - 1) {
+    currentIndex.value++
+  }
+}
+const prevQuestion = () => {
+  if (currentIndex.value > 0) {
+    currentIndex.value--
+  }
+}
+
+// submit ujian
+const finishExam = () => {
+  console.log("Jawaban dikirim:", answers.value)
+  alert("Jawaban kamu sudah terkirim!")
+}
 
 // Countdown
 const timeLeft = ref<number>(0) // detik tersisa
 let interval: ReturnType<typeof setInterval>
 
+// hitung sisa waktu berdasarkan start_at + duration
 const calculateTimeLeft = () => {
-  const end = new Date(props.result.end_at).getTime()
+  const start = new Date(props.result.start_at).getTime()
+  const end = start + props.result.duration * 60 * 1000 // duration dalam menit → ms
   const now = new Date().getTime()
   const secondsLeft = Math.max(Math.floor((end - now) / 1000), 0)
   timeLeft.value = secondsLeft
 
   if (secondsLeft === 0) {
     clearInterval(interval)
-    // TODO: trigger auto-submit atau disable jawaban
+    finishExam()
   }
 }
 
 onMounted(() => {
-  props.result.questions.forEach(q => {
-    if (!(q.id in answers.value)) {
-      answers.value[q.id] = null;
-    }
-  });
-
   calculateTimeLeft()
   interval = setInterval(calculateTimeLeft, 1000)
-});
+})
 
 onUnmounted(() => {
   clearInterval(interval)
@@ -74,28 +96,79 @@ const formattedTime = computed(() => {
   return `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`
 })
 
+const navigateTo = (index: number) => {
+  currentIndex.value = index
+}
+
+watch(answers, (newVal, oldVal) => {
+  const q = props.result.questions[currentIndex.value]
+  if (q) {
+    answerStore.handleSave(props.result.id, newVal[q.id], q.id)
+  }
+}, { deep: true })
+
 </script>
 
 <template>
   <DefaultLayout>
-    <div class="max-w-5xl mx-auto space-y-6">
-       <p class="text-red-500 font-semibold text-lg mb-6">
-      Waktu tersisa: {{ formattedTime }}
-    </p>
-      <h1 class="text-2xl font-bold mb-6">
-        {{ props.result.title }} ({{ props.result.amount_question }} Soal, {{ props.result.amount_minutes }} Menit)
-      </h1>
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6">
+      <!-- Navigasi soal -->
+      <aside class="md:col-span-1">
+        <QuestionNavigator
+          :questions="props.result.questions"
+          :answers="answers"
+          :currentIndex="currentIndex"
+          @navigate="navigateTo"
+        />
+      </aside>
 
-      <QuestionAnswer
-        v-for="(q, i) in props.result.questions"
-        :key="q.id"
-        :question="q"
-        :index="i"
-        v-model="answers[q.id]"
-      />
+      <!-- Area soal -->
+      <main class="md:col-span-3 space-y-6">
+        <p class="text-red-500 font-semibold text-lg">
+          Waktu tersisa: {{ formattedTime }}
+        </p>
 
-      <!-- Debug jawaban -->
-      <pre class="mt-6 bg-slate-100 p-3 rounded-lg border text-xs">{{ answers }}</pre>
+        <h1 class="text-2xl font-bold">
+          {{ props.result.title }}
+          ({{ props.result.amount_question }} Soal, {{ props.result.duration }} Menit)
+        </h1>
+
+        <QuestionAnswer
+          v-if="props.result.questions[currentIndex]"
+          :question="props.result.questions[currentIndex]"
+          :index="currentIndex"
+          v-model="answers[props.result.questions[currentIndex].id]"
+        />
+
+        <!-- <pre class="mt-6 bg-slate-100 p-3 rounded-lg border text-xs">{{ answers }}</pre> -->
+
+        <!-- navigasi bawah -->
+        <div class="flex justify-between mt-6">
+          <button
+            class="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+            :disabled="currentIndex === 0"
+            @click="prevQuestion"
+          >
+            Kembali
+          </button>
+
+          <button
+            v-if="currentIndex < props.result.questions.length - 1"
+            class="px-4 py-2 bg-blue-600 text-white rounded"
+            @click="nextQuestion"
+          >
+            Selanjutnya
+          </button>
+
+          <button
+            v-else
+            class="px-4 py-2 bg-green-600 text-white rounded"
+            @click="finishExam"
+          >
+            Selesai
+          </button>
+        </div>
+      </main>
     </div>
   </DefaultLayout>
 </template>

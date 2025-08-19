@@ -2,8 +2,10 @@
 
 namespace App\Repositories\Student\Subtest;
 
+use App\Enums\StatusTryoutEnum;
 use App\Models\Subtest;
 use App\Repositories\Repository;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -30,7 +32,7 @@ class SubtestRepository extends Repository implements SubtestRepositoryInterface
         $userId   = $payload['user_id'];
 
         return Cache::remember($cacheKey, now()->addMinutes($minutes), function () use ($tryoutId, $userId) {
-            return $this->model->join('start_tryouts', 'start_tryouts.tryout_id', '=', 'subtests.tryout_id')
+            $subtest = $this->model->join('start_tryouts', 'start_tryouts.tryout_id', '=', 'subtests.tryout_id')
                 ->join('tryouts', 'tryouts.id', '=', 'subtests.tryout_id')
                 ->with(['questions'])
                 ->where('subtests.tryout_id', $tryoutId)
@@ -46,6 +48,22 @@ class SubtestRepository extends Repository implements SubtestRepositoryInterface
                     DB::raw('DATE_ADD(start_tryouts.start_at, INTERVAL tryouts.duration MINUTE) as end_at')
                 )
                 ->first();
+
+            if ($subtest) {
+                $startTime = Carbon::parse($subtest->start_at);
+                $endTime   = Carbon::parse($subtest->end_at)->addMinutes(intval($subtest->duration ?? 0));
+                $now       = now();
+
+                if ($now->lt($startTime)) {
+                    $subtest->status_tryout = StatusTryoutEnum::UNAVAILABLE->value;
+                } elseif ($now->between($startTime, $endTime) && ($subtest->amount_question ?? 0) > 0) {
+                    $subtest->status_tryout = StatusTryoutEnum::ACTIVE->value;
+                } else {
+                    $subtest->status_tryout = StatusTryoutEnum::EXPIRED->value;
+                }
+            }
+
+            return $subtest;
         });
     }
 }
