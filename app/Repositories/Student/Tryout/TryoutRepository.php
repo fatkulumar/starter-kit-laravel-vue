@@ -3,10 +3,13 @@
 namespace App\Repositories\Student\Tryout;
 
 use App\Enums\OrderStatusEnum;
+use App\Enums\StatusTryoutDoingEnum;
+use App\Enums\StatusTryoutEnum;
 use App\Models\Tryout;
 use App\Repositories\Repository;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class TryoutRepository extends Repository implements TryoutRepositoryInterface
 {
@@ -48,56 +51,65 @@ class TryoutRepository extends Repository implements TryoutRepositoryInterface
     /**
      * get tryouts pruchased by event_id
      */
-    public function getTryoutPurchasedByEventId(array $payload): object
+    public function getTryoutPurchasedByEventId(array $payload): \Illuminate\Support\Collection
     {
         $cacheKey = $payload['cacheKey'];
         $event_id = $payload['event_id'];
         $minutes  = $payload['minutes'];
-        $userId   = $payload['user_id']; // tambahkan user_id di payload
+        $userId   = $payload['user_id'];
 
         return Cache::remember($cacheKey, now()->addMinutes($minutes), function () use ($event_id, $userId) {
             return $this->model::join('orders', 'orders.tryout_id', '=', 'tryouts.id')
                 ->join('events', 'events.id', '=', 'tryouts.event_id')
-                ->join('subtests', 'subtests.tryout_id', '=', 'tryouts.id')
+                ->leftJoin('subtests', 'subtests.tryout_id', '=', 'tryouts.id')
                 ->leftJoin('start_tryouts', function ($join) use ($userId) {
                     $join->on('start_tryouts.tryout_id', '=', 'tryouts.id')
                         ->where('start_tryouts.user_id', '=', $userId);
                 })
+                ->where('orders.user_id', $userId)
                 ->where('orders.status', OrderStatusEnum::PAID->value)
                 ->where('tryouts.event_id', $event_id)
                 ->select(
+                    'tryouts.id as tryout_id',
+                    'tryouts.title',
+                    'tryouts.tryout_code',
+                    'tryouts.start_time',
+                    'tryouts.end_time',
+                    DB::raw('COALESCE(SUM(subtests.amount_question),0) as amount_question'),
+                    DB::raw('COALESCE(SUM(subtests.amount_minutes),0) as amount_minutes'),
+                    'start_tryouts.start_at',
+                    'start_tryouts.finish_at'
+                )
+                ->groupBy(
                     'tryouts.id',
                     'tryouts.title',
-                    'tryouts.start_time',
                     'tryouts.tryout_code',
-                    'events.end_time',
-                    'subtests.amount_question',
-                    'subtests.amount_minutes',
+                    'tryouts.start_time',
+                    'tryouts.end_time',
                     'start_tryouts.start_at',
                     'start_tryouts.finish_at'
                 )
                 ->get()
                 ->map(function ($tryout) {
-                    $endTime   = Carbon::parse($tryout->end_time);
-                    $endActive = $endTime->copy()->addMinutes($tryout->amount_minutes); // duration = menit
+                    $startTime = Carbon::parse($tryout->start_time);
+                    $endTime   = Carbon::parse($tryout->end_time)->addMinutes($tryout->total_minutes ?? 0);
                     $now       = now();
 
-                    // status tryout (unavailable/active/expired)
-                    if ($now->lt($endTime)) {
-                        $tryout->status_tryout = 'UNAVAILABLE';
-                    } elseif ($now->between($endTime, $endActive)) {
-                        $tryout->status_tryout = 'ACTIVE';
+                    if ($now->lt($startTime) || ($tryout->amount_question ?? 0) == 0) {
+                        $tryout->status_tryout = StatusTryoutEnum::UNAVAILABLE->value; // belum mulai
+                    } elseif ($now->between($startTime, $endTime) && ($tryout->amount_question ?? 0) > 0) {
+                        $tryout->status_tryout = StatusTryoutEnum::ACTIVE->value; // sedang berlangsung
                     } else {
-                        $tryout->status_tryout = 'EXPIRED';
+                        $tryout->status_tryout = StatusTryoutEnum::EXPIRED->value; // sudah lewat
                     }
 
                     // status user
                     if (!$tryout->start_at && !$tryout->finish_at) {
-                        $tryout->status_user = 'FINISHED'; // belum ada record = anggap finished
+                        $tryout->status_user = StatusTryoutDoingEnum::STAY->value;
                     } elseif ($tryout->start_at && !$tryout->finish_at) {
-                        $tryout->status_user = 'DOING';
+                        $tryout->status_user = StatusTryoutDoingEnum::DOING->value;
                     } else {
-                        $tryout->status_user = 'done';
+                        $tryout->status_user = StatusTryoutDoingEnum::DONE->value;
                     }
 
                     return $tryout;
@@ -106,7 +118,7 @@ class TryoutRepository extends Repository implements TryoutRepositoryInterface
     }
 
     /**
-     * Get tryout by tryout_code
+     * Get tryout by tryout_code has order paid.
      */
     public function getTryoutByTryoutCode(array $payload): ?object
     {
@@ -115,7 +127,7 @@ class TryoutRepository extends Repository implements TryoutRepositoryInterface
 
         $tryout = $this->model::join('orders', 'orders.tryout_id', '=', 'tryouts.id')
             ->join('events', 'events.id', '=', 'tryouts.event_id')
-            ->join('subtests', 'subtests.tryout_id', '=', 'tryouts.id')
+            ->leftJoin('subtests', 'subtests.tryout_id', '=', 'tryouts.id')
             ->leftJoin('start_tryouts', function ($join) use ($userId) {
                 $join->on('start_tryouts.tryout_id', '=', 'tryouts.id')
                     ->where('start_tryouts.user_id', '=', $userId);
@@ -125,45 +137,44 @@ class TryoutRepository extends Repository implements TryoutRepositoryInterface
             ->select(
                 'tryouts.id',
                 'tryouts.title',
-                'tryouts.start_time',
                 'tryouts.tryout_code',
-                'tryouts.duration',
-                'events.end_time',
-                'subtests.amount_question',
-                'subtests.amount_minutes',
+                'tryouts.start_time',
+                'tryouts.end_time',
+                DB::raw('COALESCE(SUM(subtests.amount_question),0) as amount_question'),
+                DB::raw('COALESCE(SUM(subtests.amount_minutes),0) as amount_minutes'),
                 'start_tryouts.start_at',
                 'start_tryouts.finish_at'
             )
-            ->first(); // langsung ambil satu
+            ->groupBy(
+                'tryouts.id',
+                'tryouts.title',
+                'tryouts.tryout_code',
+                'tryouts.start_time',
+                'tryouts.end_time',
+                'start_tryouts.start_at',
+                'start_tryouts.finish_at'
+            )
+            ->first();
 
         if ($tryout) {
-            $endTime   = Carbon::parse($tryout->end_time);
-            $endActive = $endTime->copy()->addMinutes($tryout->amount_minutes);
+            $startTime = Carbon::parse($tryout->start_time);
+            $endTime   = Carbon::parse($tryout->end_time)->addMinutes(intval($tryout->amount_minutes ?? 0));
             $now       = now();
 
-            // Tentukan status tryout berdasarkan waktu sekarang
-            if ($now->lt($endTime)) {
-                // Jika waktu sekarang masih lebih kecil dari waktu mulai ($endTime),
-                // maka tryout belum bisa dikerjakan → status "unavailable"
-                $tryout->status_tryout = 'unavailable';
-            } elseif ($now->between($endTime, $endActive)) {
-                // Jika waktu sekarang berada di antara waktu mulai ($endTime)
-                // sampai waktu berakhir ($endActive), maka tryout sedang aktif → status "active"
-                $tryout->status_tryout = 'active';
+            if ($now->lt($startTime) || ($tryout->amount_question ?? 0) == 0) {
+                $tryout->status_tryout = StatusTryoutEnum::UNAVAILABLE->value;
+            } elseif ($now->between($startTime, $endTime) && ($tryout->amount_question ?? 0) > 0) {
+                $tryout->status_tryout = StatusTryoutEnum::ACTIVE->value;
             } else {
-                // Jika waktu sekarang sudah lewat dari waktu berakhir ($endActive),
-                // maka tryout sudah selesai → status "expired"
-                $tryout->status_tryout = 'expired';
+                $tryout->status_tryout = StatusTryoutEnum::EXPIRED->value;
             }
 
-
-            // status user
             if (!$tryout->start_at && !$tryout->finish_at) {
-                $tryout->status_user = 'stay'; // belum ada record = anggap finished
+                $tryout->status_user = StatusTryoutDoingEnum::STAY->value;
             } elseif ($tryout->start_at && !$tryout->finish_at) {
-                $tryout->status_user = 'doing';
+                $tryout->status_user = StatusTryoutDoingEnum::DOING->value;
             } else {
-                $tryout->status_user = 'done';
+                $tryout->status_user = StatusTryoutDoingEnum::DONE->value;
             }
         }
 

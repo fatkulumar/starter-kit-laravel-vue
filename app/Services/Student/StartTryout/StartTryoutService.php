@@ -33,7 +33,7 @@ class StartTryoutService extends Service implements StartTryoutServiceInterface
         $data = [
             'user_id' => $payload['user_id'],
             'tryout_id' => $tryout->id,
-            'start'=> now(),
+            'start_at'=> now(),
         ];
         return $this->startTryoutRepository->updateOrCreate($where, $data);
     }

@@ -29,15 +29,15 @@ class DatabaseSeeder extends Seeder
         $events = \App\Models\Event::factory()->count(5)->create();
 
         $events->each(function ($event) {
-            \App\Models\Tryout::factory()->count(2)->create([
+            \App\Models\Tryout::factory()->count(5)->create([
                 'event_id' => $event->id,
             ]);
         });
 
         \App\Models\Order::factory()->count(5)->create();
         \App\Models\Payment::factory()->count(5)->create();
-        \App\Models\Subtest::factory()->count(30)->create();
-        \App\Models\Question::factory()->count(30)->create();
+        \App\Models\Subtest::factory()->count(5)->create();
+        \App\Models\Question::factory()->count(5)->create();
         \App\Models\Purchase::factory()->count(5)->create();
         \App\Models\StartTryout::factory()->count(5)->create();
 

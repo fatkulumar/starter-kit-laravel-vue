@@ -83,7 +83,7 @@ class Tryout extends Model
      */
     public function getStartTimeFormattedAttribute(): string
     {
-        return Carbon::parse($this->start_time)->translatedFormat('l, j F Y');
+        return Carbon::parse($this->start_time)->translatedFormat('l, j F Y h:i:s');
     }
 
     /**
@@ -91,7 +91,7 @@ class Tryout extends Model
      */
     public function getEndTimeFormattedAttribute(): string
     {
-        return Carbon::parse($this->end_time)->translatedFormat('l, j F Y');
+        return Carbon::parse($this->end_time)->translatedFormat('l, j F Y h:i:s');
     }
 
     /**

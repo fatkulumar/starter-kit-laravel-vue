@@ -40,12 +40,13 @@ class TryoutController extends Controller
     public function doingTryout(Request $request, string $tryoutCode)
     {   
         // return 'doingTryout';
+        $userId = Auth::user()->id;
         $payload = [
-            'cacheKey' => 'get_subtest_tryout=' . ($tryoutCode ?: '_student'),
+            'cacheKey' => 'get_subtest_tryout=' . ($tryoutCode ?: '_student') .'_' . $userId,
             'paginate' => 10,
             'minutes' => 10,
             'tryout_code' => $tryoutCode,
-            'user_id' => Auth::user()->id,
+            'user_id' => $userId,
             'search' => $request->query('search')
         ];
         $result = $this->tryoutService->getSubtestsAndQuestionByTryoutCode($payload);

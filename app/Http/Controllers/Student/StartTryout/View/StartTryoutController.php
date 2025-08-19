@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Student\StartTryout\View;
 
-use App\Enums\TryoutDoingStatusEnum;
+use App\Enums\StatusTryoutDoingEnum;
+use App\Enums\StatusTryoutEnum;
 use App\Http\Controllers\Controller;
 use App\Services\Student\Event\EventService;
 use App\Services\Student\Tryout\TryoutService;
@@ -33,8 +34,7 @@ class StartTryoutController extends Controller
             'tryout_code' => $tryoutCode
         ];
         $tryout = $this->tryoutService->getTryoutByTryoutCode($payload);
-        return $tryout->status_tryout;
-        if ($tryout->status_tryout == TryoutDoingStatusEnum::ACTIVE->value) {
+        if ($tryout->status_tryout == StatusTryoutEnum::ACTIVE->value && $tryout->status_user == StatusTryoutDoingEnum::DOING->value) {
             return redirect()->route('student.doing.tryout', $tryoutCode);
         } 
         if (!$tryout) return redirect()->back();

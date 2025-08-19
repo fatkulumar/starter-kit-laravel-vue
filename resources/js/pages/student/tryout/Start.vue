@@ -46,10 +46,11 @@ function startCountdown(endTime: string) {
 // tombol aktif kalau semua checkbox dicentang DAN countdown <= 0
 const allChecked = computed(() => requirements.value.every(r => r.checked));
 const canStart = computed(() => allChecked.value && timeLeft.value <= 0);
+const showCountdown = computed(() => timeLeft.value > 0);
 
 onMounted(() => {
   tryoutStore.fetchTryoutPurchasedByEventId(props.tryout.id);
-  startCountdown(props.tryout.end_time);
+  startCountdown(props.tryout.start_time);
 });
 </script>
 
@@ -59,9 +60,8 @@ onMounted(() => {
       <h1 class="text-lg font-bold">Doing Tryout</h1>
 
       <!-- Countdown -->
-      <div class="flex items-center gap-2 text-orange-600 font-mono text-xl">
+      <div class="flex items-center gap-2 text-orange-600 font-mono text-xl" v-show="showCountdown">
         ⏳ {{ countdown }}
-        {{ props.tryout.tryout_code }}
       </div>
 
       <!-- Persyaratan -->
@@ -73,12 +73,9 @@ onMounted(() => {
       </div>
 
       <!-- Tombol mulai -->
-      <button
-        :disabled="!canStart"
-        class="px-4 py-2 rounded text-white"
+      <button :disabled="!canStart" class="px-4 py-2 rounded text-white"
         :class="canStart ? 'bg-green-600 hover:bg-green-700 cursor-pointer' : 'bg-gray-400 cursor-not-allowed'"
-        @click="tryoutStore.doingTryout(props.tryout.tryout_code)"
-      >
+        @click="tryoutStore.doingTryout(props.tryout.tryout_code)">
         Mulai Tryout
       </button>
     </div>
