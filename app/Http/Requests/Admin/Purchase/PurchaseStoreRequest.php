@@ -26,6 +26,7 @@ class PurchaseStoreRequest extends FormRequest
             'tasks.*.label' => 'required|string|max:255',
             'tasks.*.file' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
             'tryout_id' => 'required|array',
+            'tryout_id.*' => 'required|uuid|exists:tryouts,id',
             'amount' => 'required|integer',
         ];
     }
@@ -48,9 +49,10 @@ class PurchaseStoreRequest extends FormRequest
             'tasks.*.file.mimes' => 'Format gambar harus jpg, jpeg, png, atau webp.',
             'tasks.*.file.max' => 'Ukuran gambar maksimal 2MB.',
 
-            'tryout_id.required' => 'Grade ID wajib diisi.',
-            'tryout_id.uuid' => 'Grade ID harus berupa UUID.',
-            'tryout_id.exists' => 'Grade ID tidak ditemukan dalam database.',
+            'tryout_id.array' => 'Tryout ID wajib array.',
+            'tryout_id.required' => 'Tryout ID wajib diisi.',
+            'tryout_id.uuid' => 'Tryout ID harus berupa UUID.',
+            'tryout_id.exists' => 'Tryout ID tidak ditemukan dalam database.',
 
             'amount.required' => 'Amount wajib diisi.',
             'amount.integer' => 'Amount harus berupa angla.',

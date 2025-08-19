@@ -52,8 +52,18 @@ class PurchaseService extends Service implements PurchaseServiceInterface
     {
         DB::beginTransaction();
         try {
+            $filePaths = [];
+
+            foreach ($dto->tasks as $task) {
+                $this->fileSettings();
+                $filePath = !empty($task['file']) ? $this->uploadFile($task['file']) : null;
+                $filePaths[] = [
+                    'label' => $task['label'],
+                    'proof' => $filePath,
+                ];
+            }
+
             foreach ($dto->tryout_id as $tryout) {
-                // Data order
                 $whereOrder = [
                     'user_id'   => Auth::id(),
                     'tryout_id' => $tryout,
@@ -67,32 +77,23 @@ class PurchaseService extends Service implements PurchaseServiceInterface
                 ];
                 $order = $this->orderRepository->updateOrCreate($whereOrder, $dataOrder);
 
-                $wherePayment = [
-                    'order_id' => $order->id,
-                ];
-                $dataPayment = [
-                    'payment_gateway'   => $order->payment_gateway,
-                    'payment_method'    => $order->payment_method,
-                    'reference'         => $this->paymentRepository->generateUniquePaymentNumber(),
-                    'amount_paid'       => $order->amount,
-                    'status'            => PaymentStatusEnum::PENDING->value,
-                    'order_number'      => $order->order_number,
-                ];
-                $this->paymentRepository->updateOrCreate($wherePayment, $dataPayment);
+                $this->paymentRepository->updateOrCreate(
+                    ['order_id' => $order->id],
+                    [
+                        'payment_gateway'   => $order->payment_gateway,
+                        'payment_method'    => $order->payment_method,
+                        'reference'         => $this->paymentRepository->generateUniquePaymentNumber(),
+                        'amount_paid'       => $order->amount,
+                        'status'            => PaymentStatusEnum::PENDING->value,
+                        'order_number'      => $order->order_number,
+                    ]
+                );
 
-                // Loop setiap task (bukti upload)
-                foreach ($dto->tasks as $task) {
-                    $this->fileSettings();
-
-                    $filePath = null;
-                    if (!empty($task['file'])) {
-                        $filePath = $this->uploadFile($task['file']);
-                    }
-
-                    // Simpan record baru untuk setiap task
+                // simpan tasks hasil upload sebelumnya
+                foreach ($filePaths as $task) {
                     $this->purchaseRepository->store([
                         'order_id' => $order->id,
-                        'proof'    => $filePath,
+                        'proof'    => $task['proof'],
                         'label'    => $task['label'],
                     ]);
                 }
