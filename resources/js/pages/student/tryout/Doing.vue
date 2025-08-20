@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DefaultLayout from "@/layouts/DefaultLayout.vue"
-import QuestionAnswer from "@/components/student/QuestionAnswer.vue"
+import QuestionMultipleChoice from "@/components/student/QuestionMultipleChoice.vue"
 import { computed, onMounted, onUnmounted, ref, watch } from "vue"
 import QuestionNavigator from "@/components/student/QuestionNavigator.vue";
 import { useAnswerStore } from "@/stores/student/answerStore";
@@ -70,7 +70,7 @@ const finishExam = async () => {
       text: `Masih ada ${unanswered.length} soal yang belum dijawab. Tetap kirim jawaban?`
     })
 
-    if (!confirmed) return // batalkan submit jika user klik Batal
+    if (!confirmed) return // batalkan submit
   }
 
   answerStore.finishExam(answers.value);
@@ -83,7 +83,7 @@ let interval: ReturnType<typeof setInterval>
 // hitung sisa waktu berdasarkan start_at + duration
 const calculateTimeLeft = () => {
   const start = new Date(props.result.start_at).getTime()
-  const end = start + props.result.duration * 60 * 1000 // duration dalam menit → ms
+  const end = start + props.result.duration * 60 * 1000 // duration dalam menit -> ms
   const now = new Date().getTime()
   const secondsLeft = Math.max(Math.floor((end - now) / 1000), 0)
   timeLeft.value = secondsLeft
@@ -105,7 +105,6 @@ onMounted(async () => {
     props.result.questions.map(q => {
       // cari jawaban dari backend
       const backendAnswer = answerStore.answers.find(a => a.question_id === q.id);
-      // console.log(q.id, backendAnswer ? backendAnswer.answer : null)
       return [q.id, backendAnswer ? backendAnswer.answer : null];
     })
   );
@@ -127,13 +126,6 @@ const navigateTo = (index: number) => {
   currentIndex.value = index
 }
 
-// watch(answers, (newVal, oldVal) => {
-//   const q = props.result.questions[currentIndex.value]
-//   if (q) {
-//     answerStore.handleSave(props.result.id, newVal[q.id], q.id)
-//   }
-// }, { deep: true })
-
 const updateAnswer = (questionId: string, value: string | null) => {
   answers.value[questionId] = value
   answerStore.handleSave(value, questionId)
@@ -149,7 +141,6 @@ const updateAnswer = (questionId: string, value: string | null) => {
         <QuestionNavigator :questions="props.result.questions" :answers="answers" :currentIndex="currentIndex"
           @navigate="navigateTo" />
       </aside>
-      <!-- {{ answerStore.answers }} -->
       <!-- Area soal -->
       <main class="md:col-span-3 space-y-6">
         <p class="text-red-500 font-semibold text-lg">
@@ -161,17 +152,9 @@ const updateAnswer = (questionId: string, value: string | null) => {
           ({{ props.result.amount_question }} Soal, {{ props.result.duration }} Menit)
         </h1>
 
-        <!-- <QuestionAnswer
-          v-if="props.result.questions[currentIndex]"
-          :question="props.result.questions[currentIndex]"
-          :index="currentIndex"
-          v-model="answers[props.result.questions[currentIndex].id]"
-        /> -->
-        <QuestionAnswer :question="props.result.questions[currentIndex]" :index="currentIndex"
+        <QuestionMultipleChoice :question="props.result.questions[currentIndex]" :index="currentIndex"
           :model-value="answers[props.result.questions[currentIndex].id]"
           @update:model-value="val => updateAnswer(props.result.questions[currentIndex].id, val)" />
-
-        <!-- <pre class="mt-6 bg-slate-100 p-3 rounded-lg border text-xs">{{ answers }}</pre> -->
 
         <!-- navigasi bawah -->
         <div class="flex justify-between mt-6">
