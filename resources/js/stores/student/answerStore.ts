@@ -27,6 +27,8 @@ export const useAnswerStore = defineStore('answer-student', {
         answerCache: Map<string, AnswerListResponse>,
         showModal: boolean,
         form: AnswerForm,
+        localKey: string,
+        subtestId: string,
     } => ({
         answers: [] as Answer[],
         isLoading: false,
@@ -43,18 +45,37 @@ export const useAnswerStore = defineStore('answer-student', {
             answer: '',
             subtest_id: ''
         }),
+        localKey: '',
+        subtestId: ''
     }),
     actions: {
-        async fetchAnswers(page = 1, search?: string): Promise<void> {
+        async fetchAnswers(subtestId: string, page = 1, search?: string): Promise<void> {
+            this.localKey = `answers_subtest_${subtestId}`;
+            this.subtestId = subtestId;
             this.isLoading = true;
             this.error = null;
 
             const searchQuery = search ?? this.searchQuery;
-
             const isSearching = !!searchQuery;
             const cacheKey = isSearching ? `search_answer_student_${searchQuery}` : `page_answer_student_${page}`;
 
             try {
+                // 1️⃣ Cek localStorage dulu
+                const stored = localStorage.getItem(this.localKey);
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    this.answers = Object.keys(parsed).map(key => ({
+                        id: `local_${key}`,            // buat id dummy supaya type sesuai
+                        user_id: 'local_user',         // bisa diganti sesuai kebutuhan
+                        subtest_id: subtestId,
+                        question_id: key,
+                        answer: parsed[key] ?? ''
+                    }));
+                    this.pagination = null; // localStorage tidak pakai pagination
+                    return;
+                }
+
+                // 2️⃣ Cek cache internal store
                 if (this.answerCache.has(cacheKey)) {
                     const cached = this.answerCache.get(cacheKey)!;
 
@@ -81,9 +102,10 @@ export const useAnswerStore = defineStore('answer-student', {
                     return;
                 }
 
+                // 3️⃣ Ambil dari backend
                 const url = isSearching
-                    ? `/api/student/answer?search=${encodeURIComponent(searchQuery)}`
-                    : `/api/student/answer?page=${page}`;
+                    ? `/api/student/answer?search=${encodeURIComponent(searchQuery)}&subtest_id=${subtestId}`
+                    : `/api/student/answer?page=${page}&subtest_id=${subtestId}`;
 
                 const response = await axios.get<AnswerListResponse>(url);
                 const answerData = response.data.data;
@@ -108,8 +130,15 @@ export const useAnswerStore = defineStore('answer-student', {
                 }
 
                 this.page = page;
-
                 this.answerCache.set(cacheKey, response.data);
+
+                // 4️⃣ Simpan jawaban dari backend ke localStorage untuk persistence
+                const toStore: Record<string, string | null> = {};
+                this.answers.forEach((a: any) => {
+                    toStore[a.question_id] = a.answer ?? null;
+                });
+                localStorage.setItem(this.localKey, JSON.stringify(toStore));
+
             } catch (err: any) {
                 this.error = err?.response?.data || { message: 'Gagal mengambil data answer' };
             } finally {
@@ -117,16 +146,24 @@ export const useAnswerStore = defineStore('answer-student', {
             }
         },
 
-        async handleSave(subtestId: string, answer: string | null, questionId: string): Promise<void> {
+
+        async handleSave(answer: string | null, questionId: string): Promise<void> {
             this.isLoading = true;
 
             const url = `/api/student/answer`;
 
             const payload = {
-                'subtest_id': subtestId,
+                'subtest_id': this.subtestId,
                 'question_id': questionId,
                 'answer': answer
             }
+
+            // Ambil dulu data lama
+            const stored = JSON.parse(localStorage.getItem(this.localKey) || '{}');
+            // Update jawaban current question
+            stored[questionId] = answer;
+            // Simpan kembali
+            localStorage.setItem(this.localKey, JSON.stringify(stored));
 
             try {
                 const response = await axios.post<ApiResponse<Answer>>(url, payload);
@@ -151,10 +188,43 @@ export const useAnswerStore = defineStore('answer-student', {
             }
         },
 
-        hanldeResetForm(): void
-        {
+        hanldeResetForm(): void {
             this.form.question_id = '';
             this.form.answer = '';
+        },
+
+        async finishExam(value: Record<string, string | null>): Promise<void> {
+            this.isLoading = true;
+
+            const url = `/api/student/answer/finish-exam`;
+
+            const payload = Object.entries(value).map(([questionId, answer]) => ({
+                subtest_id: this.subtestId,
+                question_id: questionId,
+                answer: answer
+            }))
+
+            try {
+                const response = await axios.post<ApiResponse<Answer>>(url, {
+                    answers: payload
+                });
+
+                if (response?.status === 200) {
+                    const data = response.data.data;
+                    localStorage.removeItem(this.localKey);
+                    this.hanldeResetForm();
+                    this.showModal = false;
+                    this.error = null;
+                }
+            } catch (err: any) {
+                if (err?.response?.status === 422) {
+                    this.error = err.response.data.errors || { message: 'Data tidak valid' };
+                } else {
+                    this.error = err?.response?.data || { message: 'Gagal submit finish data answer' };
+                }
+            } finally {
+                this.isLoading = false;
+            }
         }
     }
 });

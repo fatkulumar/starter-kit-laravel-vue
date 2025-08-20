@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Student\Answer\Api;
 
 use App\DataTransferObjects\AnswerDTO;
+use App\DataTransferObjects\FinishExamDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Answer\AnswerStoreRequest;
+use App\Http\Requests\Student\FinishExamRequest;
 use App\Services\Student\Answer\AnswerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -34,6 +36,7 @@ class AnswerController extends Controller
             'search' => $search,
             'cacheKey' => 'answer_student:search=' . ($search ?: 'all') . ':answer_student=' . $page . $subtestId . $userId,
             'minutes' => 10,
+            'subtest_id' => $subtestId
         ];
         $result = $this->answerService->getAnswer($payload);
         $this->setResult($result)->setStatus(true)->setMessage('Success Get Data')->setCode(JsonResponse::HTTP_OK);
@@ -91,5 +94,18 @@ class AnswerController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Submit finish exam.
+     */
+    public function finishExam(FinishExamRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $data['user_id'] = Auth::id();
+        $dto = FinishExamDTO::fromArray($data);
+        $result = $this->answerService->finishExam($dto);
+        $this->setResult($result)->setStatus(true)->setMessage('Success Save Data')->setCode(JsonResponse::HTTP_OK);
+        return $this->toJson();
     }
 }

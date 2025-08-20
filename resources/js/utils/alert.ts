@@ -36,3 +36,21 @@ export const showError = (errors: any) => {
     });
 };
 
+export const showConfirm = async (options: {
+  title?: string,
+  text?: string,
+  confirmButtonText?: string,
+  cancelButtonText?: string
+}): Promise<boolean> => {
+  const result = await Swal.fire({
+    icon: 'question',
+    title: options.title || 'Apakah Anda yakin?',
+    text: options.text || '',
+    showCancelButton: true,
+    confirmButtonText: options.confirmButtonText || 'Ya',
+    cancelButtonText: options.cancelButtonText || 'Batal',
+    focusCancel: true
+  })
+
+  return result.isConfirmed
+}

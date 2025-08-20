@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignUuid('subtest_id')->references('id')->on('subtests')->onDelete('cascade');
             $table->foreignUuid('question_id')->references('id')->on('questions')->onDelete('cascade');
-            $table->enum('answer', ['A', 'B', 'C', 'D', 'E']);
+            $table->enum('answer', ['A', 'B', 'C', 'D', 'E'])->nullable();
             $table->timestamps();
         });
     }

@@ -4,6 +4,8 @@ import QuestionAnswer from "@/components/student/QuestionAnswer.vue"
 import { computed, onMounted, onUnmounted, ref, watch } from "vue"
 import QuestionNavigator from "@/components/student/QuestionNavigator.vue";
 import { useAnswerStore } from "@/stores/student/answerStore";
+import { showConfirm } from '@/utils/alert';
+
 const answerStore = useAnswerStore();
 
 export interface QuestionSubtest {
@@ -56,9 +58,22 @@ const prevQuestion = () => {
 }
 
 // submit ujian
-const finishExam = () => {
-  console.log("Jawaban dikirim:", answers.value)
-  alert("Jawaban kamu sudah terkirim!")
+const finishExam = async () => {
+  // cari soal yang belum diisi
+  const unanswered = props.result.questions
+    .filter(q => !answers.value[q.id] || answers.value[q.id]?.trim() === '')
+    .map(q => q.id);
+
+  if (unanswered.length > 0) {
+    const confirmed = await showConfirm({
+      title: 'Ada soal kosong!',
+      text: `Masih ada ${unanswered.length} soal yang belum dijawab. Tetap kirim jawaban?`
+    })
+
+    if (!confirmed) return // batalkan submit jika user klik Batal
+  }
+
+  answerStore.finishExam(answers.value);
 }
 
 // Countdown
@@ -74,18 +89,30 @@ const calculateTimeLeft = () => {
   timeLeft.value = secondsLeft
 
   if (secondsLeft === 0) {
-    clearInterval(interval)
-    finishExam()
+    clearInterval(interval);
+    finishExam();
   }
 }
 
-onMounted(() => {
-  calculateTimeLeft()
-  interval = setInterval(calculateTimeLeft, 1000)
+onMounted(async () => {
+  calculateTimeLeft();
+  interval = setInterval(calculateTimeLeft, 1000);
+
+  const q = props.result.questions[currentIndex.value]
+  await answerStore.fetchAnswers(props.result.id);
+
+  answers.value = Object.fromEntries(
+    props.result.questions.map(q => {
+      // cari jawaban dari backend
+      const backendAnswer = answerStore.answers.find(a => a.question_id === q.id);
+      // console.log(q.id, backendAnswer ? backendAnswer.answer : null)
+      return [q.id, backendAnswer ? backendAnswer.answer : null];
+    })
+  );
 })
 
 onUnmounted(() => {
-  clearInterval(interval)
+  clearInterval(interval);
 })
 
 // Format waktu hh:mm:ss
@@ -93,19 +120,24 @@ const formattedTime = computed(() => {
   const hours = Math.floor(timeLeft.value / 3600)
   const minutes = Math.floor((timeLeft.value % 3600) / 60)
   const seconds = timeLeft.value % 60
-  return `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 })
 
 const navigateTo = (index: number) => {
   currentIndex.value = index
 }
 
-watch(answers, (newVal, oldVal) => {
-  const q = props.result.questions[currentIndex.value]
-  if (q) {
-    answerStore.handleSave(props.result.id, newVal[q.id], q.id)
-  }
-}, { deep: true })
+// watch(answers, (newVal, oldVal) => {
+//   const q = props.result.questions[currentIndex.value]
+//   if (q) {
+//     answerStore.handleSave(props.result.id, newVal[q.id], q.id)
+//   }
+// }, { deep: true })
+
+const updateAnswer = (questionId: string, value: string | null) => {
+  answers.value[questionId] = value
+  answerStore.handleSave(value, questionId)
+}
 
 </script>
 
@@ -114,14 +146,10 @@ watch(answers, (newVal, oldVal) => {
     <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6">
       <!-- Navigasi soal -->
       <aside class="md:col-span-1">
-        <QuestionNavigator
-          :questions="props.result.questions"
-          :answers="answers"
-          :currentIndex="currentIndex"
-          @navigate="navigateTo"
-        />
+        <QuestionNavigator :questions="props.result.questions" :answers="answers" :currentIndex="currentIndex"
+          @navigate="navigateTo" />
       </aside>
-
+      <!-- {{ answerStore.answers }} -->
       <!-- Area soal -->
       <main class="md:col-span-3 space-y-6">
         <p class="text-red-500 font-semibold text-lg">
@@ -133,38 +161,31 @@ watch(answers, (newVal, oldVal) => {
           ({{ props.result.amount_question }} Soal, {{ props.result.duration }} Menit)
         </h1>
 
-        <QuestionAnswer
+        <!-- <QuestionAnswer
           v-if="props.result.questions[currentIndex]"
           :question="props.result.questions[currentIndex]"
           :index="currentIndex"
           v-model="answers[props.result.questions[currentIndex].id]"
-        />
+        /> -->
+        <QuestionAnswer :question="props.result.questions[currentIndex]" :index="currentIndex"
+          :model-value="answers[props.result.questions[currentIndex].id]"
+          @update:model-value="val => updateAnswer(props.result.questions[currentIndex].id, val)" />
 
         <!-- <pre class="mt-6 bg-slate-100 p-3 rounded-lg border text-xs">{{ answers }}</pre> -->
 
         <!-- navigasi bawah -->
         <div class="flex justify-between mt-6">
-          <button
-            class="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-            :disabled="currentIndex === 0"
-            @click="prevQuestion"
-          >
+          <button class="px-4 py-2 bg-gray-200 rounded disabled:opacity-50" :disabled="currentIndex === 0"
+            @click="prevQuestion">
             Kembali
           </button>
 
-          <button
-            v-if="currentIndex < props.result.questions.length - 1"
-            class="px-4 py-2 bg-blue-600 text-white rounded"
-            @click="nextQuestion"
-          >
+          <button v-if="currentIndex < props.result.questions.length - 1"
+            class="px-4 py-2 bg-blue-600 text-white rounded" @click="nextQuestion">
             Selanjutnya
           </button>
 
-          <button
-            v-else
-            class="px-4 py-2 bg-green-600 text-white rounded"
-            @click="finishExam"
-          >
+          <button v-else class="px-4 py-2 bg-green-600 text-white rounded" @click="finishExam">
             Selesai
           </button>
         </div>

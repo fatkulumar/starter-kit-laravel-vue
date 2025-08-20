@@ -5,4 +5,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('api/student')->as('api.')->group(function () {
     Route::resource('answer', AnswerController::class)->only(['index', 'store']);
+    Route::post('answer/finish-exam', [AnswerController::class, 'finishExam'])->name('finish.exam');
 });
